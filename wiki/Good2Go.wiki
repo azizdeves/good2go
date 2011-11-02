@@ -1,0 +1,15 @@
+#summary Good2Go makes volunteering spontaneous and personalized to the person's location and schedule.
+#labels Phase-Design
+
+= Introduction =
+
+Good2Go is a *mini volunteering* app for Android
+
+
+= Details =
+
+-Short and *focused* daily volunteering tasks (not big projects)
+
+-Simple and easy
+
+-*Rewarding* through gamification mechanisms (badges and karma)
