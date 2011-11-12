@@ -1,4 +1,4 @@
-#summary Good2Go makes volunteering spontaneous and personalized to the person's location and schedule.
+#summary GOOD2GO makes volunteering spontaneous and personalized to the person's location and schedule.
 #labels Phase-Design
 
 = Introduction =
