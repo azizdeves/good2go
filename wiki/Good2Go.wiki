@@ -3,7 +3,7 @@
 
 = Introduction =
 
-Good2Go is a *mini volunteering* app for Android
+GOOD2GO is a *mini volunteering* app for Android
 
 
 = Details =
