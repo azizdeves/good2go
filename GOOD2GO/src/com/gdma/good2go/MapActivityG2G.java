@@ -27,20 +27,21 @@ public class MapActivityG2G extends MapActivity {
         //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
         List<Overlay> mapOverlays = mapView.getOverlays();
         //instantiate the Drawable used for the map marker
-        Drawable drawable = this.getResources().getDrawable(R.drawable.androidmarker);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.mappinlo);
         //The constructor for G2GItemizedOverlay (your custom ItemizedOverlay) takes the Drawable in order to set the default marker for all overlay items
-        G2GItemizedOverlay itemizedoverlay = new G2GItemizedOverlay(drawable,this);
+        ItemizedOverlayG2G itemizedoverlay = new ItemizedOverlayG2G(drawable,this);
         
         
         /**ADDING POINTS TO MAP*/
         //GeoPoint defines the map coordinates the overlay item
-        GeoPoint point = new GeoPoint(19240000,-99120000);
+        GeoPoint point = new GeoPoint(32074938,34775591);
+
         //Pass the point to a new OverlayItem
-        OverlayItem overlayitem = new OverlayItem(point, "Hola, Mundo!", "I'm in Mexico City!");
-        GeoPoint point2 = new GeoPoint(35410000, 139460000);
-        OverlayItem overlayitem2 = new OverlayItem(point2, "Sekai, konichiwa!", "I'm in Japan!");
+        OverlayItem overlayitem = new OverlayItem(point, "Konichiwa!", "TA City!");
+        GeoPoint point2 = new GeoPoint(32055555, 34769572);
+        OverlayItem overlayitem2 = new OverlayItem(point2, "Shalom, bitchez!", "Adi's house in da house!");
         GeoPoint point3 = new GeoPoint(32063374, 34773080);
-        OverlayItem overlayitem3 = new OverlayItem(point3, "Shalom, bitchez!", "I'm in Tel Aviv!");
+        OverlayItem overlayitem3 = new OverlayItem(point3, "Yo!", "Rotschild rocks!");
         
         
         /**SHOW ON MAP*/

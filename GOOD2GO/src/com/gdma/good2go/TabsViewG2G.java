@@ -6,7 +6,7 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
 
-public class GOOD2GOActivity extends TabActivity {
+public class TabsViewG2G extends TabActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -28,7 +28,7 @@ public class GOOD2GOActivity extends TabActivity {
         tabHost.addTab(spec);
 
         // Do the same for the other tabs
-        intent = new Intent().setClass(this, ListActivity.class);
+        intent = new Intent().setClass(this, ListActivityG2G.class);
         spec = tabHost.newTabSpec("list").setIndicator("List",
                           res.getDrawable(R.drawable.ic_tab_list))
                       .setContent(intent);
