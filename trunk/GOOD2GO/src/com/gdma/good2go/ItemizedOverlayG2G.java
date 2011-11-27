@@ -11,7 +11,7 @@ import com.google.android.maps.OverlayItem;
 
 
 /*This class can manage a whole set of Overlay (which are the individual items placed on the map)*/
-public class G2GItemizedOverlay extends ItemizedOverlay<OverlayItem> {
+public class ItemizedOverlayG2G extends ItemizedOverlay<OverlayItem> {
 	
 	/*The array in which we'll put each of the OverlayItem objects we want on the map*/
 	private ArrayList<OverlayItem> mOverlays = new ArrayList<OverlayItem>();
@@ -24,7 +24,7 @@ public class G2GItemizedOverlay extends ItemizedOverlay<OverlayItem> {
 	 * Most commonly, you want the center-point at the bottom of the image to be the point at which it's attached to the map coordinates. 
 	 * This is handled for you with the boundCenterBottom() method.
 	 * Plus initialize context*/
-	public G2GItemizedOverlay(Drawable defaultMarker, Context context) {
+	public ItemizedOverlayG2G(Drawable defaultMarker, Context context) {
 		  super(boundCenterBottom(defaultMarker));
 		  mContext = context;
 		}
