@@ -3,5 +3,7 @@
 
     <string name="hello">Hello World, GOOD2GOActivity!</string>
     <string name="app_name">GOOD2GO</string>
+    <string name="mapskey">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
+    <string name="mapview_name">G2GMAP</string>
 
 </resources>
