@@ -41,6 +41,6 @@ public class GOOD2GOActivity extends TabActivity {
         tabHost.addTab(spec);
 
         //Set the map tab to be first 
-        tabHost.setCurrentTab(1);
+        tabHost.setCurrentTab(0);
     }
 }
