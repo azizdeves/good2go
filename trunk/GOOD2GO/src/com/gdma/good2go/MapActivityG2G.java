@@ -22,14 +22,17 @@ public class MapActivityG2G extends MapActivity {
         MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         
+       /* MapController controller = mapView.getController();
+        controller.setCenter(new GeoPoint((int)(32.063374 * 1E6),(int)(34.773080 * 1E6)));*/
+        
 
        /**OVERLAY*/ 
         //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
         List<Overlay> mapOverlays = mapView.getOverlays();
         //instantiate the Drawable used for the map marker
-        Drawable drawable = this.getResources().getDrawable(R.drawable.mappinlo);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
         //The constructor for G2GItemizedOverlay (your custom ItemizedOverlay) takes the Drawable in order to set the default marker for all overlay items
-        ItemizedOverlayG2G itemizedoverlay = new ItemizedOverlayG2G(drawable,this);
+        ItemizedOverlayG2G itemizedoverlay = new ItemizedOverlayG2G(drawable,mapView);
         
         
         /**ADDING POINTS TO MAP*/
