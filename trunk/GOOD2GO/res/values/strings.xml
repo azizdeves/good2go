@@ -8,4 +8,6 @@
     <string name="listview_name">G2Glist</string>
  	<string name="searchview_name">G2Gsearch</string>
  	<string name="eventdetails_name">G2Geventdetails</string>
+ 	<string name="eventdetails_tabs">G2GeventdetailsTabs</string>
+ 	
 </resources>

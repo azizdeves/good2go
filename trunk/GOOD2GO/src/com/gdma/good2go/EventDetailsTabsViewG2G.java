@@ -1,46 +1,46 @@
 package com.gdma.good2go;
 
 import android.app.TabActivity;
-import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 public class EventDetailsTabsViewG2G extends TabActivity {
-    /** Called when the activity is first created. */
-    @Override
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+	
+    TabHost mTabHost;
+  
+	
+	/** Called when the activity is first created. */
+	@Override
+	public void onCreate(Bundle savedInstanceState) {
+	    super.onCreate(savedInstanceState);
+	    setContentView(R.layout.event_details);
 
-        Resources res = getResources(); // Resource object to get Drawables
-        TabHost tabHost = getTabHost();  // The activity TabHost
-        TabHost.TabSpec spec;  // Reusable TabSpec for each tab
-        Intent intent;  // Reusable Intent for each tab
+	    mTabHost = getTabHost();
 
-        // Create an Intent to launch an Activity for the tab (to be reused)
-        intent = new Intent().setClass(this, MapActivityG2G.class);
+	    
+	    mTabHost.addTab(mTabHost.newTabSpec("tab_about_event").setIndicator("About").setContent(R.id.textview1));
+	    mTabHost.addTab(mTabHost.newTabSpec("tab_map_event").setIndicator("Map").setContent(R.id.textview2));
+	    mTabHost.addTab(mTabHost.newTabSpec("tab_npo").setIndicator("Who").setContent(R.id.textview3));
+	    
+	    mTabHost.setCurrentTab(0);
+	    
+	    
+	    final Button buttonRegister = (Button) findViewById(R.id.button_register);
+	    buttonRegister.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View view) {
+	           // mSoundManager.playSound(3);
+	            /*Intent newIntent = new Intent(view.getContext(), 
+	                            Registration.class); 
+	                            startActivityForResult(newIntent, 1);*/
+	    		Toast.makeText(view.getContext(), "onButtonClick Register",
+				Toast.LENGTH_LONG).show();
+	        }
+	    });
+	}
+	
+	
 
-        // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("map").setIndicator("Map",
-                          res.getDrawable(R.drawable.ic_tab_map))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-
-        // Do the same for the other tabs
-        intent = new Intent().setClass(this, ListActivityG2G.class);
-        spec = tabHost.newTabSpec("list").setIndicator("List",
-                          res.getDrawable(R.drawable.ic_tab_list))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-
-        intent = new Intent().setClass(this, SearchActivity.class);
-        spec = tabHost.newTabSpec("search").setIndicator("Search",
-                          res.getDrawable(R.drawable.ic_tab_search))
-                      .setContent(intent);
-        tabHost.addTab(spec);
-
-        //Set the map tab to be first 
-        tabHost.setCurrentTab(0);
-    }
 }

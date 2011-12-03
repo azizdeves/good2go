@@ -60,15 +60,19 @@
             </intent-filter>
         </activity>
         
+     
         <activity
-            android:label="@string/eventdetails_name"
-            android:name=".EventDetailsActivity" >
+            android:label="@string/eventdetails_tabs"
+            android:name=".EventDetailsTabsViewG2G"
+            android:theme="@android:style/Theme.NoTitleBar" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+        
+           
     </application>
 
 </manifest>
