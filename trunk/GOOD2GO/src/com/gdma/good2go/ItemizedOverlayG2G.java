@@ -2,9 +2,11 @@ package com.gdma.good2go;
 
 import java.util.ArrayList;
 
+//import android.app.Activity;
+
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.widget.Toast;
 
 import com.google.android.maps.MapView;
 import com.google.android.maps.OverlayItem;
@@ -69,8 +71,11 @@ public class ItemizedOverlayG2G extends BalloonItemizedOverlay<OverlayItem> {
 	}*/
 
 	protected boolean onBalloonTap(int index, OverlayItem item) {
-		Toast.makeText(mContext, "onBalloonTap for overlay index " + index,
-				Toast.LENGTH_LONG).show();
+		/*Toast.makeText(mContext, "onBalloonTap for overlay index " + index,
+				Toast.LENGTH_LONG).show();*/
+        
+		Intent i = new Intent(mContext, EventDetailsActivity.class);
+		mContext.startActivity(i);
 		return true;
 }
 }

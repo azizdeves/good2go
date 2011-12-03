@@ -41,7 +41,7 @@
         </activity>
         
         <activity
-            android:label="@string/app_name"
+            android:label="@string/listview_name"
             android:name=".ListActivityG2G" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -51,7 +51,7 @@
         </activity>
         
         <activity
-            android:label="@string/app_name"
+            android:label="@string/searchview_name"
             android:name=".SearchActivity" >
             <intent-filter >
                 <action android:name="android.intent.action.MAIN" />
@@ -60,6 +60,15 @@
             </intent-filter>
         </activity>
         
+        <activity
+            android:label="@string/eventdetails_name"
+            android:name=".EventDetailsActivity" >
+            <intent-filter >
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
     </application>
 
 </manifest>
