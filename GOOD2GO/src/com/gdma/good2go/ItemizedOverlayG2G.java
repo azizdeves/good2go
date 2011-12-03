@@ -74,7 +74,7 @@ public class ItemizedOverlayG2G extends BalloonItemizedOverlay<OverlayItem> {
 		/*Toast.makeText(mContext, "onBalloonTap for overlay index " + index,
 				Toast.LENGTH_LONG).show();*/
         
-		Intent i = new Intent(mContext, EventDetailsActivity.class);
+		Intent i = new Intent(mContext, EventDetailsTabsViewG2G.class);
 		mContext.startActivity(i);
 		return true;
 }
