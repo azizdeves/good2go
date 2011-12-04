@@ -4,10 +4,11 @@
     <string name="hello">Hello World, GOOD2GOActivity!</string>
     <string name="app_name">GOOD2GO</string>
     <string name="mapskey">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
-    <string name="mapview_name">G2GMAP</string>
-    <string name="listview_name">G2Glist</string>
- 	<string name="searchview_name">G2Gsearch</string>
- 	<string name="eventdetails_name">G2Geventdetails</string>
- 	<string name="eventdetails_tabs">G2GeventdetailsTabs</string>
+    <string name="mapview_name">MAP</string>
+    <string name="listview_name">List</string>
+ 	<string name="searchview_name">Search</string>
+ 	<string name="eventdetails_name">Event Details</string>
+ 	<string name="eventdetails_tabs">Event Details Tabs</string>
+ 	 	<string name="countmein">Count Me In</string>
  	
 </resources>

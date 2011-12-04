@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
+import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 import com.google.android.maps.OverlayItem;
@@ -54,6 +55,10 @@ public class MapActivityG2G extends MapActivity {
         itemizedoverlay.addOverlay(overlayitem3);
         //Add the G2GItemizedOverlay to the MapView
         mapOverlays.add(itemizedoverlay);
+        
+		final MapController mc = mapView.getController();
+		mc.animateTo(point3);
+		mc.setZoom(16);
         
     }
 

@@ -28,14 +28,14 @@
         android:text="Playing with Young Autistic Children"/>
     
      <Button
-        android:id="@+id/button_register"
+        android:id="@+id/countmeinbtn"
         android:layout_width="wrap_content"
         android:layout_height="10dip"
         android:layout_below="@id/eventTitle"
         android:layout_toRightOf="@id/childPic"
         android:layout_alignRight="@id/eventTitle"
         android:layout_alignBottom="@id/childPic"
-        android:text="Register and DO GOOD" />
+        android:text="Count Me In!" />
          
     <TextView
         android:id="@+id/eventDescription"
