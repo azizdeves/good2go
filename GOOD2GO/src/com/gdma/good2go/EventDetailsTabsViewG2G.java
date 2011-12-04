@@ -1,11 +1,11 @@
 package com.gdma.good2go;
 
 import android.app.TabActivity;
+import android.content.Intent;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TabHost;
-import android.widget.Toast;
 
 public class EventDetailsTabsViewG2G extends TabActivity {
 	
@@ -28,15 +28,16 @@ public class EventDetailsTabsViewG2G extends TabActivity {
 	    mTabHost.setCurrentTab(0);
 	    
 	    
-	    final Button buttonRegister = (Button) findViewById(R.id.button_register);
-	    buttonRegister.setOnClickListener(new View.OnClickListener() {
+	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
+	   
+	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
 	           // mSoundManager.playSound(3);
-	            /*Intent newIntent = new Intent(view.getContext(), 
-	                            Registration.class); 
-	                            startActivityForResult(newIntent, 1);*/
-	    		Toast.makeText(view.getContext(), "onButtonClick Register",
-				Toast.LENGTH_LONG).show();
+	            Intent newIntent = new Intent(view.getContext(), 
+	                            CountMeIn.class);
+	            startActivityForResult(newIntent, 1);
+	    		//Toast.makeText(view.getContext(), "onButtonClick Register",
+				//Toast.LENGTH_LONG).show();
 	        }
 	    });
 	}
