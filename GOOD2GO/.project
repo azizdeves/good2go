@@ -3,6 +3,7 @@
 	<name>GOOD2GO</name>
 	<comment></comment>
 	<projects>
+		<project>Test-Android</project>
 	</projects>
 	<buildSpec>
 		<buildCommand>
