@@ -6,12 +6,56 @@ import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
 
+import com.facebook.android.*;
+import com.facebook.android.Facebook.*;
+
 public class TabsViewG2G extends TabActivity {
+	
+	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
+	
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+        
+        /*
+        facebook.authorize(this, new DialogListener() {
+            //@Override
+            public void onComplete(Bundle values) {}
+
+            //@Override
+            public void onFacebookError(FacebookError error) {}
+
+            //@Override
+            public void onError(DialogError e) {}
+
+            //@Override
+            public void onCancel() {}
+            
+    
+        });
+*/
+        
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins" },
+
+        	      new DialogListener() {
+  //      	           @Override
+        	           public void onComplete(Bundle values) {}
+
+  //      	           @Override
+        	           public void onFacebookError(FacebookError error) {}
+
+  //      	           @Override
+        	           public void onError(DialogError e) {}
+
+  //      	           @Override
+        	           public void onCancel() {}
+        	      }
+        	);
+
+        
 
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
@@ -43,4 +87,15 @@ public class TabsViewG2G extends TabActivity {
         //Set the map tab to be first 
         tabHost.setCurrentTab(0);
     }
+    
+
+    
+    //added - FB
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);	
+
+    	facebook.authorizeCallback(requestCode, resultCode, data);
+    }
+
 }
