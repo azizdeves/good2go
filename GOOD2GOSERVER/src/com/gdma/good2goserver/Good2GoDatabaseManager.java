@@ -62,10 +62,9 @@ public class Good2GoDatabaseManager {
 			}
 		}
 	}
-	
+	/*
 	public void addEvent(Event newEvent){
 		Transaction txn = pm.currentTransaction();
-		Key k = 
 		
 		try {
 			txn.begin();
@@ -82,5 +81,5 @@ public class Good2GoDatabaseManager {
 				txn.rollback();
 			}
 		}
-	}
+	}*/
 }

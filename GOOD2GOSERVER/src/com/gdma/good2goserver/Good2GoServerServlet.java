@@ -15,9 +15,9 @@ public class Good2GoServerServlet extends HttpServlet {
 		log.info("I'm here!");
 		
 		resp.setContentType("text/plain");
-		resp.getWriter().println(req.toString());
+		resp.getWriter().println(req.getParameter(new String("a")));
 		}
-		catch (Exception e){
+		catch (IOException e){
 			log.info(e.getMessage());
 			throw e;
 		}
