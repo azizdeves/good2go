@@ -24,6 +24,7 @@ public class TabsViewG2G extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        
         /*
         facebook.authorize(this, new DialogListener() {
             //@Override
