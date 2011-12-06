@@ -1,9 +1,13 @@
 package com.gdma.good2go;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.util.Log;
 import android.widget.TabHost;
 
 import com.facebook.android.*;
@@ -38,13 +42,34 @@ public class TabsViewG2G extends TabActivity {
         });
 */
         
-        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins" },
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
 
         	      new DialogListener() {
   //      	           @Override
-        	           public void onComplete(Bundle values) {}
+        	           public void onComplete(Bundle values) {
+        	        	   updateStatus(values.getString(facebook.getAccessToken()));
+        	           }
 
-  //      	           @Override
+        	           private void updateStatus(String accessToken) {
+        	        	   // TODO Auto-generated method stub
+        	        	   try{
+        	        		   Bundle bundle = new Bundle();
+        	        		   bundle.putString("message", "GOOD2GO Hello World!!");
+            	        	   bundle.putString(Facebook.TOKEN, accessToken);
+            	        	   String response = facebook.request("me/feed",bundle,"POST");
+            	        	   Log.d("UPDATE RESPONSE", ""+response);
+        	        	   }
+        	        	   catch(MalformedURLException e){
+        	        		   Log.e("MALFORMED URL",""+e.getMessage());
+        	        	   }
+        	        	   catch (IOException e){
+        	        		   Log.e("IOEX",""+e.getMessage());
+        	        	   }
+        	        	   
+        	        	   
+        	           }
+
+//      	           @Override
         	           public void onFacebookError(FacebookError error) {}
 
   //      	           @Override
