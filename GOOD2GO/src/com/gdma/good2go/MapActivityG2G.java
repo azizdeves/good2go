@@ -2,6 +2,7 @@ package com.gdma.good2go;
 
 import java.util.List;
 
+import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
@@ -14,6 +15,10 @@ import com.google.android.maps.OverlayItem;
 
 
 public class MapActivityG2G extends MapActivity {
+	
+	
+	private EventsDbAdapter mDbHelper;
+	
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -23,10 +28,42 @@ public class MapActivityG2G extends MapActivity {
         MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         
-       /* MapController controller = mapView.getController();
-        controller.setCenter(new GeoPoint((int)(32.063374 * 1E6),(int)(34.773080 * 1E6)));*/
+        /**POPULATE DB**/
+        mDbHelper = new EventsDbAdapter(this);
+        mDbHelper.open();
         
-
+        mDbHelper.createEvent("Fun Horseback Riding", 
+        		"Help teenagers and enjoy a horseack ride!",
+        		"Assist handicapped teenagers in therapeutic horse-back riding," 
+        		+ "lead their horse and help them follow instructors commands.",
+        		"32069156", "34774003");
+        
+        mDbHelper.createEvent("Dogs are our best friends", 
+        		"Have a walk with a city chelter dog!",
+        		"Make a furry cute friend for life!",
+        		"32069211", "34763403");
+        
+        mDbHelper.createEvent("Surf the internet", 
+        		"Share what you know by teaching internet to kids!",
+        		"Show the wonders of Google and Wikipedia to our youngest.",
+        		"32086865", "34789581");
+        
+        mDbHelper.createEvent("Read your favourite book", 
+        		"Read anything you like to the elderly",
+        		"Make someone happy and provide company to the elderly",
+        		"32074938", "34775591");
+        
+        mDbHelper.createEvent("Konichiwa", 
+        		"Adi's in the house!",
+        		"Ran and Adi forever!!!!",
+        		"32055555", "34769572");
+        
+        mDbHelper.createEvent("Give a hot meal to the needy", 
+        		"Help pack and distribute hot meals to those in need",
+        		"They are very hungry. Help them.",
+        		"32063374", "34773080");
+        
+                  
        /**OVERLAY*/ 
         //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
         List<Overlay> mapOverlays = mapView.getOverlays();
@@ -35,33 +72,47 @@ public class MapActivityG2G extends MapActivity {
         //The constructor for G2GItemizedOverlay (your custom ItemizedOverlay) takes the Drawable in order to set the default marker for all overlay items
         ItemizedOverlayG2G itemizedoverlay = new ItemizedOverlayG2G(drawable,mapView);
         
+          
         
-        /**ADDING POINTS TO MAP*/
-        //GeoPoint defines the map coordinates the overlay item
-        GeoPoint point = new GeoPoint(32074938,34775591);
+        /**ADDING DB POINTS TO THE MAP OVERLAY*/
+        // Get all of the rows from the database and create the item list
+    	Cursor eventsCursor = mDbHelper.fetchAllEvents();
 
-        //Pass the point to a new OverlayItem
-        OverlayItem overlayitem = new OverlayItem(point, "Konichiwa!", "TA City!");
-        GeoPoint point2 = new GeoPoint(32055555, 34769572);
-        OverlayItem overlayitem2 = new OverlayItem(point2, "Shalom, bitchez!", "Adi's house in da house!");
-        GeoPoint point3 = new GeoPoint(32063374, 34773080);
-        OverlayItem overlayitem3 = new OverlayItem(point3, "Yo!", "Rotschild rocks!");
+        startManagingCursor(eventsCursor); //is this needed?
         
-        
-        /**SHOW ON MAP*/
-        //Add OverlayItems to your collection in the G2GItemizedOverlay instance
-        itemizedoverlay.addOverlay(overlayitem);
-        itemizedoverlay.addOverlay(overlayitem2);
-        itemizedoverlay.addOverlay(overlayitem3);
+        if(eventsCursor.moveToFirst()){
+        	do{
+        		OverlayItem point=MakeEventPoint(eventsCursor);
+        		itemizedoverlay.addOverlay(point);
+        		}
+        	while(eventsCursor.moveToNext());
+        }
+        if(eventsCursor!=null&&!eventsCursor.isClosed()){
+        	mDbHelper.close();
+        }
+             
+        /**SHOW ON MAP*/ 
         //Add the G2GItemizedOverlay to the MapView
         mapOverlays.add(itemizedoverlay);
         
 		final MapController mc = mapView.getController();
-		mc.animateTo(point3);
+		mc.animateTo(new GeoPoint (32069156,34774003));
 		mc.setZoom(16);
         
     }
 
+    private OverlayItem MakeEventPoint(Cursor eventsCursor) {
+    	
+    	int gplat=Integer.parseInt(eventsCursor.getString(eventsCursor.getColumnIndex("gplat")));
+    	int gplong=Integer.parseInt(eventsCursor.getString(eventsCursor.getColumnIndex("gplong")));
+    	String name=eventsCursor.getString(eventsCursor.getColumnIndex("name"));
+    	String details=eventsCursor.getString(eventsCursor.getColumnIndex("details"));
+    	
+    	GeoPoint gp= new GeoPoint(gplat,gplong); 
+    	OverlayItem overlayitem = new OverlayItem(gp, name, details);
+		
+    	return overlayitem;	
+	}
 
 	@Override
 	protected boolean isRouteDisplayed() {
