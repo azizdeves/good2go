@@ -5,7 +5,7 @@
     
     
 	<TextView
-        android:id="@+id/confirm"
+        android:id="@+id/eventname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dip"
@@ -19,7 +19,7 @@
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"  
-        android:layout_below="@id/confirm"
+        android:layout_below="@id/eventname"
         android:inputType="textMultiLine"
         android:text="Adi Anna is awesome. She's going to volunteer with kids!"/>
     
