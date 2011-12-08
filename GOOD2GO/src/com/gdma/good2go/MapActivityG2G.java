@@ -11,7 +11,6 @@ import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-import com.google.android.maps.OverlayItem;
 
 
 public class MapActivityG2G extends MapActivity {
@@ -33,29 +32,29 @@ public class MapActivityG2G extends MapActivity {
         mDbHelper.open();
         
         mDbHelper.createEvent("Fun Horseback Riding", 
-        		"Help teenagers and enjoy a horseack ride!",
+        		"Help handicapped teenagers and enjoy a horseack ride",
         		"Assist handicapped teenagers in therapeutic horse-back riding," 
         		+ "lead their horse and help them follow instructors commands.",
         		"32069156", "34774003");
         
-        mDbHelper.createEvent("Dogs are our best friends", 
-        		"Have a walk with a city chelter dog!",
+        mDbHelper.createEvent("Dogs are our best friends",  
+        		"Have a walk with a city chelter dog",
         		"Make a furry cute friend for life!",
         		"32069211", "34763403");
         
         mDbHelper.createEvent("Surf the internet", 
+        		"Show the wonders of Google and Wikipedia to children",
         		"Share what you know by teaching internet to kids!",
-        		"Show the wonders of Google and Wikipedia to our youngest.",
         		"32086865", "34789581");
         
         mDbHelper.createEvent("Read your favourite book", 
-        		"Read anything you like to the elderly",
         		"Make someone happy and provide company to the elderly",
+        		"Read anything you like to the elderly",
         		"32074938", "34775591");
         
-        mDbHelper.createEvent("Konichiwa", 
-        		"Adi's in the house!",
-        		"Ran and Adi forever!!!!",
+        mDbHelper.createEvent("Shake what your mamma gave ya", 
+        		"Get jiggy with it!",
+        		"Konichiwa bithez !!!!",
         		"32055555", "34769572");
         
         mDbHelper.createEvent("Give a hot meal to the needy", 
@@ -80,12 +79,14 @@ public class MapActivityG2G extends MapActivity {
 
         startManagingCursor(eventsCursor); //is this needed?
         
+        int cnt=0;//BUG IN CURSOR
         if(eventsCursor.moveToFirst()){
         	do{
-        		OverlayItem point=MakeEventPoint(eventsCursor);
+        		EventOverlayItem point=MakeEventPoint(eventsCursor);
         		itemizedoverlay.addOverlay(point);
+        		cnt++;//BUG IN CURSOR
         		}
-        	while(eventsCursor.moveToNext());
+        	while(eventsCursor.moveToNext()&&cnt!=6/*BUG IN CURSOR*/);
         }
         if(eventsCursor!=null&&!eventsCursor.isClosed()){
         	mDbHelper.close();
@@ -101,16 +102,23 @@ public class MapActivityG2G extends MapActivity {
         
     }
 
-    private OverlayItem MakeEventPoint(Cursor eventsCursor) {
+    private EventOverlayItem MakeEventPoint(Cursor eventsCursor) {    
     	
-    	int gplat=Integer.parseInt(eventsCursor.getString(eventsCursor.getColumnIndex("gplat")));
-    	int gplong=Integer.parseInt(eventsCursor.getString(eventsCursor.getColumnIndex("gplong")));
-    	String name=eventsCursor.getString(eventsCursor.getColumnIndex("name"));
-    	String details=eventsCursor.getString(eventsCursor.getColumnIndex("details"));
+    	String rowID=eventsCursor.getString
+    			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENTID));
+    	int gplat=Integer.parseInt(eventsCursor.getString
+    			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_GP_LAT)));
+    	int gplong=Integer.parseInt(eventsCursor.getString
+    			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_GP_LONG)));
+    	String name=eventsCursor.getString
+    			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENTNAME));
+    	String info=eventsCursor.getString
+    			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_SHORT_INFO));
+
     	
     	GeoPoint gp= new GeoPoint(gplat,gplong); 
-    	OverlayItem overlayitem = new OverlayItem(gp, name, details);
-		
+    	EventOverlayItem overlayitem = new EventOverlayItem(gp, name, info, rowID);
+
     	return overlayitem;	
 	}
 

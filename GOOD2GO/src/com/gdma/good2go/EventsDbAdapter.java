@@ -175,10 +175,27 @@ public class EventsDbAdapter {
 
         Cursor mCursor =
 
-            mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID,
+            mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
                     KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
                     KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT}, KEY_EVENTID + "=" + eventId, null,
                     null, null, null, null);
+        if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+
+    }
+    
+    
+    public Cursor fetchEventByGeo(String lat, String lon) throws SQLException {
+
+        Cursor mCursor =
+
+            mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID,
+                    KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
+                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT}, KEY_EVENT_GP_LAT + "=" + lat
+                    + "AND KEY_EVENT_GP_LONG" + "=" + lon,
+                    null, null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
         }
@@ -208,4 +225,6 @@ public class EventsDbAdapter {
 
         return mDb.update(DATABASE_TABLE, args, KEY_EVENTID + "=" + eventId, null) > 0;
     }
+
+
 }
