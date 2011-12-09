@@ -47,8 +47,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		Event e = new Event("newEvent", "Fundraiser", "You have to be filthy rich", new Date(4), false, "FilthyRichForPoorPersons", vw, sf, wt, true);
 		e.setEventAddress("TLV", "TAGORE", (short) 100, new GeoPt((float) 1.0,(float) 2.0));
 		
-		JSONSerializer j = new JSONSerializer().include("occurrences","volunteeringWith","suitableFor","workType");
-		String js = j.serialize(e);
+		String js = new JSONSerializer().include("occurrences","volunteeringWith","suitableFor","workType").serialize(e);
 		
 		resp.setContentType("text/plain");
 		resp.getWriter().println(js);
