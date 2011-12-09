@@ -47,10 +47,10 @@ public class Good2GoServerServlet extends HttpServlet {
 		Event e = new Event("newEvent", "Fundraiser", "You have to be filthy rich", new Date(4), false, "FilthyRichForPoorPersons", vw, sf, wt, true);
 		e.setEventAddress("TLV", "TAGORE", (short) 100, new GeoPt((float) 1.0,(float) 2.0));
 		
-		String js = new JSONSerializer().include("occurrences","volunteeringWith","suitableFor","workType").serialize(e);
+		String js = new JSONSerializer().serialize(e);
 		
 		resp.setContentType("text/plain");
-		resp.getWriter().println(js);
+		resp.getWriter().println("1"+js+"2");
 		}
 		catch (IOException e){
 			log.info(e.getMessage());
