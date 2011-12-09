@@ -83,39 +83,42 @@ public class Event {
 	@Persistent
 	private List<Occurrence> occurrences;
 	
+	protected Event(){
+		this.numRaters = 0;
+		this.sumRatings = 0;
+		this.occurrences = new LinkedList<Occurrence>();
+		this.eventAddress = null;
+	}
+	
 	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
-				 Address eventAddress, String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
+				 String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
 				 Set<WorkType> workType, boolean trainingRequired){
+		this();
 		
 		this.eventName = eventName;
 		this.description = description;
 		this.prerequisites = prerequisites;
 		this.minDuration = minDuration;
 		this.isArriveAnyTime = isArriveAnyTime;
-		this.eventAddress = eventAddress;
 		this.NPOName = NPOName;
 		this.volunteeringWith = volunteeringWith;
 		this.suitableFor = suitableFor;
 		this.workType = workType;
 		this.trainingRequired = trainingRequired;
-		
-		this.numRaters = 0;
-		this.sumRatings = 0;
-		occurrences = new LinkedList<Occurrence>();
 	}
 	
 	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
 			 Address eventAddress, String NPOName, boolean trainingRequired){
 		
-		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, eventAddress, NPOName,
+		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, NPOName,
 			 null, null, null, trainingRequired);
 	}
 	
-	public Key getKey() {
+	public Key getEventKey() {
 		return this.eventKey;
 	}
 
-	public String getName() {
+	public String getEventName() {
 		return eventName;
 	}
 
@@ -135,7 +138,7 @@ public class Event {
 		return isArriveAnyTime;
 	}
 
-	public Address getAddress() {
+	public Address getEventAddress() {
 		return eventAddress;
 	}
 
@@ -195,7 +198,11 @@ public class Event {
 		return this.getOccurrencesByTime(false);
 	}
 
-	public void setName(String eventName) {
+	protected void setEventKey(Key eventKey) {
+		this.eventKey = eventKey;
+	}
+	
+	public void setEventName(String eventName) {
 		this.eventName = eventName;
 	}
 
@@ -217,6 +224,10 @@ public class Event {
 
 	public void setEventAddress(Address eventAddress) {
 		this.eventAddress = eventAddress;
+	}
+	
+	public void setEventAddress(String city, String street, short number, GeoPt geoPoint){
+		this.eventAddress = new Address(city,street,number,geoPoint);
 	}
 
 	public void setNumRaters(long numRaters) {
@@ -274,6 +285,14 @@ public class Event {
 	public void setOccurrences(List<Occurrence> occurrences) {
 		this.occurrences = occurrences;
 	}
+	
+	public void addOccurrence(Occurrence occurrence) {
+		this.occurrences.add(occurrence);
+	}
+	
+	public void removeOccurrence(Occurrence occurrence) {
+		this.occurrences.remove(occurrence);
+	}
 
 	@PersistenceCapable
 	@EmbeddedOnly
@@ -301,6 +320,10 @@ public class Event {
 			this.setGeoPoint(geoPoint);
 		}
 		
+		protected Address(){
+			
+		}
+		
 		public Address(Address a) {
 			this(a.getCity(),a.getStreet(),a.getNumber(),a.getGeoPoint());
 		}
@@ -313,7 +336,7 @@ public class Event {
 			this(city,street,number,null);
 		}
 
-		public Key getKey() {
+		public Key getAddressKey() {
 			return this.addressKey;
 		}
 
@@ -333,6 +356,10 @@ public class Event {
 			return geoPoint;
 		}
 
+		protected void setAddressKey(Key addressKey) {
+			this.addressKey = addressKey;
+		}
+		
 		public void setCity(String city) {
 			this.city = city;
 		}
@@ -384,7 +411,7 @@ public class Event {
 			this.setEndTime(endTime);
 		}
 		
-		public Key getKey() {
+		public Key geOccurrencetKey() {
 			return this.occurrenceKey;
 		}
 
@@ -404,8 +431,12 @@ public class Event {
 			return registeredUserNames;
 		}
 
+		protected void setOccurrenceKey(Key occurrenceKey) {
+			this.occurrenceKey = occurrenceKey;
+		}
+		
 		public void setEventDate(Date eventDate) {
-			this.eventDate = (Date) eventDate.clone();
+			this.eventDate = eventDate;
 		}
 
 		public void setEventDate(int year, int month, int day) {
@@ -414,7 +445,7 @@ public class Event {
 		}
 
 		public void setStartTime(Date startTime) {
-			this.startTime = (Date) startTime.clone();
+			this.startTime = startTime;
 		}
 
 		public void setStartTime(int hour, int minute) {
@@ -423,7 +454,7 @@ public class Event {
 		}
 
 		public void setEndTime(Date endTime) {
-			this.endTime = (Date) endTime.clone();
+			this.endTime = endTime;
 		}
 
 		public void setEndTime(int hour, int minute) {
