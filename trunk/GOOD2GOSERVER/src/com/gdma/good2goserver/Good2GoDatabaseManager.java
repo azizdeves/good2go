@@ -25,17 +25,10 @@ import java.io.IOException;
 import javax.jdo.Query;
 
 public class Good2GoDatabaseManager {
-	private PersistenceManager pm;
-	
-	public Good2GoDatabaseManager(){
-		this.pm=PMF.get().getPersistenceManager();
-	}
-	
-	public void close(){
-		pm.close();
-	}
 	
 	public boolean checkUserNameExists(String userName){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
 		try{
 			pm.getObjectById(User.class, userName);
 			return true;
@@ -43,9 +36,14 @@ public class Good2GoDatabaseManager {
 		catch(Exception e){
 			return false;
 		}
+		finally{
+			pm.close();
+		}
 	}
 	
 	public boolean checkEventKeyExists(Key eventKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
 		try{
 			pm.getObjectById(Event.class, eventKey);
 			return true;
@@ -53,9 +51,14 @@ public class Good2GoDatabaseManager {
 		catch(Exception e){
 			return false;
 		}
+		finally{
+			pm.close();
+		}
 	}
 	
 	public void addUser(User newUser) throws IOException{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
 		Transaction txn = pm.currentTransaction();
 		
 		try {
@@ -72,17 +75,25 @@ public class Good2GoDatabaseManager {
 			if (txn.isActive()) {
 				txn.rollback();
 			}
+			pm.close();
 		}
 	}
 	
 	public void addEvent(Event newEvent) throws IOException{
-		
 		if (newEvent.getEventKey()!=null)
 			throw new IOException("Event key must be null prior to database insertion.");
 		
-		pm.makePersistent(newEvent);
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try{
+			pm.makePersistent(newEvent);
+		}
+		finally{
+			pm.close();
+		}
 		
 		for (Occurrence o : newEvent.getOccurrences()){
+			o.setContainingEventKey(newEvent.getEventKey());
 			addOccurrence(o);
 		}
 	}
@@ -91,78 +102,89 @@ public class Good2GoDatabaseManager {
 		if (newOccurrence.getOccurrenceKey()!=null)
 			throw new IOException("Occurrence key must be null prior to database insertion.");
 		
-		Transaction txn = pm.currentTransaction();
-		Key eventKey = newOccurrence.getEventKey();
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		String eventKey = newOccurrence.getContainingEventKey();
 		
 		try {
-			txn.begin();
 			
 			Event e = pm.getObjectById(Event.class, eventKey);
 			
 			pm.makePersistent(newOccurrence);
 			
-	        e.addOccurrenceKey(newOccurrence.getOccurrenceKey());
-			
-			txn.commit();
+			e.addOccurrenceKey(newOccurrence.getOccurrenceKey());
 		}
 		finally {
-			if (txn.isActive()) {
-				txn.rollback();
-			}
+			pm.close();
 		}
 	}
 	
 	public List<Event> getNextEventsByGeoPt(GeoPt gp, Date userDate){
 		List<Event> res = new LinkedList<Event>();
 		
-		final Query query = pm.newQuery("SELECT FROM Occurrence WHERE eventDate = today && endTime > now PARAMETERS java.util.Date today, java.util.Date now");
-		query.setOrdering("endTime asc, eventKey asc");
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
-		Calendar calendar = Calendar.getInstance();
-		calendar.setTime(userDate);
+		// WHERE eventDate == today && endTime > now PARAMETERS java.util.Date today, java.util.Date now
 		
-		int year = calendar.get(Calendar.YEAR);
-		int month = calendar.get(Calendar.MONTH);
-		int day = calendar.get(Calendar.DATE);
-		int hour = calendar.get(Calendar.HOUR_OF_DAY);
-		int minute = calendar.get(Calendar.MINUTE);
+		Query query = pm.newQuery(Occurrence.class);
+		query.setOrdering("endTime asc, containingEventKey asc");
 		
-		calendar.set(year, month,day,0,0,0);
-		Date today = calendar.getTime();
+		Calendar occCal = Calendar.getInstance();
+		Calendar evCal = Calendar.getInstance();
+		Calendar userCal = Calendar.getInstance();
+		userCal.setTime(userDate);
 		
-		calendar.set(0, 0,0,hour,minute,0);
-		Date now = calendar.getTime();
+		int year = userCal.get(Calendar.YEAR);
+		int month = userCal.get(Calendar.MONTH);
+		int day = userCal.get(Calendar.DATE);
+		int hour = userCal.get(Calendar.HOUR_OF_DAY);
+		int minute = userCal.get(Calendar.MINUTE);
 		
+		userCal.set(year, month,day,0,0,0);
+		Date today = userCal.getTime();
 		
-		calendar.set(year, month, day, hour, minute, 0);
+		userCal.set(0, 0,0,hour,minute,0);
+		Date now = userCal.getTime();
 		
+		userCal.set(year, month, day, hour, minute, 0);
 		
 		try {	
 			@SuppressWarnings("unchecked")
-			List<Occurrence> results = (List<Occurrence>) query.execute(today,now);
+			List<Occurrence> results = (List<Occurrence>) query.execute();  //today,now);
 		
 			if (!results.isEmpty()) {
-				//Collections.sort(results);
+				Collections.sort(results);
 				
-				Key eventKey = null;
-				Key lastEventKey = null;
+				String eventKey = null;
+				String lastEventKey = null;
 				boolean isInserted = false;
 				Event event = null;
 				
 				for (Occurrence occurrence : results){
 					
-					lastEventKey=eventKey;
-					eventKey = occurrence.getEventKey();
-					if (eventKey == lastEventKey){
+					int minHours = 0;
+					int minMinutes = 0;
+					
+					lastEventKey = eventKey;
+					eventKey = occurrence.getContainingEventKey();
+					if (lastEventKey!=null && eventKey.equals(lastEventKey)){
 						if (isInserted == true)
 							continue;
 					}
 					else {
 						isInserted = false;
 						event = (Event) pm.getObjectById(Event.class, eventKey);
+						/*evCal.setTime(event.getMinDuration());
+						minHours = evCal.get(Calendar.HOUR_OF_DAY);
+						minMinutes = evCal.get(Calendar.MINUTE);*/
 					}
 					
-					if (occurrence.getEndTime().getTime() > event.getMinDuration().getTime() + userDate.getTime()){
+					
+					occCal.setTime(occurrence.getEndTime());
+					/*occCal.add(Calendar.HOUR_OF_DAY, -minHours);
+					occCal.add(Calendar.MINUTE, -minMinutes);*/
+					
+					if (occCal.compareTo(userCal) > 0){
 						event.addOccurrence(occurrence);
 						res.add(event);
 						isInserted = true;
@@ -177,6 +199,7 @@ public class Good2GoDatabaseManager {
 		}
 		finally {
 			query.closeAll();
+			pm.close();
 		}
 		return res;
 	}
