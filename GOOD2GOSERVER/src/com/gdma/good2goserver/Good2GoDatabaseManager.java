@@ -191,7 +191,7 @@ public class Good2GoDatabaseManager {
 					}
 				}
 			
-				Collections.sort(res, new GeoPtComparator());
+				Collections.sort(res, new GeoPtComparator(gp));
 			}
 			else {
 				res = null;

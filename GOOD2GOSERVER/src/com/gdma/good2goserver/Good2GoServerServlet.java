@@ -312,23 +312,22 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 		}
 		
-		else{
+		else{	
+			Calendar c = Calendar.getInstance();
+			c.set(2012, 12, 12, 8, 0, 0);
+			Date userDate = c.getTime();
 	
-		Calendar c = Calendar.getInstance();
-		c.set(2012, 12, 12, 8, 0, 0);
-		Date userDate = c.getTime();
-
-		GeoPt gp = new GeoPt((float) 32.074938, (float) 34.775591);
-		
-		List<Event> events = dbm.getNextEventsByGeoPt(gp, userDate);
-		
-		String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").exclude("occurrenceKeys").serialize(events);
-		
-		resp.setContentType("text/plain");
-		
-		pw.println(js);
-		
-		List<Event> check = new JSONDeserializer<List<Event>>().deserialize(js);
+			GeoPt gp = new GeoPt((float) 32.074938, (float) 34.775591);
+			
+			List<Event> events = dbm.getNextEventsByGeoPt(gp, userDate);
+			
+			String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").exclude("occurrenceKeys").serialize(events);
+			
+			resp.setContentType("text/plain");
+			
+			pw.println(js);
+			
+			List<Event> check = new JSONDeserializer<List<Event>>().deserialize(js);
 		}
 	}
 }
