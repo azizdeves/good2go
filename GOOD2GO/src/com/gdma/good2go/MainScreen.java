@@ -5,6 +5,7 @@ import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
 import android.widget.TabHost;
+import android.widget.TextView;
 
 public class MainScreen extends TabActivity {
 	
@@ -75,6 +76,34 @@ public class MainScreen extends TabActivity {
 //        	);
 
         
+//////////////////////////////////////////////////////////////////////////////////////////////////
+//		Start send-receive data from server					   									//		
+//////////////////////////////////////////////////////////////////////////////////////////////////
+
+		String JSONResponse = null; //this var will contain the response from the server side
+
+		TextView textView = (TextView)findViewById(R.id.outputTextView);
+        RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+        client.AddParam("action", "getEvents");
+        client.AddParam("lon", "3124.872");
+        client.AddParam("lat", "3346.115");
+        
+        try
+        {
+        	client.Execute(1);
+        }
+        catch (Exception e)
+        {
+			textView.setText(e.getMessage());
+        }
+
+		JSONResponse = client.getResponse();
+
+
+        //Parse the response from server
+//		List<Event> eventList = new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+
+       
 
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
