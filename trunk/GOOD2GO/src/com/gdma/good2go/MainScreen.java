@@ -92,20 +92,20 @@ public class MainScreen extends TabActivity {
         intent = new Intent().setClass(this, Map.class);
 
         // Initialize a TabSpec for each tab and add it to the TabHost
-        spec = tabHost.newTabSpec("map").setIndicator("Map",
+        spec = tabHost.newTabSpec("map").setIndicator("",
                           res.getDrawable(R.drawable.ic_tab_map))
                       .setContent(intent);
         tabHost.addTab(spec);
 
         // Do the same for the other tabs
         intent = new Intent().setClass(this, List.class);
-        spec = tabHost.newTabSpec("list").setIndicator("List",
+        spec = tabHost.newTabSpec("list").setIndicator("",
                           res.getDrawable(R.drawable.ic_tab_list))
                       .setContent(intent);
         tabHost.addTab(spec);
 
         intent = new Intent().setClass(this, Search.class);
-        spec = tabHost.newTabSpec("search").setIndicator("Search",
+        spec = tabHost.newTabSpec("search").setIndicator("",
                           res.getDrawable(R.drawable.ic_tab_search))
                       .setContent(intent);
         tabHost.addTab(spec);
