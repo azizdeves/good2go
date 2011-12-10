@@ -25,15 +25,15 @@
         android:layout_alignTop="@id/childPic"
         
         android:textStyle="bold"
-        android:text="Playing with Young Autistic Children"/>
+        android:text="Playing with autistic young kids"/>
     
      <Button
         android:id="@+id/countmeinbtn"
-        android:layout_width="wrap_content"
+        android:layout_width="fill_parent"
         android:layout_height="10dip"
         android:layout_below="@id/eventTitle"
         android:layout_toRightOf="@id/childPic"
-        android:layout_alignRight="@id/eventTitle"
+        android:layout_alignLeft="@id/eventTitle"
         android:layout_alignBottom="@id/childPic"
         android:text="Count Me In!" />
          
