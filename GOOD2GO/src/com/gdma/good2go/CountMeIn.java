@@ -1,7 +1,17 @@
 package com.gdma.good2go;
 
+import java.io.IOException;
+import java.net.MalformedURLException;
+
+import com.facebook.android.DialogError;
+import com.facebook.android.Facebook;
+import com.facebook.android.FacebookError;
+import com.facebook.android.Facebook.DialogListener;
+
 import android.app.Activity;
+import android.content.Intent;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TextView;
@@ -12,7 +22,10 @@ public class CountMeIn extends Activity {
     private String mEventName;
     private String mEventDesc;
     private String mFbStatus;
+	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
 	
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -25,7 +38,7 @@ public class CountMeIn extends Activity {
 	    mEventDesc=(extras!=null)?extras.getString("desc"):null;
 	    
 	    /**POPULATE VIEWS FROM EXTRAS*/
-	    mFbStatus="Adi Anna is awesome! She's going to " + mEventDesc + ".";
+	    mFbStatus="This is awesome! I'm going to " + mEventDesc + ".";
 	    
 	    TextView eventName = (TextView) findViewById(R.id.eventname);
 	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
@@ -33,7 +46,47 @@ public class CountMeIn extends Activity {
 	    eventName.setText(mEventName);
 	    fbStatus.setText(mFbStatus);
 	    
-	    
+        
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
+        		
+        		new DialogListener() {
+  //      	           @Override
+        	           public void onComplete(Bundle values) {
+        	        	   updateStatus(values.getString(facebook.getAccessToken()));
+        	           }
+
+        	           private void updateStatus(String accessToken) {
+        	        	   // TODO Auto-generated method stub
+        	        	   try{
+        	        		   Bundle bundle = new Bundle();
+        	        		   bundle.putString("message", mFbStatus);
+            	        	   bundle.putString(Facebook.TOKEN, accessToken);
+            	        	   String response = facebook.request("me/feed",bundle,"POST");
+            	        	   Log.d("UPDATE RESPONSE", ""+response);
+        	        	   }
+        	        	   catch(MalformedURLException e){
+        	        		   Log.e("MALFORMED URL",""+e.getMessage());
+        	        	   }
+        	        	   catch (IOException e){
+        	        		   Log.e("IOEX",""+e.getMessage());
+        	        	   }
+        	        	   
+        	        	   
+        	           }
+
+//      	           @Override
+        	           public void onFacebookError(FacebookError error) {}
+
+  //      	           @Override
+        	           public void onError(DialogError e) {}
+
+  //      	           @Override
+        	           public void onCancel() {}
+        	      }
+        	);
+        
+        
+
 		
 		
 //	    final Button buttonFBInvite = (Button) findViewById(R.id.fbinvite);
@@ -65,8 +118,17 @@ public class CountMeIn extends Activity {
 	    		finish();
 	        }
 	    });
+
 	}
 	
+    //added - FB
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+    	super.onActivityResult(requestCode, resultCode, data);	
+
+    	facebook.authorizeCallback(requestCode, resultCode, data);
+    }
+
 
 
 }
