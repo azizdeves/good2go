@@ -15,7 +15,7 @@ import com.facebook.android.Facebook.*;
 
 public class MainScreen extends TabActivity {
 	
-	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
+//	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
 	
 	
     /** Called when the activity is first created. */
@@ -42,44 +42,44 @@ public class MainScreen extends TabActivity {
     
         });
 */
-        
-        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
-
-        	      new DialogListener() {
-  //      	           @Override
-        	           public void onComplete(Bundle values) {
-        	        	   updateStatus(values.getString(facebook.getAccessToken()));
-        	           }
-
-        	           private void updateStatus(String accessToken) {
-        	        	   // TODO Auto-generated method stub
-        	        	   try{
-        	        		   Bundle bundle = new Bundle();
-        	        		   bundle.putString("message", "GOOD2GO Hello World!!");
-            	        	   bundle.putString(Facebook.TOKEN, accessToken);
-            	        	   String response = facebook.request("me/feed",bundle,"POST");
-            	        	   Log.d("UPDATE RESPONSE", ""+response);
-        	        	   }
-        	        	   catch(MalformedURLException e){
-        	        		   Log.e("MALFORMED URL",""+e.getMessage());
-        	        	   }
-        	        	   catch (IOException e){
-        	        		   Log.e("IOEX",""+e.getMessage());
-        	        	   }
-        	        	   
-        	        	   
-        	           }
-
-//      	           @Override
-        	           public void onFacebookError(FacebookError error) {}
-
-  //      	           @Override
-        	           public void onError(DialogError e) {}
-
-  //      	           @Override
-        	           public void onCancel() {}
-        	      }
-        	);
+//        
+//        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
+//
+//        	      new DialogListener() {
+//  //      	           @Override
+//        	           public void onComplete(Bundle values) {
+//        	        	   updateStatus(values.getString(facebook.getAccessToken()));
+//        	           }
+//
+//        	           private void updateStatus(String accessToken) {
+//        	        	   // TODO Auto-generated method stub
+//        	        	   try{
+//        	        		   Bundle bundle = new Bundle();
+//        	        		   bundle.putString("message", "GOOD2GO Hello World!!");
+//            	        	   bundle.putString(Facebook.TOKEN, accessToken);
+//            	        	   String response = facebook.request("me/feed",bundle,"POST");
+//            	        	   Log.d("UPDATE RESPONSE", ""+response);
+//        	        	   }
+//        	        	   catch(MalformedURLException e){
+//        	        		   Log.e("MALFORMED URL",""+e.getMessage());
+//        	        	   }
+//        	        	   catch (IOException e){
+//        	        		   Log.e("IOEX",""+e.getMessage());
+//        	        	   }
+//        	        	   
+//        	        	   
+//        	           }
+//
+////      	           @Override
+//        	           public void onFacebookError(FacebookError error) {}
+//
+//  //      	           @Override
+//        	           public void onError(DialogError e) {}
+//
+//  //      	           @Override
+//        	           public void onCancel() {}
+//        	      }
+//        	);
 
         
 
@@ -116,12 +116,12 @@ public class MainScreen extends TabActivity {
     
 
     
-    //added - FB
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-    	super.onActivityResult(requestCode, resultCode, data);	
-
-    	facebook.authorizeCallback(requestCode, resultCode, data);
-    }
+//    //added - FB
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+//    	super.onActivityResult(requestCode, resultCode, data);	
+//
+//    	facebook.authorizeCallback(requestCode, resultCode, data);
+//    }
 
 }
