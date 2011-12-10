@@ -32,13 +32,13 @@ public class Map extends MapActivity {
         mDbHelper.open();
         
         mDbHelper.createEvent("Fun Horseback Riding", 
-        		"Help handicapped teenagers and enjoy a horseack ride",
+        		"Help handicapped teenagers and enjoy a horse-back ride",
         		"Assist handicapped teenagers in therapeutic horse-back riding," 
         		+ "lead their horse and help them follow instructors commands.",
         		"32069156", "34774003");
         
         mDbHelper.createEvent("Dogs are our best friends",  
-        		"Have a walk with a city chelter dog",
+        		"Have a walk with a city shelter dog",
         		"Make a furry cute friend for life!",
         		"32069211", "34763403");
         
@@ -47,7 +47,7 @@ public class Map extends MapActivity {
         		"Share what you know by teaching internet to kids!",
         		"32086865", "34789581");
         
-        mDbHelper.createEvent("Read your favourite book", 
+        mDbHelper.createEvent("Read your favorite book", 
         		"Make someone happy and provide company to the elderly",
         		"Read anything you like to the elderly",
         		"32074938", "34775591");
