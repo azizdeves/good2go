@@ -19,15 +19,15 @@ import java.util.Set;
 @PersistenceCapable
 public class Event {
 
-	enum VolunteeringWith {
+	public enum VolunteeringWith {
 		ANIMALS, CHILDREN, ELDERLY, PHYSICALLY_CHALLENGED, MENTALLY_CHALLENGED, OTHER
 	}
 
-	enum SuitableFor {
+	public enum SuitableFor {
 		CHILDREN, INDIVIDUALS, GROUPS
 	}
 
-	enum WorkType {
+	public enum WorkType {
 		MENIAL, METNAL
 	}
 
@@ -87,11 +87,10 @@ public class Event {
 		this.numRaters = 0;
 		this.sumRatings = 0;
 		this.occurrences = new LinkedList<Occurrence>();
-		this.eventAddress = null;
 	}
 	
 	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
-				 String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
+				 Address eventAddress, String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
 				 Set<WorkType> workType, boolean trainingRequired){
 		this();
 		
@@ -100,6 +99,7 @@ public class Event {
 		this.prerequisites = prerequisites;
 		this.minDuration = minDuration;
 		this.isArriveAnyTime = isArriveAnyTime;
+		this.eventAddress = eventAddress;
 		this.NPOName = NPOName;
 		this.volunteeringWith = volunteeringWith;
 		this.suitableFor = suitableFor;
@@ -110,7 +110,7 @@ public class Event {
 	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
 			 Address eventAddress, String NPOName, boolean trainingRequired){
 		
-		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, NPOName,
+		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, eventAddress, NPOName,
 			 null, null, null, trainingRequired);
 	}
 	
@@ -296,7 +296,7 @@ public class Event {
 
 	@PersistenceCapable
 	@EmbeddedOnly
-	public class Address {
+	public static class Address {
 		@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 		@PrimaryKey
 		private Key addressKey;
@@ -320,8 +320,8 @@ public class Event {
 			this.setGeoPoint(geoPoint);
 		}
 		
-		protected Address(){
-			
+		public Address(){
+			this.addressKey = null;
 		}
 		
 		public Address(Address a) {
@@ -379,7 +379,7 @@ public class Event {
 
 	@PersistenceCapable
 	@EmbeddedOnly
-	public class Occurrence {
+	public static class Occurrence {
 		@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 		@PrimaryKey
 		private Key occurrenceKey;
@@ -397,21 +397,21 @@ public class Event {
 		@Persistent
 		private List<String> registeredUserNames;
 
-		@NotPersistent
-		private Calendar calendar;
-
 		public Occurrence() {
-			calendar = Calendar.getInstance();
+			this.registeredUserNames = new LinkedList<String>();
 		}
 		
 		public Occurrence(Date eventDate, Date startTime, Date endTime){
 			this();
+			
+			Calendar calendar = Calendar.getInstance();
+			
 			this.setEventDate(eventDate);
 			this.setStartTime(startTime);
 			this.setEndTime(endTime);
 		}
 		
-		public Key geOccurrencetKey() {
+		public Key getOccurrenceKey() {
 			return this.occurrenceKey;
 		}
 
@@ -440,7 +440,9 @@ public class Event {
 		}
 
 		public void setEventDate(int year, int month, int day) {
-			this.calendar.set(year, month, day, 0, 0, 0);
+			Calendar calendar = Calendar.getInstance();
+			
+			calendar.set(year, month, day, 0, 0, 0);
 			this.eventDate = calendar.getTime();
 		}
 
@@ -449,7 +451,9 @@ public class Event {
 		}
 
 		public void setStartTime(int hour, int minute) {
-			this.calendar.set(0, 0, 0, hour, minute, 0);
+			Calendar calendar = Calendar.getInstance();
+			
+			calendar.set(0, 0, 0, hour, minute, 0);
 			this.startTime = calendar.getTime();
 		}
 
@@ -458,7 +462,9 @@ public class Event {
 		}
 
 		public void setEndTime(int hour, int minute) {
-			this.calendar.set(0, 0, 0, hour, minute, 0);
+			Calendar calendar = Calendar.getInstance();
+			
+			calendar.set(0, 0, 0, hour, minute, 0);
 			this.endTime = calendar.getTime();
 		}
 

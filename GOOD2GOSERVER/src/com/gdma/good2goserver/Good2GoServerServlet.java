@@ -1,6 +1,8 @@
 package com.gdma.good2goserver;
 
 import java.io.IOException;
+import java.io.PrintWriter;
+
 import javax.servlet.http.*;
 
 import com.gdma.good2goserver.Event.Address;
@@ -17,6 +19,7 @@ import java.util.LinkedList;
 import java.util.Set;
 import java.util.HashSet;
 import flexjson.JSONSerializer;
+import flexjson.JSONDeserializer;
 
 @SuppressWarnings("serial")
 public class Good2GoServerServlet extends HttpServlet {
@@ -25,8 +28,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {	
 		
-		try{
-		log.info("I'm here!");
+		PrintWriter pw = resp.getWriter();
 		
 		String action = req.getParameter(new String("action"));
 		
@@ -44,17 +46,49 @@ public class Good2GoServerServlet extends HttpServlet {
 		Set<Event.WorkType> wt = new HashSet<Event.WorkType>();
 		wt.add(Event.WorkType.METNAL);
 		
-		Event e = new Event("newEvent", "Fundraiser", "You have to be filthy rich", new Date(4), false, "FilthyRichForPoorPersons", vw, sf, wt, true);
-		e.setEventAddress("TLV", "TAGORE", (short) 100, new GeoPt((float) 1.0,(float) 2.0));
+		Event e = null;
+		try{
+			Event.Address a = null;
 		
-		String js = new JSONSerializer().serialize(e);
+			a = new Event.Address();
+			
+			a.setCity("TLV");
+			a.setStreet("Weissman");
+			a.setNumber((short) 100);
+			a.setGeoPoint(new GeoPt((float) 1.0, (float) 2.0));
+			
+			e = new Event("newEvent", "Fundraiser", "You have to be filthy rich", new Date(), false, a, "FilthyRichForPoorPersons", vw, sf, wt, true);
+		}
+		catch (Exception ex){
+			pw.println(ex.getMessage());
+		}
+		
+		Event.Occurrence o = new Event.Occurrence();
+		
+		o.setEventDate(2011, 12, 12);
+		o.setStartTime(10, 0);
+		o.setEndTime(20, 20);
+		o.addRegisteredUser("Dana");
+		o.addRegisteredUser("Gil");
+		
+		e.addOccurrence(o);
+		
+		o = new Event.Occurrence();
+		
+		o.setEventDate(2011,12,30);
+		o.setStartTime(12, 30);
+		o.setEndTime(15, 40);
+		o.addRegisteredUser("Gil");
+		o.addRegisteredUser("Mor");
+		
+		e.addOccurrence(o);
+		
+		String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").serialize(e);
 		
 		resp.setContentType("text/plain");
-		resp.getWriter().println("1"+js+"2");
-		}
-		catch (IOException e){
-			log.info(e.getMessage());
-			throw e;
-		}
+		
+		pw.println(js);
+		
+		Event e2 = new JSONDeserializer<Event>().deserialize(js);
 	}
 }
