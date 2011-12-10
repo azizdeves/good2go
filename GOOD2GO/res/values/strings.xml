@@ -3,7 +3,8 @@
 
     <string name="hello">Hello World, GOOD2GOActivity!</string>
     <string name="app_name">GOOD2GO</string>
-    <string name="mapskey">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
+    <string name="mapskey_adi">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
+    <string name="mapskey_gil">0YhczuGFCWeAeSfdYOPvNNsN5LAJwjDrJvsu-eA</string>
     <string name="mapview_name">MAP</string>
     <string name="listview_name">List</string>
  	<string name="searchview_name">Search</string>
