@@ -11,7 +11,6 @@ import javax.jdo.annotations.EmbeddedOnly;
 import com.google.appengine.api.datastore.Key;
 import com.google.appengine.api.datastore.GeoPt;
 import java.util.Date;
-import java.util.Calendar;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
@@ -80,12 +79,17 @@ public class Event {
 	@Persistent
 	private boolean trainingRequired;
 
+	//Occurrence Keys for persistence in database
 	@Persistent
+	private List<Key> occurrenceKeys;
+	
+	//Occurrences for extraction by applet
 	private List<Occurrence> occurrences;
 	
-	protected Event(){
+	public Event(){
 		this.numRaters = 0;
 		this.sumRatings = 0;
+		this.occurrenceKeys = new LinkedList<Key>();
 		this.occurrences = new LinkedList<Occurrence>();
 	}
 	
@@ -170,32 +174,12 @@ public class Event {
 		return trainingRequired;
 	}
 
+	public List<Key> getOccurrenceKeys() {
+		return occurrenceKeys;
+	}
+	
 	public List<Occurrence> getOccurrences() {
 		return occurrences;
-	}
-
-	private List<Occurrence> getOccurrencesByTime(boolean isFuture) {
-		List<Occurrence> res = new LinkedList<Occurrence>();
-
-		for (Occurrence occurrence : this.occurrences) {
-			Date minArrivalTime = new Date(occurrence.getEndTime().getTime()
-					- this.minDuration.getTime());
-			Date now = new Date();
-			int diff = minArrivalTime.compareTo(now);
-
-			if ((isFuture && diff > 0) || (!isFuture && diff <= 0))
-				res.add(occurrence);
-		}
-
-		return occurrences;
-	}
-
-	public List<Occurrence> getFutureOccurrences() {
-		return this.getOccurrencesByTime(true);
-	}
-
-	public List<Occurrence> getPastOccurrences() {
-		return this.getOccurrencesByTime(false);
 	}
 
 	protected void setEventKey(Key eventKey) {
@@ -282,6 +266,18 @@ public class Event {
 		this.trainingRequired = trainingRequired;
 	}
 
+	public void setOccurrenceKeys(List<Key> occurrenceKeys) {
+		this.occurrenceKeys = occurrenceKeys;
+	}
+	
+	public void addOccurrenceKey(Key occurrenceKey) {
+		this.occurrenceKeys.add(occurrenceKey);
+	}
+	
+	public void removeOccurrenceKey(Key occurrenceKey) {
+		this.occurrenceKeys.remove(occurrenceKey);
+	}
+	
 	public void setOccurrences(List<Occurrence> occurrences) {
 		this.occurrences = occurrences;
 	}
@@ -297,10 +293,6 @@ public class Event {
 	@PersistenceCapable
 	@EmbeddedOnly
 	public static class Address {
-		@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-		@PrimaryKey
-		private Key addressKey;
-
 		@Persistent
 		private String city;
 
@@ -321,7 +313,6 @@ public class Event {
 		}
 		
 		public Address(){
-			this.addressKey = null;
 		}
 		
 		public Address(Address a) {
@@ -334,10 +325,6 @@ public class Event {
 
 		public Address(String city, String street, short number) {
 			this(city,street,number,null);
-		}
-
-		public Key getAddressKey() {
-			return this.addressKey;
 		}
 
 		public String getCity() {
@@ -355,10 +342,6 @@ public class Event {
 		public GeoPt getGeoPoint() {
 			return geoPoint;
 		}
-
-		protected void setAddressKey(Key addressKey) {
-			this.addressKey = addressKey;
-		}
 		
 		public void setCity(String city) {
 			this.city = city;
@@ -374,104 +357,6 @@ public class Event {
 
 		public void setGeoPoint(GeoPt geoPoint) {
 			this.geoPoint = geoPoint;
-		}
-	}
-
-	@PersistenceCapable
-	@EmbeddedOnly
-	public static class Occurrence {
-		@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-		@PrimaryKey
-		private Key occurrenceKey;
-
-		@Persistent
-		private Date eventDate;
-
-		@Persistent
-		@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
-		private Date startTime;
-
-		@Persistent
-		private Date endTime;
-
-		@Persistent
-		private List<String> registeredUserNames;
-
-		public Occurrence() {
-			this.registeredUserNames = new LinkedList<String>();
-		}
-		
-		public Occurrence(Date eventDate, Date startTime, Date endTime){
-			this();
-			
-			this.setEventDate(eventDate);
-			this.setStartTime(startTime);
-			this.setEndTime(endTime);
-		}
-		
-		public Key getOccurrenceKey() {
-			return this.occurrenceKey;
-		}
-
-		public Date getEventDate() {
-			return (Date) eventDate.clone();
-		}
-
-		public Date getStartTime() {
-			return (Date) startTime.clone();
-		}
-
-		public Date getEndTime() {
-			return (Date) endTime.clone();
-		}
-
-		public List<String> getRegisteredUserNames() {
-			return registeredUserNames;
-		}
-
-		protected void setOccurrenceKey(Key occurrenceKey) {
-			this.occurrenceKey = occurrenceKey;
-		}
-		
-		public void setEventDate(Date eventDate) {
-			this.eventDate = eventDate;
-		}
-
-		public void setEventDate(int year, int month, int day) {
-			Calendar calendar = Calendar.getInstance();
-			
-			calendar.set(year, month, day, 0, 0, 0);
-			this.eventDate = calendar.getTime();
-		}
-
-		public void setStartTime(Date startTime) {
-			this.startTime = startTime;
-		}
-
-		public void setStartTime(int hour, int minute) {
-			Calendar calendar = Calendar.getInstance();
-			
-			calendar.set(0, 0, 0, hour, minute, 0);
-			this.startTime = calendar.getTime();
-		}
-
-		public void setEndTime(Date endTime) {
-			this.endTime = endTime;
-		}
-
-		public void setEndTime(int hour, int minute) {
-			Calendar calendar = Calendar.getInstance();
-			
-			calendar.set(0, 0, 0, hour, minute, 0);
-			this.endTime = calendar.getTime();
-		}
-
-		public void addRegisteredUser(String newName) {
-			this.registeredUserNames.add(newName);
-		}
-
-		public void removeRegisteredUser(String registeredName) {
-			this.registeredUserNames.remove(registeredName);
 		}
 	}
 

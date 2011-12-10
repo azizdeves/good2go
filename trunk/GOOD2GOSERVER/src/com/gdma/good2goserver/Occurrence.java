@@ -9,11 +9,10 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-
 import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class Occurrence implements Comparable{
+public class Occurrence{
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
 	private Key occurrenceKey;
@@ -120,25 +119,19 @@ public class Occurrence implements Comparable{
 		this.registeredUserNames.remove(registeredName);
 	}
 
-	@Override
-	public int compareTo(Object o) {
-		
-		if (! (o instanceof Occurrence))
-			return 0;
-		
-		Occurrence occ = (Occurrence) o;
-		
-		int keyDiff = this.getEventKey().compareTo(occ.getEventKey());
+	/*@Override
+	public int compareTo(Occurrence o) {
+		int keyDiff = this.getEventKey().compareTo(o.getEventKey());
 		
 		if (keyDiff!=0)
 			return keyDiff;
 		
-		if (this.getEndTime().getTime() > occ.getEndTime().getTime())
+		if (this.getEndTime().getTime() > o.getEndTime().getTime())
 			return 1;
 		
-		if (this.getEndTime().getTime() < occ.getEndTime().getTime())
+		if (this.getEndTime().getTime() < o.getEndTime().getTime())
 			return -1;
 		
 		return 0;
-	}
+	}*/
 }

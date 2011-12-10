@@ -2,10 +2,7 @@ package com.gdma.good2goserver;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-
 import javax.servlet.http.*;
-
-
 import com.google.appengine.api.datastore.GeoPt;
 import java.util.Date;
 import java.util.LinkedList;
@@ -15,6 +12,7 @@ import java.util.logging.Logger;
 import java.util.HashSet;
 import flexjson.JSONSerializer;
 import flexjson.JSONDeserializer;
+import com.gdma.good2goserver.Occurrence;
 
 @SuppressWarnings("serial")
 public class Good2GoServerServlet extends HttpServlet {
@@ -22,6 +20,8 @@ public class Good2GoServerServlet extends HttpServlet {
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {	
+		
+		Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
 		
 		PrintWriter pw = resp.getWriter();
 		
@@ -65,7 +65,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			pw.println(ex.getMessage());
 		}
 		
-		Event.Occurrence o = new Event.Occurrence();
+		Occurrence o = new Occurrence();
 		
 		o.setEventDate(2011, 12, 12);
 		o.setStartTime(10, 0);
@@ -75,7 +75,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		
 		e.addOccurrence(o);
 		
-		o = new Event.Occurrence();
+		o = new Occurrence();
 		
 		o.setEventDate(2011,12,30);
 		o.setStartTime(12, 30);
@@ -89,7 +89,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		l1.add(e);
 		l1.add(ev2);
 		
-		String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").serialize(l1);
+		String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").exclude("occurrenceKeys").serialize(l1);
 		
 		resp.setContentType("text/plain");
 		
@@ -97,6 +97,8 @@ public class Good2GoServerServlet extends HttpServlet {
 		
 		List<Event> l2 = new JSONDeserializer<List<Event>>().deserialize(js);
 		
-		pw.println("!");
+		dbm.addEvent(e);
+		
+		dbm.close();
 	}
 }
