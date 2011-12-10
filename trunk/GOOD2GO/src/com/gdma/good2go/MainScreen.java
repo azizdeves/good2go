@@ -1,17 +1,10 @@
 package com.gdma.good2go;
 
-import java.io.IOException;
-import java.net.MalformedURLException;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.util.Log;
 import android.widget.TabHost;
-
-import com.facebook.android.*;
-import com.facebook.android.Facebook.*;
 
 public class MainScreen extends TabActivity {
 	
