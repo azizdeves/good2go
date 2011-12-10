@@ -2,7 +2,10 @@ package com.gdma.good2go;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.view.View;
+import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 public class CountMeIn extends Activity {
 
@@ -47,18 +50,21 @@ public class CountMeIn extends Activity {
 //	    });
 //	    
 //	    
-//	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn2);
-//		   
-//	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
-//	        public void onClick(View view) {
-//	           // mSoundManager.playSound(3);
-//	            /*Intent newIntent = new Intent(view.getContext(), 
-//	                            CountMeIn.class);
-//	            startActivityForResult(newIntent, 1);*/
-//	    		Toast.makeText(view.getContext(), "onButtonClick Count Me In",
-//				Toast.LENGTH_LONG).show();
-//	        }
-//	    });
+	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn2);
+		   
+	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View view) {
+	           // mSoundManager.playSound(3);
+	            /*Intent newIntent = new Intent(view.getContext(), 
+	                            CountMeIn.class);
+	            startActivityForResult(newIntent, 1);*/
+	    		Toast.makeText(view.getContext(), "Thanks for being awesome! We'll love to see you at: " +mEventName+ ".",
+				Toast.LENGTH_LONG).show();
+	    		
+	    		setResult(Activity.RESULT_OK);
+	    		finish();
+	        }
+	    });
 	}
 	
 

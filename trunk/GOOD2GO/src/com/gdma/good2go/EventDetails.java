@@ -1,5 +1,6 @@
 package com.gdma.good2go;
 
+import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
 import android.database.Cursor;
@@ -18,7 +19,8 @@ public class EventDetails extends TabActivity {
     private String mEventDesc;
     private String mEventDetails;
     
-    private EventsDbAdapter mDbHelper;
+        
+	private EventsDbAdapter mDbHelper;
     
     /**@TODO - add all the fields here in case this activity dies, so it can resume
   
@@ -92,6 +94,17 @@ public class EventDetails extends TabActivity {
 	    });
 	}
 	
-	
+    @Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (resultCode==Activity.RESULT_OK)
+		{
+			final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
+			buttonCountMeIn.setText("You're in!");
+			buttonCountMeIn.setClickable(false);
+		}
+	}
 
 }
