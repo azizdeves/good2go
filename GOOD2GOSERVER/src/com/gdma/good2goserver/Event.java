@@ -27,12 +27,13 @@ public class Event {
 	}
 
 	public enum WorkType {
-		MENIAL, METNAL
+		MENIAL, MENTAL
 	}
 
 	@PrimaryKey
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	private Key eventKey;
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	private String eventKey;
 
 	@Persistent
 	private String eventName;
@@ -81,15 +82,16 @@ public class Event {
 
 	//Occurrence Keys for persistence in database
 	@Persistent
-	private List<Key> occurrenceKeys;
+	private List<String> occurrenceKeys;
 	
 	//Occurrences for extraction by applet
+	@NotPersistent
 	private List<Occurrence> occurrences;
 	
 	public Event(){
 		this.numRaters = 0;
 		this.sumRatings = 0;
-		this.occurrenceKeys = new LinkedList<Key>();
+		this.occurrenceKeys = new LinkedList<String>();
 		this.occurrences = new LinkedList<Occurrence>();
 	}
 	
@@ -118,7 +120,7 @@ public class Event {
 			 null, null, null, trainingRequired);
 	}
 	
-	public Key getEventKey() {
+	public String getEventKey() {
 		return this.eventKey;
 	}
 
@@ -174,7 +176,7 @@ public class Event {
 		return trainingRequired;
 	}
 
-	public List<Key> getOccurrenceKeys() {
+	public List<String> getOccurrenceKeys() {
 		return occurrenceKeys;
 	}
 	
@@ -182,7 +184,7 @@ public class Event {
 		return occurrences;
 	}
 
-	protected void setEventKey(Key eventKey) {
+	protected void setEventKey(String eventKey) {
 		this.eventKey = eventKey;
 	}
 	
@@ -266,11 +268,11 @@ public class Event {
 		this.trainingRequired = trainingRequired;
 	}
 
-	public void setOccurrenceKeys(List<Key> occurrenceKeys) {
+	public void setOccurrenceKeys(List<String> occurrenceKeys) {
 		this.occurrenceKeys = occurrenceKeys;
 	}
 	
-	public void addOccurrenceKey(Key occurrenceKey) {
+	public void addOccurrenceKey(String occurrenceKey) {
 		this.occurrenceKeys.add(occurrenceKey);
 	}
 	

@@ -9,19 +9,19 @@ import javax.jdo.annotations.IdGeneratorStrategy;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import com.google.appengine.api.datastore.Key;
 
 @PersistenceCapable
-public class Occurrence{
+public class Occurrence implements Comparable<Occurrence>{
 	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
 	@PrimaryKey
-	private Key occurrenceKey;
+	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+    private String occurrenceKey;
 	
 	@Persistent
-	private Key eventKey;
+	private String containingEventKey;
 
 	@Persistent
-	private Date eventDate;
+	private Date occurrenceDate;
 
 	@Persistent
 	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
@@ -34,59 +34,60 @@ public class Occurrence{
 	private List<String> registeredUserNames;
 
 	public Occurrence() {
+		this.occurrenceKey = null;
 		this.registeredUserNames = new LinkedList<String>();
 	}
 	
-	public Occurrence(Key eventKey, Date occurrenceDate, Date startTime, Date endTime){
+	public Occurrence(String containingEventKey, Date occurrenceDate, Date startTime, Date endTime){
 		this();
 		
-		this.setEventKey(eventKey);
-		this.setEventDate(eventDate);
+		this.setContainingEventKey(containingEventKey);
+		this.setOccurrenceDate(occurrenceDate);
 		this.setStartTime(startTime);
 		this.setEndTime(endTime);
 	}
 	
-	public Key getOccurrenceKey() {
+	public String getOccurrenceKey() {
 		return this.occurrenceKey;
 	}
 	
-	public Key getEventKey() {
-		return this.eventKey;
+	public String getContainingEventKey() {
+		return this.containingEventKey;
 	}
 
-	public Date getEventDate() {
-		return (Date) eventDate.clone();
+	public Date getOccurrenceDate() {
+		return occurrenceDate;
 	}
 
 	public Date getStartTime() {
-		return (Date) startTime.clone();
+		return startTime;
 	}
 
 	public Date getEndTime() {
-		return (Date) endTime.clone();
+		return endTime;
 	}
 
 	public List<String> getRegisteredUserNames() {
 		return registeredUserNames;
 	}
 
-	protected void setOccurrenceKey(Key occurrenceKey) {
+	protected void setOccurrenceKey(String occurrenceKey) {
 		this.occurrenceKey = occurrenceKey;
 	}
 	
-	public void setEventKey(Key eventKey){
-		this.eventKey = eventKey;
+	public void setContainingEventKey(String containingEventKey){
+		this.containingEventKey = containingEventKey;
 	}
 	
-	public void setEventDate(Date eventDate) {
-		this.eventDate = eventDate;
+	public void setOccurrenceDate(Date occurrenceDate) {
+		this.occurrenceDate = occurrenceDate;
 	}
 
-	public void setEventDate(int year, int month, int day) {
+	public void setOccurrenceDate(int year, int month, int day) {
 		Calendar calendar = Calendar.getInstance();
 		
 		calendar.set(year, month, day, 0, 0, 0);
-		this.eventDate = calendar.getTime();
+		this.occurrenceDate = calendar.getTime();
 	}
 
 	public void setStartTime(Date startTime) {
@@ -111,6 +112,10 @@ public class Occurrence{
 		this.endTime = calendar.getTime();
 	}
 
+	protected void setRegisteredUserNames(List<String> registeredUserNames) {
+		this.registeredUserNames = registeredUserNames;
+	}
+	
 	public void addRegisteredUser(String newName) {
 		this.registeredUserNames.add(newName);
 	}
@@ -119,9 +124,9 @@ public class Occurrence{
 		this.registeredUserNames.remove(registeredName);
 	}
 
-	/*@Override
+	@Override
 	public int compareTo(Occurrence o) {
-		int keyDiff = this.getEventKey().compareTo(o.getEventKey());
+		int keyDiff = this.getContainingEventKey().compareTo(o.getContainingEventKey());
 		
 		if (keyDiff!=0)
 			return keyDiff;
@@ -133,5 +138,5 @@ public class Occurrence{
 			return -1;
 		
 		return 0;
-	}*/
+	}
 }
