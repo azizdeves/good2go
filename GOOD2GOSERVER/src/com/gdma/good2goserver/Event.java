@@ -404,8 +404,6 @@ public class Event {
 		public Occurrence(Date eventDate, Date startTime, Date endTime){
 			this();
 			
-			Calendar calendar = Calendar.getInstance();
-			
 			this.setEventDate(eventDate);
 			this.setStartTime(startTime);
 			this.setEndTime(endTime);
