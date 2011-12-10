@@ -5,18 +5,13 @@ import java.io.PrintWriter;
 
 import javax.servlet.http.*;
 
-import com.gdma.good2goserver.Event.Address;
-import com.gdma.good2goserver.Event.SuitableFor;
-import com.gdma.good2goserver.Event.VolunteeringWith;
-import com.gdma.good2goserver.Event.WorkType;
-import com.google.appengine.api.datastore.GeoPt;
 
+import com.google.appengine.api.datastore.GeoPt;
 import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
 import java.util.HashSet;
 import flexjson.JSONSerializer;
 import flexjson.JSONDeserializer;
@@ -32,8 +27,13 @@ public class Good2GoServerServlet extends HttpServlet {
 		
 		String action = req.getParameter(new String("action"));
 		
-		if (action=="getEvents"){
-			
+		if (action.compareToIgnoreCase("getEvents")==0){
+			String lo = req.getParameter(new String("lon"));
+			String la = req.getParameter(new String("lat"));
+			float lon = Float.valueOf(lo.trim()).floatValue();
+			float lat = Float.valueOf(la.trim()).floatValue();
+			/*pw.println(lon);
+			pw.println(lat);*/
 		}
 		
 		Set<Event.VolunteeringWith> vw = new HashSet<Event.VolunteeringWith>();
@@ -47,6 +47,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		wt.add(Event.WorkType.METNAL);
 		
 		Event e = null;
+		Event ev2 = null;
 		try{
 			Event.Address a = null;
 		
@@ -58,6 +59,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setGeoPoint(new GeoPt((float) 1.0, (float) 2.0));
 			
 			e = new Event("newEvent", "Fundraiser", "You have to be filthy rich", new Date(), false, a, "FilthyRichForPoorPersons", vw, sf, wt, true);
+			ev2 = new Event("oldEvent", "e2Event", "none", new Date(), false, new Event.Address(a), "ABCDE", null, null, null, true);
 		}
 		catch (Exception ex){
 			pw.println(ex.getMessage());
@@ -83,12 +85,18 @@ public class Good2GoServerServlet extends HttpServlet {
 		
 		e.addOccurrence(o);
 		
-		String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").serialize(e);
+		List<Event> l1 = new LinkedList<Event>();
+		l1.add(e);
+		l1.add(ev2);
+		
+		String js = new JSONSerializer().include("occurrences", "occurrences.registeredUserNames", "volunteeringWith", "suitableFor", "workType").serialize(l1);
 		
 		resp.setContentType("text/plain");
 		
 		pw.println(js);
 		
-		Event e2 = new JSONDeserializer<Event>().deserialize(js);
+		List<Event> l2 = new JSONDeserializer<List<Event>>().deserialize(js);
+		
+		pw.println("!");
 	}
 }

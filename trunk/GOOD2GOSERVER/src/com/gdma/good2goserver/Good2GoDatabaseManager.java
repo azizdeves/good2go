@@ -21,6 +21,7 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
 import java.io.IOException;
+import javax.jdo.Query;
 
 public class Good2GoDatabaseManager {
 	private PersistenceManager pm;
@@ -62,24 +63,54 @@ public class Good2GoDatabaseManager {
 			}
 		}
 	}
-	/*
-	public void addEvent(Event newEvent){
-		Transaction txn = pm.currentTransaction();
+	public void addEvent(Event newEvent) throws IOException{
 		
-		try {
-			txn.begin();
-			
-			if (checkUserNameExists(newUser.getUserName()))
-				throw new IOException("Username " + newUser.getUserName() + " already exists in database.");
-			
-			pm.makePersistent(newUser);
-			
-			txn.commit();
+		if (newEvent.getEventKey()!=null)
+			throw new IOException("Event key must be null prior to database insertion.");
+		
+		for (Event.Occurrence o : newEvent.getOccurrences()){
+			if (o.getOccurrenceKey()!=null)
+				throw new IOException("All occurrence keys must be null prior to database insertion.");
 		}
-		finally {
-			if (txn.isActive()) {
-				txn.rollback();
+		
+		pm.makePersistent(newEvent);
+	}
+	
+	public List<Event> getNextEventsByGeoPt(GeoPt gp, Date userDate){
+		List<Event> res = new LinkedList<Event>();
+		
+		final Query query = pm.newQuery("SELECT FROM Event WHERE occurences.eventDate = today && occurrences.endTime > now PARAMETERS java.util.Date today, java.util.Date now");
+		
+		Calendar calendar = Calendar.getInstance();
+		calendar.setTime(userDate);
+		
+		int year = calendar.get(Calendar.YEAR);
+		int month = calendar.get(Calendar.MONTH);
+		int day = calendar.get(Calendar.DATE);
+		int hour = calendar.get(Calendar.HOUR_OF_DAY);
+		int minute = calendar.get(Calendar.MINUTE);
+		
+		calendar.set(year, month,day,0,0,0);
+		Date today = calendar.getTime();
+		
+		calendar.set(0, 0,0,hour,minute,0);
+		Date now = calendar.getTime();
+		/*
+		try {
+			List<Event> results = (List<Event>) query.execute(today,now);
+			if (!results.isEmpty()) {
+				for (Employee e : results) {
+					
+				}
+			}
+			else {
+				
 			}
 		}
-	}*/
+		finally {
+			query.closeAll();
+		}*/
+		
+		return res;
+	}
 }
