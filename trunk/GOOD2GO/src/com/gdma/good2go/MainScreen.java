@@ -1,17 +1,21 @@
 package com.gdma.good2go;
 
-import java.util.List;
+import java.io.IOException;
+import java.net.MalformedURLException;
 
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.provider.ContactsContract.CommonDataKinds.Event;
+import android.util.Log;
 import android.widget.TabHost;
+
+import com.facebook.android.*;
+import com.facebook.android.Facebook.*;
 
 public class MainScreen extends TabActivity {
 	
-//	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
+	//Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
 	
 	
     /** Called when the activity is first created. */
@@ -37,7 +41,7 @@ public class MainScreen extends TabActivity {
             
     
         });
-*/
+//*/
 //        
 //        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
 //
@@ -78,34 +82,6 @@ public class MainScreen extends TabActivity {
 //        	);
 
         
-        
-        
-//////////////////////////////////////////////////////////////////////////////////////////////////
-//Start send-receive data from server					   									//		
-//////////////////////////////////////////////////////////////////////////////////////////////////
-
-        String JSONResponse = null; // this will hold the response from server
-        
-        RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-        client.AddParam("action", "getEvents");
-        client.AddParam("lon", "3124.872");
-        client.AddParam("lat", "3346.115");
-        
-        try
-        {
-        	client.Execute(1); //1 is GET
-        }
-        catch (Exception e)
-        {
-        	
-        }
-        
-        JSONResponse = client.getResponse();
-        
-        
-//        This code seems to kill the app
-//      //Parse the response from server
-//      	List<Event> eventList = new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
 
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
@@ -140,7 +116,7 @@ public class MainScreen extends TabActivity {
     
 
     
-//    //added - FB
+    //added - FB
 //    @Override
 //    public void onActivityResult(int requestCode, int resultCode, Intent data) {
 //    	super.onActivityResult(requestCode, resultCode, data);	
