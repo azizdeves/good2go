@@ -1,4 +1,4 @@
-package com.gdma.good2go;
+package com.gdma.good2go.communication;
 
 import java.io.BufferedReader;
 import java.io.IOException;
