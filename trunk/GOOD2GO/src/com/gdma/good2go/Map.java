@@ -12,6 +12,10 @@ import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
+//import flexjson.JSONDeserializer;
+
+
+
 
 public class Map extends MapActivity {
 	
@@ -26,6 +30,41 @@ public class Map extends MapActivity {
         
         MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
+        
+        
+        /**TESTING CLIENT-SERVER**/
+        
+//        String JSONResponse = null; // this will hold the response from server
+        
+        RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+        client.AddParam("action", "getEvents");
+        client.AddParam("lon", "3124.872");
+        client.AddParam("lat", "3346.115");
+        
+        try
+        {
+        	client.Execute(1); //1 is GET
+        }
+        catch (Exception e)
+        {
+        	
+        }
+        
+ //       JSONResponse = client.getResponse();
+        
+
+    //Parse the response from server
+        
+        String name=null;
+        String desc=null;
+
+    	/*List<Event> eventList = new JSONDeserializer<List<Event>>().deserialize(JSONResponse,Event.class);
+    	
+    	for(Event event : eventList){
+    		name=event.getEventName();
+    		desc=event.getDescription();
+    	}
+        /**END TEST**/
         
         /**POPULATE DB**/
         mDbHelper = new EventsDbAdapter(this);
