@@ -22,7 +22,7 @@ import android.widget.Toast;
     }
 }*/
 
-public class List extends ListActivity {
+public class ListTab extends ListActivity {
     /** Called when the activity is first created. */
     @Override
     public void onCreate(Bundle savedInstanceState) {

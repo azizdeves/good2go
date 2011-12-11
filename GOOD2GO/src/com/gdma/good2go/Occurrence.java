@@ -124,7 +124,7 @@ public class Occurrence implements Comparable<Occurrence>{
 		this.registeredUserNames.remove(registeredName);
 	}
 
-	@Override
+	//@Override
 	public int compareTo(Occurrence o) {
 		int keyDiff = this.getContainingEventKey().compareTo(o.getContainingEventKey());
 		

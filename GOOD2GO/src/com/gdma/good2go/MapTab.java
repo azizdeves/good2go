@@ -6,14 +6,19 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
+import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
 
+import flexjson.JSONDeserializer;
 
-public class G2GMap extends MapActivity {
+
+
+
+public class MapTab extends MapActivity {
 	
 	
 	private EventsDbAdapter mDbHelper;
@@ -27,41 +32,44 @@ public class G2GMap extends MapActivity {
         MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         
+        
+        /**CLIENT-SERVER**/
+        /**@TODO THIS IS NOT THE CORRECT PLACE FOR THIS*/
+
+		String JSONResponse = null; // this will hold the response from server
+		
+		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		client.AddParam("action", "getEvents");
+		client.AddParam("lon", "3124.872");
+		client.AddParam("lat", "3346.115");
+		
+		try{
+		client.Execute(1); //1 is GET
+		}
+		catch (Exception e){}
+		
+		JSONResponse = client.getResponse();
+		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+		
+		//Parse the response from server
+		List<Event> eventList = new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+
+        
         /**POPULATE DB**/
         mDbHelper = new EventsDbAdapter(this);
         mDbHelper.open();
-        
-        mDbHelper.createEvent("Fun Horseback Riding", 
-        		"Help handicapped teenagers and enjoy a horse-back ride",
-        		"Assist handicapped teenagers in therapeutic horse-back riding," 
-        		+ "lead their horse and help them follow instructors commands.",
-        		"32069156", "34774003");
-        
-        mDbHelper.createEvent("Dogs are our best friends",  
-        		"Have a walk with a city shelter dog",
-        		"Make a furry cute friend for life!",
-        		"32069211", "34763403");
-        
-        mDbHelper.createEvent("Surf the internet", 
-        		"Show the wonders of Google and Wikipedia to children",
-        		"Share what you know by teaching internet to kids!",
-        		"32086865", "34789581");
-        
-        mDbHelper.createEvent("Read your favorite book", 
-        		"Make someone happy and provide company to the elderly",
-        		"Read anything you like to the elderly",
-        		"32074938", "34775591");
-        
-        mDbHelper.createEvent("Shake what your mamma gave ya", 
-        		"Get jiggy with it!",
-        		"Konichiwa bithez !!!!",
-        		"32055555", "34769572");
-        
-        mDbHelper.createEvent("Give a hot meal to the needy", 
-        		"Help pack and distribute hot meals to those in need",
-        		"They are very hungry. Help them.",
-        		"32063374", "34773080");
-        
+        for(Event event : eventList)
+        {
+        	String lat=Integer.toString(
+        			event.getEventAddress().getGood2GoPoint().getLat());
+        	String lon=Integer.toString(
+        			event.getEventAddress().getGood2GoPoint().getLon());
+        	
+        			mDbHelper.createEvent(event.getEventName(),
+        			event.getDescription(),
+        			event.getPrerequisites(),
+        			lat, lon);
+        }
                   
        /**OVERLAY*/ 
         //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.

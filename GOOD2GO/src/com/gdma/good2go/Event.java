@@ -1,19 +1,19 @@
 package com.gdma.good2go;
 
-import javax.jdo.annotations.Extension;
-import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.PersistenceCapable;
-import javax.jdo.annotations.NotPersistent;
-import javax.jdo.annotations.Persistent;
-import javax.jdo.annotations.PrimaryKey;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
+
 import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.EmbeddedOnly;
+import javax.jdo.annotations.Extension;
+import javax.jdo.annotations.IdGeneratorStrategy;
+import javax.jdo.annotations.NotPersistent;
+import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.Persistent;
+import javax.jdo.annotations.PrimaryKey;
 
-//import com.google.appengine.api.datastore.GeoPt;
-import java.util.Date;
-import java.util.List;
-import java.util.LinkedList;
-import java.util.Set;
 
 @PersistenceCapable
 public class Event {
