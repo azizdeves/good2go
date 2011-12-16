@@ -1,5 +1,12 @@
 package com.gdma.good2go;
 
+import java.util.List;
+
+import com.gdma.good2go.R;
+import com.gdma.good2go.communication.RestClient;
+
+import flexjson.JSONDeserializer;
+
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
@@ -10,6 +17,7 @@ public class MainScreen extends TabActivity {
 	
 //	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
 	
+	private EventsDbAdapter mDbHelper;
 	
     /** Called when the activity is first created. */
     @Override
@@ -17,6 +25,27 @@ public class MainScreen extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        /**GET EVENTS FROM SERVER**/
+        // TODO on resume check if we have the events if not - repopulate
+        List<Event> eventList=getEventsFromServer();
+        
+	
+        /**POPULATE DB**/
+        mDbHelper = new EventsDbAdapter(this);
+        mDbHelper.open();
+        for(Event event : eventList)
+        {
+        	String lat=Integer.toString(
+        			event.getEventAddress().getGood2GoPoint().getLat());
+        	String lon=Integer.toString(
+        			event.getEventAddress().getGood2GoPoint().getLon()); 	
+     	
+        			mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
+        			event.getDescription(),
+        			event.getPrerequisites(),
+        			lat, lon);
+        }
+
         
         /*
         facebook.authorize(this, new DialogListener() {
@@ -78,7 +107,7 @@ public class MainScreen extends TabActivity {
         
         
 
-
+        /** SHOW TABS**/
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
         TabHost.TabSpec spec;  // Reusable TabSpec for each tab
@@ -109,6 +138,30 @@ public class MainScreen extends TabActivity {
         //Set the map tab to be first 
         tabHost.setCurrentTab(0);
     }
+
+	private List<Event> getEventsFromServer() {
+		//TODO is this supposed to be async task?
+
+		String JSONResponse = null; // this will hold the response from server
+		
+		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		client.AddParam("action", "getEvents");
+		client.AddParam("lon", "3124.872");
+		client.AddParam("lat", "3346.115");
+		
+		try{
+			client.Execute(1); //1 is HTTP GET
+		}
+		catch (Exception e){
+			return null;
+		}
+		
+		JSONResponse = client.getResponse();
+		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+		
+		//Parse the response from server
+		return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+	}
     
 
     
