@@ -5,9 +5,8 @@ import java.util.ArrayList;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.drawable.Drawable;
-import android.os.Bundle;
 
-import com.gdma.mapviewbaloons.BalloonItemizedOverlay;
+import com.gdma.good2go.mapviewbaloons.BalloonItemizedOverlay;
 import com.google.android.maps.MapView;
 
 
@@ -55,12 +54,10 @@ public class EventsItemizedOverlay extends BalloonItemizedOverlay<EventOverlayIt
 	
 	protected boolean onBalloonTap(int index, EventOverlayItem item) {
         
-		Bundle extraInfo = new Bundle();
-        extraInfo.putString("rowid", item.getRowID());
-		
 		Intent i = new Intent(mContext, EventDetails.class);
-		
-		i.putExtras(extraInfo);
+        i.putExtra("sender", "map");
+        i.putExtra(EventsDbAdapter.KEY_EVENTID, item.getRowID());
+    
 		mContext.startActivity(i);
 		return true;
 }

@@ -36,6 +36,7 @@ import android.util.Log;
  */
 public class EventsDbAdapter {
 	
+	public static final String KEY_EVENT_KEY = "eventkey";
 	public static final String KEY_EVENTNAME = "name";
 	public static final String KEY_EVENT_SHORT_INFO = "info";
 	public static final String KEY_EVENT_DETAILS = "details";
@@ -54,9 +55,10 @@ public class EventsDbAdapter {
     private static final String DATABASE_CREATE =
         "create table events (_id integer primary key autoincrement, "
         + "name text not null, info text not null, details text not null, " 
-        		+"gplong text not null, gplat text not null);";
+        		+"gplong text not null, gplat text not null," 
+        +"eventkey text not null, UNIQUE (eventkey));";
     
-
+    
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
     private static final int DATABASE_VERSION = 1;
@@ -126,11 +128,12 @@ public class EventsDbAdapter {
      * @param gplong the geopoint longtitude
      * @return rowId or -1 if failed
      */
-    public long createEvent(String name, String info, String details, 
+    public long createEvent(String eventkey, String name, String info, String details, 
     		String gplat, String gplong) 
     {
     	
         ContentValues initialValues = new ContentValues();
+        initialValues.put(KEY_EVENT_KEY, eventkey);
         initialValues.put(KEY_EVENTNAME, name);
         initialValues.put(KEY_EVENT_SHORT_INFO, info);
         initialValues.put(KEY_EVENT_DETAILS, details);

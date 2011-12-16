@@ -28,8 +28,8 @@ public class EventOverlayItem extends OverlayItem {
 		mRowID = rowID;
 	}
 
-	public String getRowID() {
-		return mRowID;
+	public Long getRowID() {
+		return Long.parseLong(mRowID);
 	}
 
 	public void setRowID(String rowID) {

@@ -1,5 +1,7 @@
 package com.gdma.good2go;
 
+import com.gdma.good2go.R;
+
 import android.app.Activity;
 import android.app.TabActivity;
 import android.content.Intent;
@@ -14,7 +16,7 @@ public class EventDetails extends TabActivity {
 	
     TabHost mTabHost;
     
-    private String mRowId;
+    private Long mRowId;
     private String mEventName;
     private String mEventDesc;
     private String mEventDetails;
@@ -33,16 +35,18 @@ public class EventDetails extends TabActivity {
 
 	    mTabHost = getTabHost();
 	    
-	    /**GET DATA PASSED FROM BALOON*/
-	    Bundle extras = getIntent().getExtras();
-	    mRowId=(extras!=null)?extras.getString("rowid"):null;
-
+	    
+	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
+		Bundle extras = getIntent().getExtras();
+		mRowId=extras!= null?
+				mRowId = extras.getLong(EventsDbAdapter.KEY_EVENTID):0;
+	       
 	    
 	    /**GET DATA FROM DB*/
 	    mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
 	    
-	    Cursor event = mDbHelper.fetchEvent(Long.parseLong(mRowId));
+	    Cursor event = mDbHelper.fetchEvent(mRowId);
 	    startManagingCursor(event);
 	    
 	    /**POPULATE VIEWS FROM DB*/   

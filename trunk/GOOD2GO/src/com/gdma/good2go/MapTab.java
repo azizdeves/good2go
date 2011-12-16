@@ -6,14 +6,11 @@ import android.database.Cursor;
 import android.graphics.drawable.Drawable;
 import android.os.Bundle;
 
-import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
 import com.google.android.maps.Overlay;
-
-import flexjson.JSONDeserializer;
 
 
 
@@ -33,45 +30,8 @@ public class MapTab extends MapActivity {
         mapView.setBuiltInZoomControls(true);
         
         
-        /**CLIENT-SERVER**/
-        /**@TODO THIS IS NOT THE CORRECT PLACE FOR THIS*/
-
-		String JSONResponse = null; // this will hold the response from server
-		
-		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "getEvents");
-		client.AddParam("lon", "3124.872");
-		client.AddParam("lat", "3346.115");
-		
-		try{
-		client.Execute(1); //1 is GET
-		}
-		catch (Exception e){}
-		
-		JSONResponse = client.getResponse();
-		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-		
-		//Parse the response from server
-		List<Event> eventList = new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-
+        /**OVERLAY*/ 
         
-        /**POPULATE DB**/
-        mDbHelper = new EventsDbAdapter(this);
-        mDbHelper.open();
-        for(Event event : eventList)
-        {
-        	String lat=Integer.toString(
-        			event.getEventAddress().getGood2GoPoint().getLat());
-        	String lon=Integer.toString(
-        			event.getEventAddress().getGood2GoPoint().getLon());
-        	
-        			mDbHelper.createEvent(event.getEventName(),
-        			event.getDescription(),
-        			event.getPrerequisites(),
-        			lat, lon);
-        }
-                  
-       /**OVERLAY*/ 
         //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
         List<Overlay> mapOverlays = mapView.getOverlays();
         //instantiate the Drawable used for the map marker
@@ -80,11 +40,12 @@ public class MapTab extends MapActivity {
         EventsItemizedOverlay itemizedoverlay = new EventsItemizedOverlay(drawable,mapView);
         
           
-        
         /**ADDING DB POINTS TO THE MAP OVERLAY*/
-        // Get all of the rows from the database and create the item list
+        
+	    mDbHelper = new EventsDbAdapter(this);
+	    mDbHelper.open();
+	    
     	Cursor eventsCursor = mDbHelper.fetchAllEvents();
-
         startManagingCursor(eventsCursor); //is this needed?
         
         int cnt=0;//BUG IN CURSOR
@@ -99,6 +60,10 @@ public class MapTab extends MapActivity {
         if(eventsCursor!=null&&!eventsCursor.isClosed()){
         	mDbHelper.close();
         }
+        
+        //GeoPoint gp=new GeoPoint (32074938,34775591);
+
+        //itemizedoverlay.addOverlay(new EventOverlayItem(gp, "adi", "anna", "230"));
              
         /**SHOW ON MAP*/ 
         //Add the G2GItemizedOverlay to the MapView
