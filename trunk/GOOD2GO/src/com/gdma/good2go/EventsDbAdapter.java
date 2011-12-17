@@ -42,6 +42,7 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_DETAILS = "details";
 	public static final String KEY_EVENT_GP_LONG = "gplong";
 	public static final String KEY_EVENT_GP_LAT = "gplat";
+	public static final String KEY_EVENT_DISTANCE = "distance";
 	public static final String KEY_EVENTID = "_id";
 	
 
@@ -54,8 +55,9 @@ public class EventsDbAdapter {
      */
     private static final String DATABASE_CREATE =
         "create table events (_id integer primary key autoincrement, "
-        + "name text not null, info text not null, details text not null, " 
-        		+"gplong text not null, gplat text not null," 
+        + "name text not null, info text not null, details text not null, "
+        + "distance text not null, " 
+        		+"gplong text not null, gplat text not null, " 
         +"eventkey text not null, UNIQUE (eventkey));";
     
     
@@ -129,7 +131,7 @@ public class EventsDbAdapter {
      * @return rowId or -1 if failed
      */
     public long createEvent(String eventkey, String name, String info, String details, 
-    		String gplat, String gplong) 
+    		String gplat, String gplong, String distance) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -139,6 +141,7 @@ public class EventsDbAdapter {
         initialValues.put(KEY_EVENT_DETAILS, details);
         initialValues.put(KEY_EVENT_GP_LONG, gplong);
         initialValues.put(KEY_EVENT_GP_LAT, gplat);
+        initialValues.put(KEY_EVENT_DISTANCE, distance);
         
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
@@ -163,7 +166,7 @@ public class EventsDbAdapter {
 
         return mDb.query(DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
         		KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-        		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT},
+        		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, KEY_EVENT_DISTANCE},
         		null, null, null, null, null);
     }
 
@@ -180,7 +183,7 @@ public class EventsDbAdapter {
 
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
                     KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT}, KEY_EVENTID + "=" + eventId, null,
+                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, KEY_EVENT_DISTANCE}, KEY_EVENTID + "=" + eventId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
@@ -189,22 +192,6 @@ public class EventsDbAdapter {
 
     }
     
-    
-    public Cursor fetchEventByGeo(String lat, String lon) throws SQLException {
-
-        Cursor mCursor =
-
-            mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID,
-                    KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT}, KEY_EVENT_GP_LAT + "=" + lat
-                    + "AND KEY_EVENT_GP_LONG" + "=" + lon,
-                    null, null, null, null, null);
-        if (mCursor != null) {
-            mCursor.moveToFirst();
-        }
-        return mCursor;
-
-    }
 
     /**
      * Update the event using the details provided. The event to be updated is
@@ -219,6 +206,7 @@ public class EventsDbAdapter {
     public boolean updatEvent(long eventId, String name, String info, String details,
     		String gplong, String gplat) 
     {
+    	/**TODO: add new columns**/
         ContentValues args = new ContentValues();
         args.put(KEY_EVENTNAME, name);
         args.put(KEY_EVENT_SHORT_INFO, info);

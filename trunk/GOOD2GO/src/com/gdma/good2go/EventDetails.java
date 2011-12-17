@@ -20,6 +20,7 @@ public class EventDetails extends TabActivity {
     private String mEventName;
     private String mEventDesc;
     private String mEventDetails;
+    private String mEventDistance;
     
         
 	private EventsDbAdapter mDbHelper;
@@ -61,10 +62,14 @@ public class EventDetails extends TabActivity {
 	    		EventsDbAdapter.KEY_EVENT_SHORT_INFO));
 	    mEventDetails=event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DETAILS));
+	    mEventDistance=event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
 	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
 	    eventDetails.setText(mEventDetails);
+	    
+	    /**TODO: add distance*/
 
 	    if(event!=null&&!event.isClosed()){
         	mDbHelper.close();

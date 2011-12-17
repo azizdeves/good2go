@@ -77,7 +77,7 @@ public class MapTab extends MapActivity {
 
     private EventOverlayItem MakeEventPoint(Cursor eventsCursor) {    
     	
-    	String rowID=eventsCursor.getString
+    	Long rowID=eventsCursor.getLong
     			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENTID));
     	int gplat=Integer.parseInt(eventsCursor.getString
     			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_GP_LAT)));

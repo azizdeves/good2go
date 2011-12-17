@@ -20,20 +20,14 @@ import com.google.android.maps.OverlayItem;
 
 public class EventOverlayItem extends OverlayItem {
 
-	//protected String mImageURL;
-	protected String mRowID;
+	protected Long mRowID;
 	
-	public EventOverlayItem(GeoPoint point, String title, String snippet, String rowID) {
+	public EventOverlayItem(GeoPoint point, String title, String snippet, Long rowID) {
 		super(point, title, snippet);
 		mRowID = rowID;
 	}
 
 	public Long getRowID() {
-		return Long.parseLong(mRowID);
+		return mRowID;
 	}
-
-	public void setRowID(String rowID) {
-		this.mRowID = rowID;
-	}
-	
 }
