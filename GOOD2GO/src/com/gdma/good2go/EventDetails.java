@@ -21,6 +21,9 @@ public class EventDetails extends TabActivity {
     private String mEventDesc;
     private String mEventDetails;
     private String mEventDistance;
+    private String mEventCity;
+    private String mEventSreet;
+    private String mEventStreetNumber;
     
         
 	private EventsDbAdapter mDbHelper;
@@ -54,6 +57,9 @@ public class EventDetails extends TabActivity {
 	    TextView eventTitle = (TextView) findViewById(R.id.eventTitle);
 	    TextView eventDescription = (TextView) findViewById(R.id.eventDescription);
 	    TextView eventDetails = (TextView) findViewById(R.id.eventdetails);
+	    TextView eventDuration = (TextView) findViewById(R.id.howlong);
+	    TextView eventWhen = (TextView) findViewById(R.id.when);
+	    TextView eventWhere = (TextView) findViewById(R.id.where);
 
 	    
 	    mEventName=event.getString(event.getColumnIndexOrThrow
@@ -64,10 +70,13 @@ public class EventDetails extends TabActivity {
 	    		(EventsDbAdapter.KEY_EVENT_DETAILS));
 	    mEventDistance=event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
+	    mEventCity=event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_CITY));
 	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
 	    eventDetails.setText(mEventDetails);
+	    eventWhere.setText(mEventCity);
 	    
 	    /**TODO: add distance*/
 

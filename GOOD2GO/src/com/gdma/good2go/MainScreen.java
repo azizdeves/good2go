@@ -1,5 +1,7 @@
 package com.gdma.good2go;
 
+import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
 
 import android.app.TabActivity;
@@ -9,6 +11,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.widget.TabHost;
 
+import com.gdma.good2go.Event.Address;
 import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 
@@ -60,11 +63,17 @@ public class MainScreen extends TabActivity {
         			Integer.valueOf(eventLat)/1E6, Integer.valueOf(eventLon)/1E6, results);
         	String distance=String.format("%.1f", (float)(results[0]/1E3))+" km";
         	
+        	//calculate duration        	
+        	String duration=String.valueOf(event.getMinDuration().getMinutes())+ " min";
+        	       	       	
         	//populate db
         	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
         			event.getDescription(),
         			event.getPrerequisites(),
-        			eventLat, eventLon,distance);
+        			eventLat, eventLon,distance,duration,
+        			event.getEventAddress().getCity(),
+        			event.getEventAddress().getStreet(),
+        			String.valueOf(event.getEventAddress().getNumber()));
         }
         
         /** SHOW TABS**/
