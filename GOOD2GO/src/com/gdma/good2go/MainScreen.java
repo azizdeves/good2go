@@ -2,22 +2,25 @@ package com.gdma.good2go;
 
 import java.util.List;
 
-import com.gdma.good2go.R;
-import com.gdma.good2go.communication.RestClient;
-
-import flexjson.JSONDeserializer;
-
 import android.app.TabActivity;
 import android.content.Intent;
 import android.content.res.Resources;
+import android.location.Location;
 import android.os.Bundle;
 import android.widget.TabHost;
+
+import com.gdma.good2go.communication.RestClient;
+import com.google.android.maps.GeoPoint;
+
+import flexjson.JSONDeserializer;
 
 public class MainScreen extends TabActivity {
 	
 //	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
 	
 	private EventsDbAdapter mDbHelper;
+	private GeoPoint mMyGeoPoint;
+	private Location mMyLocation;
 	
     /** Called when the activity is first created. */
     @Override
@@ -25,88 +28,45 @@ public class MainScreen extends TabActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
         
+        /**GET MY LOCATION**/
+        
+        /**TODO: add actual calculation**/
+        mMyGeoPoint=new GeoPoint((int)(32.055699*1E6),(int)(34.769540*1E6));       
+        mMyLocation = new Location("myLocation"); 	
+        mMyLocation.setLatitude(mMyGeoPoint.getLatitudeE6()/1E6);
+        mMyLocation.setLongitude(mMyGeoPoint.getLongitudeE6()/1E6);
+        
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
-        List<Event> eventList=getEventsFromServer();
+        List<Event> eventList=getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
         
 	
         /**POPULATE DB**/
+        /**TODO: drop what we have if it's a new day
+         * or if there's been a change since last read
+         */
         mDbHelper = new EventsDbAdapter(this);
         mDbHelper.open();
         for(Event event : eventList)
         {
-        	String lat=Integer.toString(
+        	String eventLat=Integer.toString(
         			event.getEventAddress().getGood2GoPoint().getLat());
-        	String lon=Integer.toString(
-        			event.getEventAddress().getGood2GoPoint().getLon()); 	
-     	
-        			mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
+        	String eventLon=Integer.toString(
+        			event.getEventAddress().getGood2GoPoint().getLon());
+        	    	        	
+        	//calculate distance
+    	   	float results[]=new float[3];
+        	Location.distanceBetween(mMyLocation.getLatitude(), mMyLocation.getLongitude(), 
+        			Integer.valueOf(eventLat)/1E6, Integer.valueOf(eventLon)/1E6, results);
+        	String distance=String.format("%.1f", (float)(results[0]/1E3))+" km";
+        	
+        	//populate db
+        	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
         			event.getDescription(),
         			event.getPrerequisites(),
-        			lat, lon);
+        			eventLat, eventLon,distance);
         }
-
         
-        /*
-        facebook.authorize(this, new DialogListener() {
-            //@Override
-            public void onComplete(Bundle values) {}
-
-            //@Override
-            public void onFacebookError(FacebookError error) {}
-
-            //@Override
-            public void onError(DialogError e) {}
-
-            //@Override
-            public void onCancel() {}
-            
-    
-        });
-*/
-//        
-//        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
-//
-//        	      new DialogListener() {
-//  //      	           @Override
-//        	           public void onComplete(Bundle values) {
-//        	        	   updateStatus(values.getString(facebook.getAccessToken()));
-//        	           }
-//
-//        	           private void updateStatus(String accessToken) {
-//        	        	   // TODO Auto-generated method stub
-//        	        	   try{
-//        	        		   Bundle bundle = new Bundle();
-//        	        		   bundle.putString("message", "GOOD2GO Hello World!!");
-//            	        	   bundle.putString(Facebook.TOKEN, accessToken);
-//            	        	   String response = facebook.request("me/feed",bundle,"POST");
-//            	        	   Log.d("UPDATE RESPONSE", ""+response);
-//        	        	   }
-//        	        	   catch(MalformedURLException e){
-//        	        		   Log.e("MALFORMED URL",""+e.getMessage());
-//        	        	   }
-//        	        	   catch (IOException e){
-//        	        		   Log.e("IOEX",""+e.getMessage());
-//        	        	   }
-//        	        	   
-//        	        	   
-//        	           }
-//
-////      	           @Override
-//        	           public void onFacebookError(FacebookError error) {}
-//
-//  //      	           @Override
-//        	           public void onError(DialogError e) {}
-//
-//  //      	           @Override
-//        	           public void onCancel() {}
-//        	      }
-//        	);
-
-        
-        
-        
-
         /** SHOW TABS**/
         Resources res = getResources(); // Resource object to get Drawables
         TabHost tabHost = getTabHost();  // The activity TabHost
@@ -139,15 +99,15 @@ public class MainScreen extends TabActivity {
         tabHost.setCurrentTab(0);
     }
 
-	private List<Event> getEventsFromServer() {
+	private List<Event> getEventsFromServer(int lat, int lon) {
 		//TODO is this supposed to be async task?
 
 		String JSONResponse = null; // this will hold the response from server
 		
 		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getEvents");
-		client.AddParam("lon", "3124.872");
-		client.AddParam("lat", "3346.115");
+		client.AddParam("lon", String.valueOf(lon/1000));
+		client.AddParam("lat", String.valueOf(lat/1000));
 		
 		try{
 			client.Execute(1); //1 is HTTP GET
@@ -162,15 +122,5 @@ public class MainScreen extends TabActivity {
 		//Parse the response from server
 		return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
 	}
-    
-
-    
-//    //added - FB
-//    @Override
-//    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-//    	super.onActivityResult(requestCode, resultCode, data);	
-//
-//    	facebook.authorizeCallback(requestCode, resultCode, data);
-//    }
 
 }

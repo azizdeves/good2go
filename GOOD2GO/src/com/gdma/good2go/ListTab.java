@@ -31,18 +31,15 @@ public class ListTab extends ListActivity {
 		
 		
 		/**SHOW THE POINTS IN THE LIST*/
-        mColumns = new String[] {EventsDbAdapter.KEY_EVENTID, EventsDbAdapter.KEY_EVENTNAME, EventsDbAdapter.KEY_EVENT_SHORT_INFO};
-        int[] to = new int[] { R.id.event_id, R.id.eventname_entry, R.id.eventinfo_entry };
+        mColumns = new String[] {EventsDbAdapter.KEY_EVENTNAME, 
+        		EventsDbAdapter.KEY_EVENT_SHORT_INFO,EventsDbAdapter.KEY_EVENT_DISTANCE};
+        int[] to = new int[] {R.id.eventname_entry, R.id.eventinfo_entry, R.id.eventdistance_entry };
 
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this, 
         		R.layout.list_item, 
         		mEventsCursor, mColumns, to);
 
         setListAdapter(mAdapter);
-        
-		
-		//ListView lv = getListView();
-		//lv.setTextFilterEnabled(true);
 		}
     
     @Override
@@ -51,13 +48,10 @@ public class ListTab extends ListActivity {
         
         Cursor c = mEventsCursor;
         c.moveToPosition(position);
+        
         Intent i = new Intent(this, EventDetails.class);
         i.putExtra("sender", "list");
         i.putExtra(EventsDbAdapter.KEY_EVENTID, id);
-        i.putExtra(EventsDbAdapter.KEY_EVENTNAME, c.getString(
-                c.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENTNAME)));
-        i.putExtra(EventsDbAdapter.KEY_EVENT_SHORT_INFO, c.getString(
-                c.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_SHORT_INFO)));
         startActivity(i);
     }
 }

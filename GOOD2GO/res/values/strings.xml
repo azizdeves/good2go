@@ -10,6 +10,6 @@
  	<string name="searchview_name">Search</string>
  	<string name="eventdetails_name">Event Details</string>
  	<string name="eventdetails_tabs">Event Details Tabs</string>
- 	 	<string name="countmein">Count Me In</string>
+ 	<string name="countmein">Count Me In</string>
  	
 </resources>
