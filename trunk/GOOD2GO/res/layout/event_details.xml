@@ -23,7 +23,7 @@
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"
         android:layout_alignTop="@id/childPic"
-        
+        android:textColor="@android:color/primary_text_dark"
         android:textStyle="bold"
         android:text="Playing with autistic young kids"/>
     
@@ -36,21 +36,95 @@
         android:layout_alignLeft="@id/eventTitle"
         android:layout_alignBottom="@id/childPic"
         android:text="Count Me In!" />
+     
+     
+     
          
     <TextView
         android:id="@+id/eventDescription"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/childPic"
-        android:layout_marginTop="20dip"
-        android:layout_marginBottom="30dip"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="10dip"
         android:text="Help young children learn new skills through board games, reading, drawing and group activities. Teach them to play ball and jump"/>
-	
+        
+    
+     <TextView
+        android:id="@+id/howlongTitle"
+        android:layout_width="110dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/eventDescription"
+        android:layout_marginLeft="10dip"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"    
+        android:textStyle="bold"
+        android:text="How long?"/>  
+        
+     <TextView
+        android:id="@+id/whenTitle"
+        android:layout_width="110dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/eventDescription"
+        android:layout_toRightOf="@id/howlongTitle"
+        android:layout_marginLeft="10dip"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"    
+        android:textStyle="bold"
+        android:text="When?"/>  
+        
+     <TextView
+        android:id="@+id/whereTitle"
+        android:layout_width="110dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/eventDescription"
+        android:layout_toRightOf="@id/whenTitle"
+        android:layout_marginLeft="10dip"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"    
+        android:textStyle="bold"
+        android:text="Where?"/>  
+        
+     
+         
+    <Button
+        android:id="@+id/howlong"
+        android:layout_width="110dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/howlongTitle"
+        android:layout_marginBottom="20dip"
+        android:clickable="false"
+        android:text="20 min" />
+   
+         
+    <Button
+        android:id="@+id/when"
+        android:layout_width="110dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/whenTitle"
+        android:layout_toRightOf="@id/howlong"
+        android:layout_marginBottom="20dip"
+        android:clickable="false"
+        android:text="17:00-20:00" />
+   
+
+    
+   <Button
+        android:id="@+id/where"
+        android:layout_width="110dip"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/whereTitle"
+        android:layout_toRightOf="@id/when"
+        android:layout_marginBottom="20dip"
+        android:clickable="false"
+        android:text="Tel Aviv" />
+       
+  	
 	<TabHost 
 	    android:id="@android:id/tabhost"
 	    android:layout_width="fill_parent"
 	    android:layout_height="fill_parent"
-	    android:layout_below="@id/eventDescription">
+	    android:layout_below="@id/howlong">
 	    <LinearLayout
 	        android:orientation="vertical"
 	        android:layout_width="fill_parent"
