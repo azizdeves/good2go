@@ -43,6 +43,10 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_GP_LONG = "gplong";
 	public static final String KEY_EVENT_GP_LAT = "gplat";
 	public static final String KEY_EVENT_DISTANCE = "distance";
+	public static final String KEY_EVENT_DURATION = "duration";
+	public static final String KEY_EVENT_CITY = "city";
+	public static final String KEY_EVENT_STREET = "street";
+	public static final String KEY_EVENT_STREET_NUMBER = "streetnumber";
 	public static final String KEY_EVENTID = "_id";
 	
 
@@ -54,11 +58,22 @@ public class EventsDbAdapter {
      * Database creation sql statement
      */
     private static final String DATABASE_CREATE =
-        "create table events (_id integer primary key autoincrement, "
-        + "name text not null, info text not null, details text not null, "
-        + "distance text not null, " 
-        		+"gplong text not null, gplat text not null, " 
-        +"eventkey text not null, UNIQUE (eventkey));";
+        "create table events ("
+    		+ KEY_EVENTID + " integer primary key autoincrement, "
+	        + KEY_EVENTNAME +" text not null, "
+	        + KEY_EVENT_SHORT_INFO + " text not null, "
+	        + KEY_EVENT_DETAILS + " text not null, "
+	        + KEY_EVENT_DISTANCE + " text not null, "
+	        + KEY_EVENT_CITY + " text not null, "
+	        + KEY_EVENT_STREET + " text not null, "
+	        + KEY_EVENT_STREET_NUMBER + " text not null, "
+	        + KEY_EVENT_DURATION + " text not null, " 
+	        + KEY_EVENT_GP_LONG + " text not null, "
+	        + KEY_EVENT_GP_LAT + " text not null, " 
+	        + KEY_EVENT_KEY + " text not null, "
+	        + "UNIQUE ("
+	        + KEY_EVENT_KEY
+	        + "));";
     
     
     private static final String DATABASE_NAME = "data";
@@ -131,7 +146,8 @@ public class EventsDbAdapter {
      * @return rowId or -1 if failed
      */
     public long createEvent(String eventkey, String name, String info, String details, 
-    		String gplat, String gplong, String distance) 
+    		String gplat, String gplong, String distance, String duration,
+    		String city, String street, String streetNumber) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -142,6 +158,11 @@ public class EventsDbAdapter {
         initialValues.put(KEY_EVENT_GP_LONG, gplong);
         initialValues.put(KEY_EVENT_GP_LAT, gplat);
         initialValues.put(KEY_EVENT_DISTANCE, distance);
+        initialValues.put(KEY_EVENT_DURATION, duration);
+        initialValues.put(KEY_EVENT_CITY, city);
+        initialValues.put(KEY_EVENT_STREET, street);
+        initialValues.put(KEY_EVENT_STREET_NUMBER, streetNumber);
+        
         
         return mDb.insert(DATABASE_TABLE, null, initialValues);
     }
@@ -166,7 +187,9 @@ public class EventsDbAdapter {
 
         return mDb.query(DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
         		KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-        		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, KEY_EVENT_DISTANCE},
+        		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
+        		KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
+        		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER},
         		null, null, null, null, null);
     }
 
@@ -183,7 +206,10 @@ public class EventsDbAdapter {
 
             mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
                     KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, KEY_EVENT_DISTANCE}, KEY_EVENTID + "=" + eventId, null,
+                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
+                    KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
+            		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER}, 
+                    KEY_EVENTID + "=" + eventId, null,
                     null, null, null, null);
         if (mCursor != null) {
             mCursor.moveToFirst();
