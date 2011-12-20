@@ -35,7 +35,7 @@ public class MapTab extends MapActivity {
         MapView mapView = (MapView) findViewById(R.id.mapview);
         mapView.setBuiltInZoomControls(true);
         
-        final Button buttonFilterEvents = (Button) findViewById(R.id.FilterEventsButton);
+        final Button buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
         /**OVERLAY*/ 
         
         //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
