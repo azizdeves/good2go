@@ -1,7 +1,6 @@
 package com.gdma.good2go;
 
-import java.util.Calendar;
-import java.util.Date;
+
 import java.util.List;
 
 import android.app.TabActivity;
@@ -11,7 +10,6 @@ import android.location.Location;
 import android.os.Bundle;
 import android.widget.TabHost;
 
-import com.gdma.good2go.Event.Address;
 import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 

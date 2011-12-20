@@ -1,9 +1,26 @@
-<?xml version="1.0" encoding="utf-8"?>
-<com.google.android.maps.MapView
+<RelativeLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    android:id="@+id/mapview"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:clickable="true"
-    android:apiKey="@string/mapskey_adi"
-/>
+    android:layout_width="fill_parent" 
+    android:layout_height="fill_parent">
+
+    <com.google.android.maps.MapView
+        android:id="@+id/mapview"
+        android:layout_width="fill_parent"
+        android:layout_height="fill_parent" 
+        android:clickable="true"
+        android:layout_centerInParent="true"
+        android:apiKey="@string/mapskey_mor" />
+		
+    <Button 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:drawableBottom="@drawable/ic_filter_grey"
+		android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true" 
+        android:id="@+id/FilterEventsButton" 
+    	android:onClick="getFilterScreen" 
+    	android:background="@null"
+    	/>
+    
+
+</RelativeLayout>

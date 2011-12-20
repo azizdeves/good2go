@@ -5,11 +5,15 @@
     <string name="app_name">GOOD2GO</string>
     <string name="mapskey_adi">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
     <string name="mapskey_gil">0YhczuGFCWeAeSfdYOPvNNsN5LAJwjDrJvsu-eA</string>
+    <string name="mapskey_mor">0YRc18l4N6pXnWLTP4zPdNZDlP8OuVxR_8Ip7jg</string>    
     <string name="mapview_name">MAP</string>
     <string name="listview_name">List</string>
  	<string name="searchview_name">Search</string>
  	<string name="eventdetails_name">Event Details</string>
  	<string name="eventdetails_tabs">Event Details Tabs</string>
  	<string name="countmein">Count Me In</string>
- 	
+	<string name="radius">Tracking on</string>
+	<string name="seekbar_tracking_off">Tracking off</string>
+	<string name="seekbar_from_touch">from touch</string> 	
+	<string name="duration">Duration</string>		
 </resources>
