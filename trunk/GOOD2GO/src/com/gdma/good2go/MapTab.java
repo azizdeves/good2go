@@ -151,8 +151,8 @@ public class MapTab extends MapActivity {
 				
 			}
 			if(resultCode==RESULT_CANCELED){
-				Toast debugging=Toast.makeText(this, "failed", Toast.LENGTH_LONG);
-				debugging.show();				
+//				Toast debugging=Toast.makeText(this, "failed", Toast.LENGTH_LONG);
+//				debugging.show();				
 			}		
 		 }
 	}
