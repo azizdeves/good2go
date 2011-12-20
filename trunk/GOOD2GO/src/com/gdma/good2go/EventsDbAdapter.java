@@ -47,6 +47,7 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_CITY = "city";
 	public static final String KEY_EVENT_STREET = "street";
 	public static final String KEY_EVENT_STREET_NUMBER = "streetnumber";
+	public static final String KEY_EVENT_TYPE = "type";
 	public static final String KEY_EVENTID = "_id";
 	
 
@@ -70,6 +71,7 @@ public class EventsDbAdapter {
 	        + KEY_EVENT_DURATION + " text not null, " 
 	        + KEY_EVENT_GP_LONG + " text not null, "
 	        + KEY_EVENT_GP_LAT + " text not null, " 
+//	        + KEY_EVENT_TYPE + " text not null, "
 	        + KEY_EVENT_KEY + " text not null, "
 	        + "UNIQUE ("
 	        + KEY_EVENT_KEY
@@ -151,20 +153,21 @@ public class EventsDbAdapter {
     {
     	
         ContentValues initialValues = new ContentValues();
-        initialValues.put(KEY_EVENT_KEY, eventkey);
         initialValues.put(KEY_EVENTNAME, name);
         initialValues.put(KEY_EVENT_SHORT_INFO, info);
         initialValues.put(KEY_EVENT_DETAILS, details);
-        initialValues.put(KEY_EVENT_GP_LONG, gplong);
-        initialValues.put(KEY_EVENT_GP_LAT, gplat);
         initialValues.put(KEY_EVENT_DISTANCE, distance);
-        initialValues.put(KEY_EVENT_DURATION, duration);
         initialValues.put(KEY_EVENT_CITY, city);
         initialValues.put(KEY_EVENT_STREET, street);
-        initialValues.put(KEY_EVENT_STREET_NUMBER, streetNumber);
-        
-        
-        return mDb.insert(DATABASE_TABLE, null, initialValues);
+        initialValues.put(KEY_EVENT_STREET_NUMBER, streetNumber);        
+        initialValues.put(KEY_EVENT_DURATION, duration);
+        initialValues.put(KEY_EVENT_GP_LONG, gplong);
+        initialValues.put(KEY_EVENT_GP_LAT, gplat);
+        initialValues.put(KEY_EVENT_KEY, eventkey);
+//        initialValues.put(KEY_EVENT_TYPE, type);
+
+        long result=mDb.insert(DATABASE_TABLE, null, initialValues);
+        return result;
     }
 
     /**
@@ -190,7 +193,7 @@ public class EventsDbAdapter {
         		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
         		KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
         		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER},
-        		null, null, null, null, null);
+        		null, null, null, null, null, null);
     }
 
     /**
@@ -217,8 +220,50 @@ public class EventsDbAdapter {
         return mCursor;
 
     }
-    
+   
+    @SuppressWarnings("null")
+	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
 
+    	int i=0;
+    	String q = "SELECT * FROM events WHERE 1 ";
+    	String arr[] = null;
+    	if(timeInMinutes>0){
+    		q=q+"AND KEY_MIN_TIME_IN_MINUTES>= ? ";
+    		arr[i]=Integer.toString(timeInMinutes);
+    		i++;
+    	}
+    	if(radius>0){
+    		q=q+"AND KEY_EVENT_DISTANCE< radius ";
+    		arr[i]=Integer.toString(timeInMinutes);
+    		i++;
+    	}
+    	if(types!=null){
+    		for(int j=0;j<types.length;j++){
+    			if(types[j]=="animals"){
+    	    		q=q+"AND KEY_EVENT_TYPE= 'animals' ";
+    	    		arr[i]=Integer.toString(timeInMinutes);
+    	    		j++;
+    			}
+    			if(types[j]=="Env"){
+    	    		q=q+"AND KEY_EVENT_TYPE= 'Env' ";
+    	    		arr[i]=Integer.toString(timeInMinutes);
+    	    		j++;
+    			}    		
+    		//TODO - FINISH	
+    		}
+    	}
+       	Cursor mCursor = mDb.rawQuery(q, arr);
+    	if (mCursor != null) {
+            mCursor.moveToFirst();
+        }
+        return mCursor;
+
+    }  
+    //TODO REMOVE
+	public Cursor fetchEventByFilters(String types, int radius, int timeInMinutes) throws SQLException {
+
+    	return fetchAllEvents();
+    }  
     /**
      * Update the event using the details provided. The event to be updated is
      * specified using the eventId, and it is altered to use the details
