@@ -7,6 +7,7 @@
     <string name="mapskey_gil">0YhczuGFCWeAeSfdYOPvNNsN5LAJwjDrJvsu-eA</string>
     <string name="mapskey_mor">0YRc18l4N6pXnWLTP4zPdNZDlP8OuVxR_8Ip7jg</string>    
     <string name="mapview_name">MAP</string>
+    <string name="meview_name">Me</string>
     <string name="listview_name">List</string>
  	<string name="searchview_name">Search</string>
  	<string name="eventdetails_name">Event Details</string>
