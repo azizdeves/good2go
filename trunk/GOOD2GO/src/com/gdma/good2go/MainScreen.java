@@ -102,6 +102,13 @@ public class MainScreen extends TabActivity {
                       .setContent(intent);
         tabHost.addTab(spec);
 
+      
+        intent = new Intent().setClass(this, MeTab.class);
+        spec = tabHost.newTabSpec("me").setIndicator("",
+                          res.getDrawable(R.drawable.ic_tab_map))
+                      .setContent(intent);
+        tabHost.addTab(spec);
+        
         //Set the map tab to be first 
         tabHost.setCurrentTab(0);
     }

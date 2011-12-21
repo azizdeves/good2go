@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="utf-8"?>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+    <ImageView
+        android:id="@+id/mePicMeView"
+        android:layout_width="100dip"
+        android:layout_height="100dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentTop="true"
+        android:layout_marginRight="10dip"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="0dip"
+        android:src="@drawable/child_event" />
+
+     
+    <TextView
+        android:id="@+id/userNameMeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_toRightOf="@id/mePicMeView"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+        android:layout_alignTop="@id/mePicMeView"
+        android:textColor="@android:color/primary_text_dark"
+        android:textStyle="bold"
+        android:text=""/>
+    
+     <TextView
+        android:id="@+id/userPointsMeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/mePicMeView"
+        android:layout_marginRight="10dip"
+        android:text="Points" />
+        
+    <SeekBar 
+        android:id="@+id/pointSeekMeView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userPointsMeView"
+        android:max="100"
+        android:progress="1"
+        android:secondaryProgress="2" />
+         
+    <TextView
+        android:id="@+id/userBadgesMeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pointSeekMeView"
+        android:text="Badges"/>
+    <TextView
+        android:id="@+id/userHistoryMeView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/userBadgesMeView"
+        android:text="History and future events"/>
+	
+	<TableLayout  
+	    xmlns:android="http://schemas.android.com/apk/res/android"  
+	    android:id="@+id/tableLayout1"  
+	    android:layout_width="fill_parent"  
+	    android:layout_height="fill_parent"  
+	    android:layout_below="@id/userHistoryMeView"
+	    android:shrinkColumns="*"  
+	    android:stretchColumns="*">  
+	  
+	    <TableRow  
+	        android:id="@+id/tableRow1"  
+	        android:layout_height="wrap_content"  
+	        android:layout_width="fill_parent">  
+	        <TextView  
+	            android:id="@+id/TextView04"  
+	            android:text="Date"></TextView>  
+	        <TextView  
+	            android:id="@+id/TextView04"  
+	            android:text="Event"  
+	            android:textStyle="bold"  
+	            android:typeface="serif"></TextView>  
+	        <TextView  
+	            android:id="@+id/TextView03"  
+	            android:text="Hours"  
+	            android:textStyle="bold"  
+	            android:typeface="serif"></TextView>  
+	        <TextView  
+	            android:id="@+id/TextView02"  
+	            android:text="Points"  
+	            android:textStyle="bold"  
+	            android:typeface="serif"></TextView>  
+	 
+	    </TableRow>  
+	    <TableRow  
+	        android:layout_height="wrap_content"  
+	        android:id="@+id/tableRow2"  
+	        android:layout_width="fill_parent">  
+	        <TextView  
+	            android:text="20/01/12"  
+	            android:id="@+id/textView2"  
+	            android:textStyle="bold"></TextView>  
+	        <TextView  
+	            android:id="@+id/textView3"  
+	            android:text="Reading books"  
+	            android:gravity="center_horizontal"></TextView>  
+	        <TextView  
+	            android:text="2+"  
+	            android:id="@+id/textView4"  
+	            android:gravity="center_horizontal"></TextView>  
+	        <TextView  
+	            android:text="100"  
+	            android:id="@+id/textView5"  
+	            android:gravity="center_horizontal"></TextView>  
+	
+	    </TableRow>  
+	
+	</TableLayout>    
+    
+points
+    
+</RelativeLayout>
+
