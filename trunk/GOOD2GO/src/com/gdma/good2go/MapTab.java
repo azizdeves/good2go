@@ -1,6 +1,7 @@
 package com.gdma.good2go;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 import android.content.Intent;
@@ -11,6 +12,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import com.gdma.good2go.Event.VolunteeringWith;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapActivity;
 import com.google.android.maps.MapController;
@@ -88,24 +90,46 @@ public class MapTab extends MapActivity {
 		super.onActivityResult(requestCode, resultCode, data);
 		 if (requestCode == GET_FILTERED_EVENTS) {
 			if(resultCode==RESULT_OK){
-//				Bundle bundleResult = data.getExtras();
-//				Toast debugging=Toast.makeText(this, bundleResult.getString("events")+"   OMG! it works!", Toast.LENGTH_LONG);
-//				debugging.show();	
-//				String JSONResponse = bundleResult.getString("events");
-//				List<Event> eventsList = new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-
 				Bundle bundleResult = data.getExtras();
 				int i=0;
-				int duration=0;
-				int radius=0;
-				if(bundleResult!=null){
-
+				int duration=-1;
+				int radius=-1;
+				String[] types= new String[bundleResult.size()];
+				for (int j = 0; j < types.length; j++) {
+					types[i]="";
 				}
-				String types = (bundleResult!=null) ? bundleResult.getString("1"):null;
-//				Toast debugging=Toast.makeText(this,types, Toast.LENGTH_LONG);
-//				debugging.show();	
-				duration= (bundleResult!=null) ? bundleResult.getInt("durationInMinutes"): -1;
-				radius = (bundleResult!=null) ? bundleResult.getInt("radius"):-1;
+				
+				if(bundleResult!=null){
+					if(bundleResult.getString("animals")=="1"){
+						types[i]="animals";
+						i++;
+					}	
+					if(bundleResult.getString("children")=="1"){
+						types[i]="children";
+						i++;
+					}
+					if(bundleResult.getString("disabled")=="1"){
+						types[i]="disabled";
+						i++;
+					}
+					if(bundleResult.getString("elderly")=="1"){
+						types[i]="elderly";
+						i++;
+					}
+					if(bundleResult.getString("environment")=="1"){
+						types[i]="environment";
+						i++;
+					}
+					if(bundleResult.getString("special")=="1"){
+						types[i]="special";
+						i++;
+					}
+					if( bundleResult.getInt("durationInMinutes")!=0)
+						duration= bundleResult.getInt("durationInMinutes");
+					if( bundleResult.getInt("radius")!=0)
+						radius =  bundleResult.getInt("radius");
+				
+				}
 				Cursor eventsCursor = mDbHelper.fetchAllEvents();
 				//Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
 
