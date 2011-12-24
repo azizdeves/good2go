@@ -36,7 +36,9 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
         radiusSeekBar = (SeekBar)findViewById(R.id.radiusSeek);
         radiusSeekBar.setOnSeekBarChangeListener(this);
          
-        
+    	durationTrackingText = (TextView)findViewById(R.id.durationSeekVal);
+    	radiusTrackingText = (TextView)findViewById(R.id.radiusSeekVal);
+    	
 //        mProgressText = (TextView)findViewById(R.id.progress);
 //        mTrackingText = (TextView)findViewById(R.id.tracking);        
 //       
@@ -46,10 +48,10 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 
     public void getEventsWithFilters(View view){
    	
-		final ToggleButton togglebutton_People = (ToggleButton) findViewById(R.id.peopleFilterButton);
+		final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
 		final ToggleButton togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
 		final ToggleButton togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
-		ToggleButton tbArray[]={togglebutton_People, togglebutton_Env, togglebutton_Animals};
+		ToggleButton tbArray[]={togglebutton_Children, togglebutton_Env, togglebutton_Animals};
 		
 		String debugString = "";
 		String js = null; // hold the response from server
@@ -93,11 +95,33 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 //			}
 //		}
 
-	
-//		Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_LONG);
-//		debugging.show();				
+
 		Bundle b = new Bundle();
-		b.putString("1", "animals");
+		if(togglebutton_Children.isChecked())
+			b.putString("animals","1");		
+		else
+			b.putString("animals","0");			
+		if(togglebutton_Children.isChecked())
+			b.putString("children","1");
+		else
+			b.putString("children","0");
+		if(togglebutton_Children.isChecked())
+			b.putString("disabled","1");
+		else
+			b.putString("disabled","0");
+		if(togglebutton_Children.isChecked())
+			b.putString("elderly","1");	
+		else
+			b.putString("elderly","0");
+		if(togglebutton_Children.isChecked())
+			b.putString("environment","1");	
+		else
+			b.putString("environment","0");	
+		if(togglebutton_Children.isChecked())
+			b.putString("special","1");	
+		else
+			b.putString("special","0");	
+		
 		b.putInt("durationInMInutes", duration);
 		b.putInt("radius", radius);
 		Intent intent = new Intent();
@@ -110,12 +134,15 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 
     public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
 //	        mProgressText.setText(getString(R.string.duration));
+       
 
 		if (seekBar.getId()==R.id.durationSeek){
 			duration = progress;
+			durationTrackingText.setText(Integer.toString(duration)+"h");
 		}
 		if(seekBar.getId()==R.id.radiusSeek){
 			radius = progress;
+			radiusTrackingText.setText(Integer.toString(radius)+"km");
 		}
 		else{return;}
 	}
