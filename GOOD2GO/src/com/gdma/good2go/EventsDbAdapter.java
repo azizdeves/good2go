@@ -35,7 +35,7 @@ import android.util.Log;
  * recommended).
  */
 public class EventsDbAdapter {
-	
+
 	public static final String KEY_EVENT_KEY = "eventkey";
 	public static final String KEY_EVENTNAME = "name";
 	public static final String KEY_EVENT_SHORT_INFO = "info";
@@ -47,7 +47,12 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_CITY = "city";
 	public static final String KEY_EVENT_STREET = "street";
 	public static final String KEY_EVENT_STREET_NUMBER = "streetnumber";
-	public static final String KEY_EVENT_TYPE = "type";
+	public static final String KEY_EVENT_TYPE_ANIMAL = "type_animal";
+	public static final String KEY_EVENT_TYPE_CHILDREN = "type_children";
+	public static final String KEY_EVENT_TYPE_DISABLED = "type_disabled";
+	public static final String KEY_EVENT_TYPE_ELDERLY = "type_elderly";
+	public static final String KEY_EVENT_TYPE_ENVIRONMENT = "type_environment";
+	public static final String KEY_EVENT_TYPE_SPECIAL = "type_special";
 	public static final String KEY_EVENTID = "_id";
 	
 
@@ -71,7 +76,12 @@ public class EventsDbAdapter {
 	        + KEY_EVENT_DURATION + " text not null, " 
 	        + KEY_EVENT_GP_LONG + " text not null, "
 	        + KEY_EVENT_GP_LAT + " text not null, " 
-//	        + KEY_EVENT_TYPE + " text not null, "
+	        + KEY_EVENT_TYPE_ANIMAL + " text not null, "
+	        + KEY_EVENT_TYPE_CHILDREN + " text not null, "
+	        + KEY_EVENT_TYPE_DISABLED + " text not null, "
+	        + KEY_EVENT_TYPE_ELDERLY + " text not null, "
+	        + KEY_EVENT_TYPE_ENVIRONMENT + " text not null, "
+	        + KEY_EVENT_TYPE_SPECIAL + " text not null, "
 	        + KEY_EVENT_KEY + " text not null, "
 	        + "UNIQUE ("
 	        + KEY_EVENT_KEY
@@ -149,7 +159,9 @@ public class EventsDbAdapter {
      */
     public long createEvent(String eventkey, String name, String info, String details, 
     		String gplat, String gplong, String distance, String duration,
-    		String city, String street, String streetNumber) 
+    		String city, String street, String streetNumber,
+    		String typeAnimal, String typeChildren,String typeDisabled,
+    		String typeElderly,String typeEnvironment,String typeSpecial) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -164,7 +176,13 @@ public class EventsDbAdapter {
         initialValues.put(KEY_EVENT_GP_LONG, gplong);
         initialValues.put(KEY_EVENT_GP_LAT, gplat);
         initialValues.put(KEY_EVENT_KEY, eventkey);
-//        initialValues.put(KEY_EVENT_TYPE, type);
+        initialValues.put(KEY_EVENT_TYPE_ANIMAL, typeAnimal);
+        initialValues.put(KEY_EVENT_TYPE_CHILDREN, typeChildren);
+        initialValues.put(KEY_EVENT_TYPE_DISABLED, typeDisabled);
+        initialValues.put(KEY_EVENT_TYPE_ELDERLY, typeElderly);
+        initialValues.put(KEY_EVENT_TYPE_ENVIRONMENT, typeEnvironment);
+        initialValues.put(KEY_EVENT_TYPE_SPECIAL, typeSpecial);
+        
 
         long result=mDb.insert(DATABASE_TABLE, null, initialValues);
         return result;
@@ -211,7 +229,9 @@ public class EventsDbAdapter {
                     KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
                     KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
                     KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
-            		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER}, 
+            		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER,
+            		KEY_EVENT_TYPE_ANIMAL, KEY_EVENT_TYPE_CHILDREN, KEY_EVENT_TYPE_DISABLED,
+            		KEY_EVENT_TYPE_ELDERLY,KEY_EVENT_TYPE_ENVIRONMENT,KEY_EVENT_TYPE_SPECIAL}, 
                     KEY_EVENTID + "=" + eventId, null,
                     null, null, null, null);
         if (mCursor != null) {
@@ -234,22 +254,41 @@ public class EventsDbAdapter {
     	}
     	if(radius>0){
     		q=q+"AND KEY_EVENT_DISTANCE< radius ";
-    		arr[i]=Integer.toString(timeInMinutes);
+    		arr[i]=Integer.toString(radius);
     		i++;
     	}
     	if(types!=null){
     		for(int j=0;j<types.length;j++){
     			if(types[j]=="animals"){
-    	    		q=q+"AND KEY_EVENT_TYPE= 'animals' ";
+    	    		q=q+"AND "+ KEY_EVENT_TYPE_ANIMAL+ " = '1' ";
     	    		arr[i]=Integer.toString(timeInMinutes);
     	    		j++;
     			}
-    			if(types[j]=="Env"){
-    	    		q=q+"AND KEY_EVENT_TYPE= 'Env' ";
+    			if(types[j]=="children"){
+    				q=q+"AND "+ KEY_EVENT_TYPE_CHILDREN+ " = '1' ";
     	    		arr[i]=Integer.toString(timeInMinutes);
     	    		j++;
-    			}    		
-    		//TODO - FINISH	
+    			}  
+    			if(types[j]=="disabled"){
+    				q=q+"AND "+ KEY_EVENT_TYPE_DISABLED+ " = '1' ";
+    	    		arr[i]=Integer.toString(timeInMinutes);
+    	    		j++;
+    			}  
+    			if(types[j]=="elderly"){
+    				q=q+"AND "+ KEY_EVENT_TYPE_ELDERLY+ " = '1' ";
+    	    		arr[i]=Integer.toString(timeInMinutes);
+    	    		j++;
+    			}  
+    			if(types[j]=="environment"){
+    				q=q+"AND "+ KEY_EVENT_TYPE_ENVIRONMENT+ " = '1' ";
+    	    		arr[i]=Integer.toString(timeInMinutes);
+    	    		j++;
+    			}
+    			if(types[j]=="special"){
+    				q=q+"AND "+ KEY_EVENT_TYPE_SPECIAL+ " = '1' ";
+    	    		arr[i]=Integer.toString(timeInMinutes);
+    	    		j++;
+    			}
     		}
     	}
        	Cursor mCursor = mDb.rawQuery(q, arr);

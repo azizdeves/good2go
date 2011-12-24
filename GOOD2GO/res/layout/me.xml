@@ -1,6 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent">
     <ImageView
@@ -50,72 +51,21 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pointSeekMeView"
         android:text="Badges"/>
-    <TextView
-        android:id="@+id/userHistoryMeView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/userBadgesMeView"
-        android:text="History and future events"/>
-	
-	<TableLayout  
-	    xmlns:android="http://schemas.android.com/apk/res/android"  
-	    android:id="@+id/tableLayout1"  
-	    android:layout_width="fill_parent"  
-	    android:layout_height="fill_parent"  
-	    android:layout_below="@id/userHistoryMeView"
-	    android:shrinkColumns="*"  
-	    android:stretchColumns="*">  
-	  
-	    <TableRow  
-	        android:id="@+id/tableRow1"  
-	        android:layout_height="wrap_content"  
-	        android:layout_width="fill_parent">  
-	        <TextView  
-	            android:id="@+id/TextView04"  
-	            android:text="Date"></TextView>  
-	        <TextView  
-	            android:id="@+id/TextView04"  
-	            android:text="Event"  
-	            android:textStyle="bold"  
-	            android:typeface="serif"></TextView>  
-	        <TextView  
-	            android:id="@+id/TextView03"  
-	            android:text="Hours"  
-	            android:textStyle="bold"  
-	            android:typeface="serif"></TextView>  
-	        <TextView  
-	            android:id="@+id/TextView02"  
-	            android:text="Points"  
-	            android:textStyle="bold"  
-	            android:typeface="serif"></TextView>  
-	 
-	    </TableRow>  
-	    <TableRow  
-	        android:layout_height="wrap_content"  
-	        android:id="@+id/tableRow2"  
-	        android:layout_width="fill_parent">  
-	        <TextView  
-	            android:text="20/01/12"  
-	            android:id="@+id/textView2"  
-	            android:textStyle="bold"></TextView>  
-	        <TextView  
-	            android:id="@+id/textView3"  
-	            android:text="Reading books"  
-	            android:gravity="center_horizontal"></TextView>  
-	        <TextView  
-	            android:text="2+"  
-	            android:id="@+id/textView4"  
-	            android:gravity="center_horizontal"></TextView>  
-	        <TextView  
-	            android:text="100"  
-	            android:id="@+id/textView5"  
-	            android:gravity="center_horizontal"></TextView>  
-	
-	    </TableRow>  
-	
-	</TableLayout>    
     
-points
+	<TextView
+	        android:id="@+id/userHistoryMeView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/userBadgesMeView"
+	        android:text="History and future events"/>
+
+	<ListView android:id="@android:id/list"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent"
+                android:layout_below="@id/userHistoryMeView"
+               android:drawSelectorOnTop="false"/>
+
+
     
 </RelativeLayout>
 
