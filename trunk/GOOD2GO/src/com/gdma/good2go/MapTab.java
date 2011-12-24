@@ -98,7 +98,6 @@ public class MapTab extends MapActivity {
 				int i=0;
 				int duration=0;
 				int radius=0;
-////				List typesList = new ArrayList<>
 				if(bundleResult!=null){
 
 				}

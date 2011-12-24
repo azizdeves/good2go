@@ -1,7 +1,9 @@
 package com.gdma.good2go;
 
 
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import android.app.TabActivity;
 import android.content.Intent;
@@ -10,6 +12,7 @@ import android.location.Location;
 import android.os.Bundle;
 import android.widget.TabHost;
 
+import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 
@@ -39,7 +42,7 @@ public class MainScreen extends TabActivity {
         
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
-        List<Event> eventList=getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
+        List<Event> eventList=remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
         
 	
         /**POPULATE DB**/
@@ -64,14 +67,36 @@ public class MainScreen extends TabActivity {
         	//calculate duration        	
         	String duration=String.valueOf(event.getMinDuration().getMinutes())+ " min";
         	       	       	
-        	//populate db
+        	//populate db.
+
+        	Set<VolunteeringWith> listType = event.getVolunteeringWith();
+        	String animals="0", children="0", disabled="0", elderly="0", environment="0", special="0" ;
+        	
+        	for (Iterator<VolunteeringWith> iterator = listType.iterator(); iterator.hasNext();) {
+				VolunteeringWith volunteeringWith = (VolunteeringWith) iterator.next();
+				if(volunteeringWith==VolunteeringWith.ANIMALS)
+					animals="1";
+				else if(volunteeringWith==VolunteeringWith.CHILDREN)
+					children="1";
+//				else if(volunteeringWith==VolunteeringWith.DISABLED)
+//					disabled="1";
+//				else if(volunteeringWith==VolunteeringWith.ELDERLY)
+//					elderly="1";
+//				else if(volunteeringWith==VolunteeringWith.ENVIRONMENT)
+//					environment="1";
+//				else if(volunteeringWith==VolunteeringWith.SPECIAL)
+//					special="1";
+				
+			}
         	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
         			event.getDescription(),
         			event.getPrerequisites(),
         			eventLat, eventLon,distance,duration,
         			event.getEventAddress().getCity(),
         			event.getEventAddress().getStreet(),
-        			String.valueOf(event.getEventAddress().getNumber()));
+        			String.valueOf(event.getEventAddress().getNumber()),
+        			animals, children,disabled,
+        			elderly,environment,special);
         }
         
         /** SHOW TABS**/
@@ -113,7 +138,7 @@ public class MainScreen extends TabActivity {
         tabHost.setCurrentTab(0);
     }
 
-	private List<Event> getEventsFromServer(int lat, int lon) {
+	private List<Event> remote_getEventsFromServer(int lat, int lon) {
 		//TODO is this supposed to be async task?
 
 		String JSONResponse = null; // this will hold the response from server
