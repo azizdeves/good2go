@@ -124,12 +124,24 @@ public class MapTab extends MapActivity {
 						types[i]="special";
 						i++;
 					}
-					if( bundleResult.getInt("durationInMinutes")!=0)
+					if( bundleResult.getInt("durationInMinutes")>-1)
 						duration= bundleResult.getInt("durationInMinutes");
-					if( bundleResult.getInt("radius")!=0)
+					if( bundleResult.getInt("radius")>-1)
 						radius =  bundleResult.getInt("radius");
 				
 				}
+				
+//				Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
+//				debugging.show();	
+//				debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
+//				debugging.show();	
+//				for (int j = 0; j < types.length; j++) {
+//					debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
+//					debugging.show();					
+//				}
+	
+		
+				
 				Cursor eventsCursor = mDbHelper.fetchAllEvents();
 				//Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
 

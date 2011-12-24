@@ -51,13 +51,7 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 		final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
 		final ToggleButton togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
 		final ToggleButton togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
-		ToggleButton tbArray[]={togglebutton_Children, togglebutton_Env, togglebutton_Animals};
-		
-		String debugString = "";
-		String js = null; // hold the response from server
-		String types[] = {"","",""};
-		int i=0;
-
+//		final ToggleButton togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
 //		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 //		client.AddParam("action", "getEventsWithFilters");
 //		for (ToggleButton tb : tbArray) {
@@ -97,7 +91,7 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 
 
 		Bundle b = new Bundle();
-		if(togglebutton_Children.isChecked())
+		if(togglebutton_Animals.isChecked())
 			b.putString("animals","1");		
 		else
 			b.putString("animals","0");			
@@ -105,25 +99,26 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 			b.putString("children","1");
 		else
 			b.putString("children","0");
-		if(togglebutton_Children.isChecked())
-			b.putString("disabled","1");
+		if(togglebutton_Env.isChecked())
+			b.putString("environment","1");
 		else
-			b.putString("disabled","0");
-		if(togglebutton_Children.isChecked())
-			b.putString("elderly","1");	
-		else
-			b.putString("elderly","0");
-		if(togglebutton_Children.isChecked())
-			b.putString("environment","1");	
-		else
-			b.putString("environment","0");	
-		if(togglebutton_Children.isChecked())
-			b.putString("special","1");	
-		else
-			b.putString("special","0");	
+			b.putString("environment","0");
+//		if(togglebutton_Elderly.isChecked())
+//			b.putString("elderly","1");	
+//		else
+//			b.putString("elderly","0");
+//		if(togglebutton_Env.isChecked())
+//			b.putString("environment","1");	
+//		else
+//			b.putString("environment","0");	
+//		if(togglebutton_Children.isChecked())
+//			b.putString("special","1");	
+//		else
+//			b.putString("special","0");	
 		
-		b.putInt("durationInMInutes", duration);
+		b.putInt("durationInMinutes", duration);
 		b.putInt("radius", radius);
+
 		Intent intent = new Intent();
 		intent.putExtras(b);
 		setResult(RESULT_OK, intent);
