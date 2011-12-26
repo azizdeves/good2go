@@ -92,37 +92,44 @@ public class MapTab extends MapActivity {
 			if(resultCode==RESULT_OK){
 				Bundle bundleResult = data.getExtras();
 				int i=0;
+				int arrSize=0;
 				int duration=-1;
 				int radius=-1;
-				String[] types= new String[bundleResult.size()];
+				String[] types= new String[bundleResult.size()-2];
 				for (int j = 0; j < types.length; j++) {
 					types[i]="";
 				}
 				
 				if(bundleResult!=null){
-					if(bundleResult.getString("animals")=="1"){
+					if(bundleResult.getString("animals").compareTo("1")==0){
 						types[i]="animals";
 						i++;
+						arrSize++;
 					}	
 					if(bundleResult.getString("children")=="1"){
 						types[i]="children";
 						i++;
+						arrSize++;
 					}
 					if(bundleResult.getString("disabled")=="1"){
 						types[i]="disabled";
 						i++;
+						arrSize++;
 					}
 					if(bundleResult.getString("elderly")=="1"){
 						types[i]="elderly";
 						i++;
+						arrSize++;
 					}
 					if(bundleResult.getString("environment")=="1"){
 						types[i]="environment";
 						i++;
+						arrSize++;
 					}
 					if(bundleResult.getString("special")=="1"){
 						types[i]="special";
 						i++;
+						arrSize++;
 					}
 					if( bundleResult.getInt("durationInMinutes")>-1)
 						duration= bundleResult.getInt("durationInMinutes");
@@ -130,42 +137,38 @@ public class MapTab extends MapActivity {
 						radius =  bundleResult.getInt("radius");
 				
 				}
-				
+				/******DEBUGGING AREA******/
 //				Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
 //				debugging.show();	
 //				debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
 //				debugging.show();	
-//				for (int j = 0; j < types.length; j++) {
+//				for (int j = 0; j < arrSize; j++) {
 //					debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
 //					debugging.show();					
 //				}
 	
-		
+				/***END OF DEBUGGING AREA***/	
 				
-				Cursor eventsCursor = mDbHelper.fetchAllEvents();
-				//Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
-
+				//Cursor eventsCursor = mDbHelper.fetchAllEvents();
+				Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
+//				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
+//				debugging.show();
 				MapView mapView = (MapView) findViewById(R.id.mapview);
 		        List<Overlay> mapOverlays = mapView.getOverlays();
+		        mapOverlays.clear();
 		        Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
 		        EventsItemizedOverlay itemizedoverlay = new EventsItemizedOverlay(drawable,mapView);
 
-
+		        startManagingCursor(eventsCursor); 
 		        
-		        
-		        
-		        
-		        
-		        startManagingCursor(eventsCursor); //is this needed?
-		        
-		        int cnt=0;//BUG IN CURSOR
+		        int cnt=0;
 		        if(eventsCursor.moveToFirst()){
 		        	do{
 		        		EventOverlayItem point=MakeEventPoint(eventsCursor);
 		        		itemizedoverlay.addOverlay(point);
-		        		cnt++;//BUG IN CURSOR
+		        		cnt++;
 		        		}
-		        	while(eventsCursor.moveToNext()&&cnt!=6/*BUG IN CURSOR*/);
+		        	while(eventsCursor.moveToNext()&&cnt!=eventsCursor.getCount());
 		        }
 //		        if(eventsCursor!=null&&!eventsCursor.isClosed()){
 //		        	mDbHelper.close();

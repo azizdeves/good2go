@@ -23,6 +23,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
+import android.widget.Toast;
 
 /**
  * Simple notes database access helper class. Defines the basic CRUD operations
@@ -90,7 +91,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 1;
+    private static final int DATABASE_VERSION = 3;
 
     private final Context mCtx;
 
@@ -245,7 +246,7 @@ public class EventsDbAdapter {
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
 
     	int i=0;
-    	String q = "SELECT * FROM events WHERE 1 ";
+    	String q = "SELECT * FROM events WHERE 1=1 ";
     	String arr[] = null;
     	if(timeInMinutes>0){
     		q=q+"AND KEY_MIN_TIME_IN_MINUTES>= ? ";
@@ -253,43 +254,70 @@ public class EventsDbAdapter {
     		i++;
     	}
     	if(radius>0){
-    		q=q+"AND KEY_EVENT_DISTANCE< radius ";
+    		q=q+"AND KEY_EVENT_DISTANCE< ? ";
     		arr[i]=Integer.toString(radius);
     		i++;
     	}
     	if(types!=null){
-    		for(int j=0;j<types.length;j++){
+    		int j=0;
+    		boolean flag=false;
+    		while(j<types.length){
     			if(types[j]=="animals"){
-    	    		q=q+"AND "+ KEY_EVENT_TYPE_ANIMAL+ " = '1' ";
-    	    		arr[i]=Integer.toString(timeInMinutes);
-    	    		j++;
+    				if(!flag){
+    					q=q+" AND ("+ KEY_EVENT_TYPE_ANIMAL+ " = '1' ";
+    					flag=true;
+    				}
+    				else
+    					q=q+" OR"+ KEY_EVENT_TYPE_ANIMAL+ " = '1' ";
     			}
+    			
+    			
     			if(types[j]=="children"){
-    				q=q+"AND "+ KEY_EVENT_TYPE_CHILDREN+ " = '1' ";
-    	    		arr[i]=Integer.toString(timeInMinutes);
-    	    		j++;
+    				if(!flag){
+    					q=q+" AND ("+ KEY_EVENT_TYPE_CHILDREN+ " = '1' ";
+    					flag=true;
+    				}
+    				else
+    					q=q+" OR"+ KEY_EVENT_TYPE_CHILDREN+ " = '1' ";
     			}  
+
     			if(types[j]=="disabled"){
-    				q=q+"AND "+ KEY_EVENT_TYPE_DISABLED+ " = '1' ";
-    	    		arr[i]=Integer.toString(timeInMinutes);
-    	    		j++;
+    				if(!flag){
+    					q=q+ "AND ("+ KEY_EVENT_TYPE_DISABLED+ " = '1' ";
+    					flag=true;
+    				}
+    				else
+    					q=q+" OR"+ KEY_EVENT_TYPE_DISABLED+ " = '1' ";
     			}  
     			if(types[j]=="elderly"){
-    				q=q+"AND "+ KEY_EVENT_TYPE_ELDERLY+ " = '1' ";
-    	    		arr[i]=Integer.toString(timeInMinutes);
-    	    		j++;
+    				if(!flag){
+    					q=q+" AND ("+ KEY_EVENT_TYPE_ELDERLY+ " = '1' ";
+    					flag=true;
+    				}
+    				else
+    					q=q+" OR"+ KEY_EVENT_TYPE_ELDERLY+ " = '1' ";
     			}  
     			if(types[j]=="environment"){
-    				q=q+"AND "+ KEY_EVENT_TYPE_ENVIRONMENT+ " = '1' ";
-    	    		arr[i]=Integer.toString(timeInMinutes);
-    	    		j++;
-    			}
+    				if(!flag){
+    					q=q+" AND ("+ KEY_EVENT_TYPE_ENVIRONMENT+ " = '1' ";
+    					flag=true;
+    				}
+    				else
+    					q=q+" OR"+ KEY_EVENT_TYPE_ENVIRONMENT+ " = '1' ";
+    			}  
     			if(types[j]=="special"){
-    				q=q+"AND "+ KEY_EVENT_TYPE_SPECIAL+ " = '1' ";
-    	    		arr[i]=Integer.toString(timeInMinutes);
-    	    		j++;
-    			}
+    				if(!flag){
+    					q=q+" AND ("+ KEY_EVENT_TYPE_SPECIAL+ " = '1' ";
+    					flag=true;
+    				}
+    				else
+    					q=q+" OR"+ KEY_EVENT_TYPE_SPECIAL+ " = '1' ";
+    			}      			
+
+    			j++;
     		}
+    		if(flag)
+    			q=q+")";
     	}
        	Cursor mCursor = mDb.rawQuery(q, arr);
     	if (mCursor != null) {
@@ -297,11 +325,6 @@ public class EventsDbAdapter {
         }
         return mCursor;
 
-    }  
-    //TODO REMOVE
-	public Cursor fetchEventByFilters(String types, int radius, int timeInMinutes) throws SQLException {
-
-    	return fetchAllEvents();
     }  
     /**
      * Update the event using the details provided. The event to be updated is

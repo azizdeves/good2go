@@ -11,6 +11,7 @@ import android.content.res.Resources;
 import android.location.Location;
 import android.os.Bundle;
 import android.widget.TabHost;
+import android.widget.Toast;
 
 import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.communication.RestClient;
@@ -43,8 +44,7 @@ public class MainScreen extends TabActivity {
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
         List<Event> eventList=remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
-        
-	
+
         /**POPULATE DB**/
         /**TODO: drop what we have if it's a new day
          * or if there's been a change since last read
@@ -86,7 +86,7 @@ public class MainScreen extends TabActivity {
 //					environment="1";
 //				else if(volunteeringWith==VolunteeringWith.SPECIAL)
 //					special="1";
-				
+			
 			}
         	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
         			event.getDescription(),
@@ -152,7 +152,8 @@ public class MainScreen extends TabActivity {
 			client.Execute(1); //1 is HTTP GET
 		}
 		catch (Exception e){
-			return null;
+			Toast debugging=Toast.makeText(this, "Error: could not connect to the server", Toast.LENGTH_LONG);
+			debugging.show();
 		}
 		
 		JSONResponse = client.getResponse();
