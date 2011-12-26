@@ -247,14 +247,14 @@ public class EventsDbAdapter {
 
     	int i=0;
     	String q = "SELECT * FROM events WHERE 1=1 ";
-    	String arr[] = null;
+    	String arr[] = {"", ""};
     	if(timeInMinutes>0){
-    		q=q+"AND KEY_MIN_TIME_IN_MINUTES>= ? ";
+    		q=q+" AND "+ KEY_EVENT_DURATION + ">=" + "\' " +Integer.toString(timeInMinutes)+"\'";
     		arr[i]=Integer.toString(timeInMinutes);
     		i++;
     	}
     	if(radius>0){
-    		q=q+"AND KEY_EVENT_DISTANCE< ? ";
+    		q=q+" AND "+ KEY_EVENT_DISTANCE+" <" +  "\' "+ Integer.toString(radius)+ "\'";
     		arr[i]=Integer.toString(radius);
     		i++;
     	}
@@ -264,54 +264,54 @@ public class EventsDbAdapter {
     		while(j<types.length){
     			if(types[j]=="animals"){
     				if(!flag){
-    					q=q+" AND ("+ KEY_EVENT_TYPE_ANIMAL+ " = '1' ";
+    					q=q+" AND ("+ KEY_EVENT_TYPE_ANIMAL+ " = \'1\' ";
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_ANIMAL+ " = '1' ";
+    					q=q+" OR"+ KEY_EVENT_TYPE_ANIMAL+ " = \'1\' ";
     			}
     			
     			
     			if(types[j]=="children"){
     				if(!flag){
-    					q=q+" AND ("+ KEY_EVENT_TYPE_CHILDREN+ " = '1' ";
+    					q=q+" AND ("+ KEY_EVENT_TYPE_CHILDREN+ " = \'1\'";
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_CHILDREN+ " = '1' ";
+    					q=q+" OR"+ KEY_EVENT_TYPE_CHILDREN+ " = \'1\' ";
     			}  
 
     			if(types[j]=="disabled"){
     				if(!flag){
-    					q=q+ "AND ("+ KEY_EVENT_TYPE_DISABLED+ " = '1' ";
+    					q=q+ "AND ("+ KEY_EVENT_TYPE_DISABLED+ " = \'1\' ";
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_DISABLED+ " = '1' ";
+    					q=q+" OR"+ KEY_EVENT_TYPE_DISABLED+ " = \'1\' ";
     			}  
     			if(types[j]=="elderly"){
     				if(!flag){
-    					q=q+" AND ("+ KEY_EVENT_TYPE_ELDERLY+ " = '1' ";
+    					q=q+" AND ("+ KEY_EVENT_TYPE_ELDERLY+ " = \'1\' ";
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_ELDERLY+ " = '1' ";
+    					q=q+" OR"+ KEY_EVENT_TYPE_ELDERLY+ " = \'1\' ";
     			}  
     			if(types[j]=="environment"){
     				if(!flag){
-    					q=q+" AND ("+ KEY_EVENT_TYPE_ENVIRONMENT+ " = '1' ";
+    					q=q+" AND ("+ KEY_EVENT_TYPE_ENVIRONMENT+ " = \'1\' ";
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_ENVIRONMENT+ " = '1' ";
+    					q=q+" OR"+ KEY_EVENT_TYPE_ENVIRONMENT+ " = \'1\' ";
     			}  
     			if(types[j]=="special"){
     				if(!flag){
-    					q=q+" AND ("+ KEY_EVENT_TYPE_SPECIAL+ " = '1' ";
+    					q=q+" AND ("+ KEY_EVENT_TYPE_SPECIAL+ " = \'1\' ";
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_SPECIAL+ " = '1' ";
+    					q=q+" OR"+ KEY_EVENT_TYPE_SPECIAL+ " = \'1\'";
     			}      			
 
     			j++;
@@ -319,7 +319,7 @@ public class EventsDbAdapter {
     		if(flag)
     			q=q+")";
     	}
-       	Cursor mCursor = mDb.rawQuery(q, arr);
+       	Cursor mCursor = mDb.rawQuery(q, null);
     	if (mCursor != null) {
             mCursor.moveToFirst();
         }

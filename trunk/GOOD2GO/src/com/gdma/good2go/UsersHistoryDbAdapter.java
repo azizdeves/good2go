@@ -20,7 +20,6 @@ import android.util.Log;
  */
 public class UsersHistoryDbAdapter {
 	
-	public static final String KEY_EVENT_KEY = "eventkey";
 	public static final String KEY_EVENTID = "_id";
 	public static final String KEY_EVENTNAME = "name";
 	public static final String KEY_EVENT_DURATION = "duration";
@@ -43,11 +42,8 @@ public class UsersHistoryDbAdapter {
     	        + KEY_EVENTNAME +" text not null, "
     	        + KEY_EVENTDATE +" text not null, "
     	        + KEY_EVENPOINTS +" text not null, "
-    	        + KEY_EVENT_DURATION + " text not null, "
-    	        + KEY_EVENT_KEY + " text not null, "
-    	        + "UNIQUE ("
-    	        + KEY_EVENT_KEY
-    	        + "));";
+    	        + KEY_EVENT_DURATION + " text not null "
+    	        +");";
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -113,15 +109,14 @@ public class UsersHistoryDbAdapter {
      * @return rowId or -1 if failed
      */
     
-    public long createUsersHistory(String eventkey, String name, String date, String points,String duration) 
+    public long createUsersHistory(String name, String date, String points,String duration) 
     {
     	
         ContentValues initialValues = new ContentValues();
         initialValues.put(KEY_EVENTNAME, name);
-        initialValues.put(KEY_EVENT_DURATION, duration);
         initialValues.put(KEY_EVENTDATE, date);
         initialValues.put(KEY_EVENPOINTS, points);
-        initialValues.put(KEY_EVENT_KEY, eventkey);
+        initialValues.put(KEY_EVENT_DURATION, duration);
         long result=mDb.insert(DATABASE_TABLE, null, initialValues);
         return result;
     }
@@ -144,7 +139,7 @@ public class UsersHistoryDbAdapter {
     public Cursor fetchAllUsersHistory() {
 
         return mDb.query(DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
-        		KEY_EVENT_DURATION,KEY_EVENTDATE, KEY_EVENPOINTS, KEY_EVENT_KEY}, null, null, null, null, null, null);
+        		KEY_EVENTDATE, KEY_EVENPOINTS,KEY_EVENT_DURATION}, null, null, null, null, null, null);
     }
 
 

@@ -1,6 +1,7 @@
 package com.gdma.good2go;
 
 
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
@@ -141,13 +142,14 @@ public class MainScreen extends TabActivity {
 	private List<Event> remote_getEventsFromServer(int lat, int lon) {
 		//TODO is this supposed to be async task?
 
+		
 		String JSONResponse = null; // this will hold the response from server
 		
 		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getEvents");
 		client.AddParam("lon", String.valueOf(lon/1000));
 		client.AddParam("lat", String.valueOf(lat/1000));
-		
+		client.AddParam("userDate", (new Date()).toString());
 		try{
 			client.Execute(1); //1 is HTTP GET
 		}
