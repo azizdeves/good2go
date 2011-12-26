@@ -25,24 +25,22 @@ public class ListTab extends ListActivity {
 	Cursor mEventsCursor;
 	
 	private String[] mColumns;
-	
+	private Button buttonFilterEvents;
 
     /** Called when the activity is first created. */
     @Override
+    
+    
+//    public void onCreate(Bundle savedInstanceState) {
+//        super.onCreate(savedInstanceState);
+//        setContentView(R.layout.map);
+//        onCreateHelper();
+//       
+//    }
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
-    	
-    	
-    	/**GET POINTS FROM LOCAL DB*/
-    	mDbHelper = new EventsDbAdapter(this);
-		mDbHelper.open(); //TODO CLOSE WHEN THE APP IS CLOSED
-		
-		mEventsCursor = mDbHelper.fetchAllEvents();
-		startManagingCursor(mEventsCursor);
-	
-		showPointsInList();
-        setContentView(R.layout.list);
-		final Button buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
+       	onCreateHelper();
+
     }
     
     private void showPointsInList(){
@@ -123,6 +121,13 @@ public class ListTab extends ListActivity {
 
 				startManagingCursor(mEventsCursor);
  				showPointsInList();
+ 				
+				buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_launcher); 
+				buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+		            public void onClick(View v) {
+		            	onCreateHelper();
+		            }
+		        });
  			}
  			if(resultCode==RESULT_CANCELED){
 			
@@ -148,4 +153,25 @@ public class ListTab extends ListActivity {
     	Intent myIntent = new Intent(view.getContext(),FilterTab.class);
     	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
 	}
+	
+	private void onCreateHelper(){
+    	/**GET POINTS FROM LOCAL DB*/
+    	mDbHelper = new EventsDbAdapter(this);
+		mDbHelper.open(); //TODO CLOSE WHEN THE APP IS CLOSED
+		
+		mEventsCursor = mDbHelper.fetchAllEvents();
+		startManagingCursor(mEventsCursor);
+	
+		showPointsInList();
+        setContentView(R.layout.list);
+		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
+        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_grey); 
+        buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	getFilterScreen(v);
+            }
+        });
+		
+	}
+	
 }

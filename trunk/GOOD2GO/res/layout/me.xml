@@ -73,12 +73,7 @@
                 android:layout_below="@id/userHistoryMeView"
                android:drawSelectorOnTop="false"/>
 
-	<TextView
-	        android:id="@+id/userFutureEventsMeView"
-	        android:layout_width="wrap_content"
-	        android:layout_height="wrap_content"
-	        android:layout_below="@id/userHistoryMeView"
-	        android:text="History"/>
+
 
 </RelativeLayout>
 

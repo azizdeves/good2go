@@ -268,7 +268,7 @@ public class EventsDbAdapter {
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_ANIMAL+ " = \'1\' ";
+    					q=q+" OR "+ KEY_EVENT_TYPE_ANIMAL+ " = \'1\' ";
     			}
     			
     			
@@ -278,7 +278,7 @@ public class EventsDbAdapter {
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_CHILDREN+ " = \'1\' ";
+    					q=q+" OR "+ KEY_EVENT_TYPE_CHILDREN+ " = \'1\' ";
     			}  
 
     			if(types[j]=="disabled"){
@@ -287,7 +287,7 @@ public class EventsDbAdapter {
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_DISABLED+ " = \'1\' ";
+    					q=q+" OR "+ KEY_EVENT_TYPE_DISABLED+ " = \'1\' ";
     			}  
     			if(types[j]=="elderly"){
     				if(!flag){
@@ -295,7 +295,7 @@ public class EventsDbAdapter {
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_ELDERLY+ " = \'1\' ";
+    					q=q+" OR "+ KEY_EVENT_TYPE_ELDERLY+ " = \'1\' ";
     			}  
     			if(types[j]=="environment"){
     				if(!flag){
@@ -303,7 +303,7 @@ public class EventsDbAdapter {
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_ENVIRONMENT+ " = \'1\' ";
+    					q=q+" OR "+ KEY_EVENT_TYPE_ENVIRONMENT+ " = \'1\' ";
     			}  
     			if(types[j]=="special"){
     				if(!flag){
@@ -311,7 +311,7 @@ public class EventsDbAdapter {
     					flag=true;
     				}
     				else
-    					q=q+" OR"+ KEY_EVENT_TYPE_SPECIAL+ " = \'1\'";
+    					q=q+" OR "+ KEY_EVENT_TYPE_SPECIAL+ " = \'1\'";
     			}      			
 
     			j++;

@@ -48,10 +48,12 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 
     public void getEventsWithFilters(View view){
    	
-		final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
-		final ToggleButton togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
 		final ToggleButton togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
-//		final ToggleButton togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
+    	final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
+		final ToggleButton togglebutton_Disabled = (ToggleButton) findViewById(R.id.disabledFilterButton);
+		final ToggleButton togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
+		final ToggleButton togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
+		final ToggleButton togglebutton_Special = (ToggleButton) findViewById(R.id.specialFilterButton);
 //		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 //		client.AddParam("action", "getEventsWithFilters");
 //		for (ToggleButton tb : tbArray) {
@@ -91,6 +93,7 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 
 
 		Bundle b = new Bundle();
+		
 		if(togglebutton_Animals.isChecked())
 			b.putString("animals","1");		
 		else
@@ -103,18 +106,18 @@ public class FilterTab extends Activity implements SeekBar.OnSeekBarChangeListen
 			b.putString("environment","1");
 		else
 			b.putString("environment","0");
-//		if(togglebutton_Elderly.isChecked())
-//			b.putString("elderly","1");	
-//		else
-//			b.putString("elderly","0");
-//		if(togglebutton_Env.isChecked())
-//			b.putString("environment","1");	
-//		else
-//			b.putString("environment","0");	
-//		if(togglebutton_Children.isChecked())
-//			b.putString("special","1");	
-//		else
-//			b.putString("special","0");	
+		if(togglebutton_Elderly.isChecked())
+			b.putString("elderly","1");	
+		else
+			b.putString("elderly","0");
+		if(togglebutton_Disabled.isChecked())
+			b.putString("disabled","1");	
+		else
+			b.putString("disabled","0");	
+		if(togglebutton_Special.isChecked())
+			b.putString("special","1");	
+		else
+			b.putString("special","0");	
 		
 		b.putInt("durationInMinutes", duration);
 		b.putInt("radius", radius);
