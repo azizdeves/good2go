@@ -57,21 +57,71 @@ public class ListTab extends ListActivity {
  	protected void onActivityResult(int requestCode, int resultCode, Intent data)
  	{
  		super.onActivityResult(requestCode, resultCode, data);
- 		 if (requestCode == GET_FILTERED_EVENTS) {
- 			if(resultCode==RESULT_OK){
- 				Bundle bundleResult = data.getExtras();
- 				int i=0;
- 				int duration=0;
- 				int radius=0;
- 				String types = (bundleResult!=null) ? bundleResult.getString("1"):null;
-// 				Toast debugging=Toast.makeText(this,types, Toast.LENGTH_LONG);
-// 				debugging.show();	
- 				duration= (bundleResult!=null) ? bundleResult.getInt("durationInMinutes"): -1;
- 				radius = (bundleResult!=null) ? bundleResult.getInt("radius"):-1;
+		 if (requestCode == GET_FILTERED_EVENTS) {
+			if(resultCode==RESULT_OK){
+				Bundle bundleResult = data.getExtras();
+				int i=0;
+				int arrSize=0;
+				int duration=-1;
+				int radius=-1;
+				String[] types= new String[bundleResult.size()-2];
+				for (int j = 0; j < types.length; j++) {
+					types[i]="";
+				}
+				
+				if(bundleResult!=null){
+					if(bundleResult.getString("animals").compareTo("1")==0){
+						types[i]="animals";
+						i++;
+						arrSize++;
+					}	
+					if(bundleResult.getString("children")=="1"){
+						types[i]="children";
+						i++;
+						arrSize++;
+					}
+					if(bundleResult.getString("disabled")=="1"){
+						types[i]="disabled";
+						i++;
+						arrSize++;
+					}
+					if(bundleResult.getString("elderly")=="1"){
+						types[i]="elderly";
+						i++;
+						arrSize++;
+					}
+					if(bundleResult.getString("environment")=="1"){
+						types[i]="environment";
+						i++;
+						arrSize++;
+					}
+					if(bundleResult.getString("special")=="1"){
+						types[i]="special";
+						i++;
+						arrSize++;
+					}
+					if( bundleResult.getInt("durationInMinutes")>-1)
+						duration= bundleResult.getInt("durationInMinutes");
+					if( bundleResult.getInt("radius")>-1)
+						radius =  bundleResult.getInt("radius");
+				
+				}
+				/******DEBUGGING AREA******/
+//				Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
+//				debugging.show();	
+//				debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
+//				debugging.show();	
+//				for (int j = 0; j < arrSize; j++) {
+//					debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
+//					debugging.show();					
+//				}
+	
+				/***END OF DEBUGGING AREA***/	
+				
+				//mEventsCursor = mDbHelper.fetchAllEvents();
+				mEventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
 
- 				mEventsCursor = mDbHelper.fetchAllEvents();
- 				//mEventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration)
- 				startManagingCursor(mEventsCursor);
+				startManagingCursor(mEventsCursor);
  				showPointsInList();
  			}
  			if(resultCode==RESULT_CANCELED){

@@ -73,15 +73,12 @@
                 android:layout_below="@id/userHistoryMeView"
                android:drawSelectorOnTop="false"/>
 
+	<TextView
+	        android:id="@+id/userFutureEventsMeView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/userHistoryMeView"
+	        android:text="History"/>
 
-    <Button 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true" 
-        android:id="@+id/FutureEventsMeViewButton" 
-    	android:onClick="getUsersFutureEvents"
-    	android:text="futureEvents" 
-    	/>    
 </RelativeLayout>
 
