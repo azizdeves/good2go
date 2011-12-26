@@ -15,16 +15,17 @@
     
     <ToggleButton 	    
         android:id="@+id/childrenFilterButton"
-	    android:layout_width="80dip"
-	    android:layout_height="40dip"  
+	    android:layout_width="105dip"
+	    android:layout_height="105dip"  
 	    android:layout_below ="@id/filterTitle"     
         android:textOn="children on"
+
         android:textOff="children" /> 
 	
 	<ToggleButton
 	    android:id="@+id/envFilterButton"
-	    android:layout_width="80dip"
-	    android:layout_height="40dip" 
+	    android:layout_width="105dip"
+	    android:layout_height="105dip" 
 	    android:layout_below ="@id/filterTitle"     
 	    android:layout_toRightOf ="@id/childrenFilterButton" 
 	    android:textOn="Env-on"	
@@ -32,18 +33,47 @@
 
 	<ToggleButton
 	    android:id="@+id/animalsFilterButton"
-	    android:layout_width="80dip"
-	    android:layout_height="40dip" 
+	    android:layout_width="105dip"
+	    android:layout_height="105dip" 
 	    android:layout_below ="@id/filterTitle"     
 	    android:layout_toRightOf ="@id/envFilterButton" 	    
 	    android:textOn="Animals-on"	
 	    android:textOff="Animals"	/>    
 
+		
+	<ToggleButton 	    
+        android:id="@+id/disabledFilterButton"
+	    android:layout_width="105dip"
+	    android:layout_height="105dip"  
+	    android:layout_below ="@id/childrenFilterButton"     
+        android:textOn="disabled on"
+        android:textOff="disabled" /> 
+	
+	<ToggleButton
+	    android:id="@+id/specialFilterButton"
+	    android:layout_width="105dip"
+	    android:layout_height="105dip" 
+	    android:layout_below ="@+id/envFilterButton"     
+	    android:layout_toRightOf ="@id/disabledFilterButton" 
+	    android:textOn="special-on"	
+	    android:textOff="special"	/>      
+
+	<ToggleButton
+	    android:id="@+id/elderlyFilterButton"
+	    android:layout_width="105dip"
+	    android:layout_height="105dip" 
+	    android:layout_below ="@+id/animalsFilterButton"     
+	    android:layout_toRightOf ="@id/specialFilterButton" 	    
+	    android:textOn="elderly-on"	
+	    android:textOff="elderly"	/>    
+	
+	
+	
     <TextView
         android:id="@+id/duration"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-	    android:layout_below ="@id/animalsFilterButton"    
+	    android:layout_below ="@id/disabledFilterButton"    
         android:textStyle="bold"
         android:text="Duration "/>	
 

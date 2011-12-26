@@ -14,11 +14,9 @@
     <Button 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:drawableBottom="@drawable/ic_filter_grey"
 		android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true" 
         android:id="@+id/FilterEventsMapViewButton" 
-    	android:onClick="getFilterScreen" 
     	android:background="@null"
     	/>
     
