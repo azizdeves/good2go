@@ -85,10 +85,9 @@ public class MeTab extends ListActivity {
         
       mDbHelper = new UsersHistoryDbAdapter(this);
       mDbHelper.open();
-      mDbHelper.createUsersHistory("Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
-      mDbHelper.createUsersHistory("Clean the beach", "13/13/13", "30", "2h") ; 
+      mDbHelper.createUsersHistory("mor1","Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
+      mDbHelper.createUsersHistory("mor2", "Clean the beach", "13/13/13", "30", "2h") ; 
       mEventsCursor=mDbHelper.fetchAllUsersHistory();
-      int debugger = mEventsCursor.getCount(); 
       startManagingCursor(mEventsCursor);
       showHistoryInList();
       

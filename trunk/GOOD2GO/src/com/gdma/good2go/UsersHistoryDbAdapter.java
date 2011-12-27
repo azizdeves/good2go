@@ -25,7 +25,8 @@ public class UsersHistoryDbAdapter {
 	public static final String KEY_EVENT_DURATION = "duration";
 	public static final String KEY_EVENTDATE = "date";
 	public static final String KEY_EVENPOINTS = "points";
-
+	public static final String KEY_EVENTKEY = "eventkey";
+	
     private static final String TAG = "UsersHistoryDbAdapter";
     private DatabaseHelper mDbHelper;
     private SQLiteDatabase mDb;
@@ -42,8 +43,11 @@ public class UsersHistoryDbAdapter {
     	        + KEY_EVENTNAME +" text not null, "
     	        + KEY_EVENTDATE +" text not null, "
     	        + KEY_EVENPOINTS +" text not null, "
-    	        + KEY_EVENT_DURATION + " text not null "
-    	        +");";
+    	        + KEY_EVENT_DURATION + " text not null, "
+    	        + KEY_EVENTKEY + " text not null, "
+    	        + "UNIQUE ("
+    	        + KEY_EVENTKEY
+    	        + "));";
 
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
@@ -109,10 +113,11 @@ public class UsersHistoryDbAdapter {
      * @return rowId or -1 if failed
      */
     
-    public long createUsersHistory(String name, String date, String points,String duration) 
+    public long createUsersHistory(String key, String name, String date, String points,String duration) 
     {
     	
         ContentValues initialValues = new ContentValues();
+    	initialValues.put(KEY_EVENTKEY, key);
         initialValues.put(KEY_EVENTNAME, name);
         initialValues.put(KEY_EVENTDATE, date);
         initialValues.put(KEY_EVENPOINTS, points);
