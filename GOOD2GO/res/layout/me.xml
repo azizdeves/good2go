@@ -59,12 +59,63 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pointSeekMeView"
         android:text="Badges"/>
+
+    <ImageView
+        android:id="@+id/mrNiceGuy_PicMeView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+		android:layout_below="@id/userBadgesMeView"
+		android:layout_marginLeft="5dp"
+        android:src="@drawable/child_event" />
+    <ImageView
+        android:id="@+id/angle_PicMeView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+		android:layout_below="@id/userBadgesMeView"
+				android:layout_marginLeft="5dp"
+	    android:layout_toRightOf ="@id/mrNiceGuy_PicMeView" 
+        android:src="@drawable/child_event" />
+    <ImageView
+        android:id="@+id/motherTeresa_PicMeView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+		android:layout_below="@id/userBadgesMeView"
+				android:layout_marginLeft="5dp"
+	    android:layout_toRightOf ="@id/angle_PicMeView" 
+        android:src="@drawable/child_event" />
+
+    <ImageView
+        android:id="@+id/buddhistMonk_PicMeView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+		android:layout_below="@id/userBadgesMeView"
+		android:layout_marginLeft="5dp"
+	    android:layout_toRightOf ="@id/motherTeresa_PicMeView" 
+        android:src="@drawable/child_event" />
     
+    <ImageView
+        android:id="@+id/dalaiLama_PicMeView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+		android:layout_below="@id/userBadgesMeView"
+		android:layout_marginLeft="5dp"
+	    android:layout_toRightOf ="@id/buddhistMonk_PicMeView" 
+        android:src="@drawable/child_event" />    
+
+        <ImageView
+        android:id="@+id/god_PicMeView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+		android:layout_below="@id/userBadgesMeView"
+		android:layout_marginLeft="5dp"
+	    android:layout_toRightOf ="@id/dalaiLama_PicMeView" 
+        android:src="@drawable/child_event" />   
+        
 	<TextView
 	        android:id="@+id/userHistoryMeView"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        android:layout_below="@id/userBadgesMeView"
+	        android:layout_below="@id/mrNiceGuy_PicMeView"
 	        android:text="History"/>
 
 	<ListView android:id="@android:id/list"

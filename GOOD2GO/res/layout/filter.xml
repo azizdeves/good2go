@@ -19,7 +19,6 @@
 	    android:layout_height="105dip"  
 	    android:layout_below ="@id/filterTitle"     
         android:textOn="children on"
-
         android:textOff="children" /> 
 	
 	<ToggleButton
@@ -82,9 +81,8 @@
         android:layout_width="280dip"
         android:layout_height="wrap_content"
         android:layout_below ="@id/duration"   
-        android:max="100"
-        android:progress="1"
-        android:secondaryProgress="2" />
+        android:max="24"
+        android:progress="2" />
    		    
 	<TextView
 		android:id="@+id/durationSeekVal"
@@ -92,7 +90,7 @@
 		android:layout_height="wrap_content"
         android:layout_toRightOf="@id/durationSeek"
         android:layout_below ="@id/duration"   
-		android:text="2h"/>
+		/>
 
         	
     <TextView
@@ -108,8 +106,7 @@
         android:layout_height="wrap_content"
         android:layout_below ="@id/radius"  
         android:max="100"
-        android:progress="1"
-        android:secondaryProgress="2" />
+        android:progress="15" />
    
  	<TextView
 		android:id="@+id/radiusSeekVal"
@@ -117,7 +114,7 @@
 		android:layout_height="wrap_content"
         android:layout_toRightOf="@id/radiusSeek"
         android:layout_below ="@id/radius"   
-		android:text="10km"/>  		
+		/>  		
     
     <Button 
         android:layout_width="wrap_content"

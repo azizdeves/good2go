@@ -1,6 +1,8 @@
 package com.gdma.good2go;
 
+import java.util.ArrayList;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 
 import android.R.drawable;
@@ -12,6 +14,7 @@ import android.view.Gravity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -48,10 +51,11 @@ public class MeTab extends ListActivity {
         setContentView(R.layout.me);
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
         
-  
+//("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
         points=70;
+        badge="BUDDHIST_MONK";
 //      points=remote_getUsersKarma(userName);
-// 		badge=Karma.Badge.getMyBadge(points)       
+// 		badge=Karma.Badge.getMyBadge(points);
 //      User u = getUsersDetails(userName);
 //      userFirstName=u.getFirstName();
 //      userLastName=u.getLastName();
@@ -59,7 +63,16 @@ public class MeTab extends ListActivity {
         TextView tvName = (TextView) findViewById(R.id.userNameMeView);
         TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);
         SeekBar pointsProg = (SeekBar)findViewById(R.id.pointSeekMeView);
+        setBadgesPictures(badge);
         
+//        for (Iterator iterator = badges.iterator(); iterator.hasNext();) {
+//			String b= (String) iterator.next();
+//			if(b.compareTo("MR_NICE_GUY")==0){
+//				
+//			}
+//			
+//		}
+
         tvName.setText(userNiceName);
         tvPoints.setText(Integer.toString((int)points));
         pointsProg.setProgress((int)points);
@@ -72,6 +85,13 @@ public class MeTab extends ListActivity {
 //        {
 //        	mDbHelper.createUsersHistory(event.getEventKey(), event.getEventName(), event.getMinDuration(), event.getEventDate, event.getEventPoints);
 //        }
+//      List<Event> futureList=remote_getUsersFutureEvents(userId);
+//      mDbHelper = new UsersHistoryDbAdapter(this);
+//      mDbHelper.open();
+//      for(Event event : historyList)
+//      {
+//      	mDbHelper.createUsersHistory(event.getEventKey(), event.getEventName(), event.getMinDuration(), event.getEventDate, event.getEventPoints);
+//      }        
 //		
 //		mEventsCursor = mDbHelper.fetchAllUsersHistory();
 //		startManagingCursor(mEventsCursor);
@@ -109,13 +129,12 @@ public class MeTab extends ListActivity {
 			debugging.show();
 			return -1;
 		}
-		return 0;
-//		
-//		JsonParser parser = new JsonParser();
-//		
-//		jsonArray = parser.parse(json).getAsJsonArray();
-//		for (int i=0;i<jsonArray.size();i++){
-//			JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
+		String JSONResponse = client.getResponse();
+		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+		
+		//Parse the response from server
+		long p = Long.parseLong(JSONResponse);
+		return p;
 	}
 
 
@@ -197,4 +216,70 @@ public class MeTab extends ListActivity {
 		pw.dismiss();
 
 	}
+	//("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");	
+	
+	private void setBadgesPictures(String s){
+		if(s.compareTo("MR_NICE_GUY")==0){
+			setPicture1();
+		}
+		if(s.compareTo("ANGEL")==0){
+			setPicture1();
+			setPicture2();
+		}
+		if(s.compareTo("MOTHER_TERESA")==0){
+			setPicture1();
+			setPicture2();
+			setPicture3();
+		}
+		if(s.compareTo("BUDDHIST_MONK")==0){
+			setPicture1();
+			setPicture2();
+			setPicture3();
+			setPicture4();
+		}
+		if(s.compareTo("DALAI_LAMA")==0){
+			setPicture1();
+			setPicture2();
+			setPicture3();
+			setPicture4();
+			setPicture5();
+			
+		}
+		if(s.compareTo("GOD")==0){
+			setPicture1();
+			setPicture2();
+			setPicture3();
+			setPicture4();
+			setPicture5();
+			setPicture6();
+			
+		}
+
+	}
+	
+	private void setPicture1(){
+		ImageView im1=(ImageView)findViewById(R.id.mrNiceGuy_PicMeView);
+		im1.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+	}
+	private void setPicture2(){
+		ImageView im2=(ImageView)findViewById(R.id.angle_PicMeView);
+		im2.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+	}
+	private void setPicture3(){
+		ImageView im3=(ImageView)findViewById(R.id.motherTeresa_PicMeView);
+		im3.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+	}
+	private void setPicture4(){
+		ImageView im4=(ImageView)findViewById(R.id.buddhistMonk_PicMeView);
+		im4.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+	}
+	private void setPicture5(){
+		ImageView im5=(ImageView)findViewById(R.id.dalaiLama_PicMeView);
+		im5.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+	}
+	private void setPicture6(){
+		ImageView im6=(ImageView)findViewById(R.id.god_PicMeView);
+		im6.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+	}
+	
 }

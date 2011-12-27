@@ -2,12 +2,17 @@ package com.gdma.good2go;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Date;
+import java.util.List;
 
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Facebook.DialogListener;
 import com.gdma.good2go.R;
+import com.gdma.good2go.communication.RestClient;
+
+import flexjson.JSONDeserializer;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -24,7 +29,7 @@ public class CountMeIn extends Activity {
     private String mEventDesc;
     private String mFbStatus;
 	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
-	
+    RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");	
     
     
 	@Override
@@ -108,6 +113,10 @@ public class CountMeIn extends Activity {
 		   
 	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
+	        	
+	        	//remote_registerToOccurrence(username, key);
+	        	
+	        	
 	           // mSoundManager.playSound(3);
 	            /*Intent newIntent = new Intent(view.getContext(), 
 	                            CountMeIn.class);
@@ -128,6 +137,22 @@ public class CountMeIn extends Activity {
     	super.onActivityResult(requestCode, resultCode, data);	
 
     	facebook.authorizeCallback(requestCode, resultCode, data);
+    }
+    
+    private void remote_registerToOccurrence(String username, String occurrenceKey) {
+		client.AddParam("action", "registerToOccurrence");
+		client.AddParam("username", username);
+		client.AddParam("occurrenceKey", occurrenceKey);
+		client.AddParam("userDate", (new Date()).toString());
+		
+		try{
+			client.Execute(1); //1 is HTTP GET
+		}
+		catch (Exception e){
+			Toast debugging=Toast.makeText(this,"Connection to server - faild", Toast.LENGTH_LONG);
+			debugging.show();
+		}
+
     }
 
 
