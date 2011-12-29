@@ -1,20 +1,50 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
+<!--
+  Copyright 2011 The Android Open Source Project
 
-    <string name="hello">Hello World, GOOD2GOActivity!</string>
+  Licensed under the Apache License, Version 2.0 (the "License");
+  you may not use this file except in compliance with the License.
+  You may obtain a copy of the License at
+
+      http://www.apache.org/licenses/LICENSE-2.0
+
+  Unless required by applicable law or agreed to in writing, software
+  distributed under the License is distributed on an "AS IS" BASIS,
+  WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+  See the License for the specific language governing permissions and
+  limitations under the License.
+  -->
+
+<resources>
     <string name="app_name">GOOD2GO</string>
+    <string name="alternate_title">An alternate title that is long</string>
+    <string name="toggle_title">Toggle title</string>
+    <string name="search_btn">Search</string>
+    <string name="me_btn">Me</string>
+    <string name="nearby_btn">Nearby</string>
+    <string name="about_btn">About</string>
+
+    <string name="menu_refresh">Refresh</string>
+    <string name="menu_search">Search</string>
+    <string name="menu_share">Share</string>
+    <string name="menu_list">List</string>
+    <string name="menu_map">Map</string>
+    <string name="menu_filter">Filter</string>
+    <string name="menu_go">GO</string>
+    <string name="menu_done">DONE</string>
+    
+    
+        
+        
+        
+        
     <string name="mapskey_adi">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
     <string name="mapskey_gil">0YhczuGFCWeAeSfdYOPvNNsN5LAJwjDrJvsu-eA</string>
     <string name="mapskey_mor">0YRc18l4N6pXnWLTP4zPdNZDlP8OuVxR_8Ip7jg</string>    
-    <string name="mapview_name">MAP</string>
+    <string name="mapview_name">Map</string>
     <string name="meview_name">Me</string>
     <string name="listview_name">List</string>
  	<string name="searchview_name">Search</string>
  	<string name="eventdetails_name">Event Details</string>
- 	<string name="eventdetails_tabs">Event Details Tabs</string>
+ 	<string name="eventdetails_tabs">Event Details</string>
  	<string name="countmein">Count Me In</string>
-	<string name="radius">Tracking on</string>
-	<string name="seekbar_tracking_off">Tracking off</string>
-	<string name="seekbar_from_touch">from touch</string> 	
-	<string name="duration">Duration</string>		
 </resources>

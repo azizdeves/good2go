@@ -2,5 +2,5 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:drawable="@drawable/ic_filter_grey"
           android:state_pressed="true" />
-    <item android:drawable="@drawable/ic_map_pin_grey" />
+    <item android:drawable="@drawable/marker" />
 </selector>
