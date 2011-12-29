@@ -15,11 +15,17 @@
   -->
 
 <resources>
-    <item type="id" name="actionbar_compat" />
-    <item type="id" name="actionbar_compat_title" />
-    <item type="id" name="actionbar_compat_item_refresh_progress" />
-    <item type="id" name="actionbar_compat_item_refresh" />
-    <item type="id" name="menu_refresh" />
-    <item type="id" name="balloon_inner_layout" />
-	<item type="id" name="balloon_close" />
+
+    <declare-styleable name="AppTheme">
+        <attr name="actionbarCompatTitleStyle" format="reference" />
+        <attr name="actionbarCompatItemStyle" format="reference" />
+        <attr name="actionbarCompatItemHomeStyle" format="reference" />
+        <attr name="actionbarCompatProgressIndicatorStyle" format="reference" />
+    </declare-styleable>
+
+    <declare-styleable name="BezelImageView">
+        <attr name="maskDrawable" format="reference" />
+        <attr name="borderDrawable" format="reference" />
+    </declare-styleable>
+
 </resources>
