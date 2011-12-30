@@ -8,9 +8,8 @@ import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.EmbeddedOnly;
-import com.google.appengine.api.datastore.Key;
-import com.google.appengine.api.datastore.GeoPt;
-import java.util.Date;
+
+//import com.google.appengine.api.datastore.GeoPt;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
@@ -19,15 +18,42 @@ import java.util.Set;
 public class Event {
 
 	public enum VolunteeringWith {
-		ANIMALS, CHILDREN, ELDERLY, PHYSICALLY_CHALLENGED, MENTALLY_CHALLENGED, OTHER
+		ANIMALS, CHILDREN, ELDERLY, DISABLED, ENVIRONMENT, SPECIAL;
+		
+		public static boolean isMember(String s){
+			for (VolunteeringWith vw : VolunteeringWith.values()){
+				if (vw.name().equalsIgnoreCase(s))
+					return true;
+			}
+			
+			return false;
+		}
 	}
 
 	public enum SuitableFor {
-		CHILDREN, INDIVIDUALS, GROUPS
+		KIDS, INDIVIDUALS, GROUPS;
+		
+		public static boolean isMember(String s){
+			for (SuitableFor sf : SuitableFor.values()){
+				if (sf.name().equalsIgnoreCase(s))
+					return true;
+			}
+			
+			return false;
+		}
 	}
 
-	public enum WorkType {
-		MENIAL, MENTAL
+	public enum  WorkType{
+		MENIAL, MENTAL;
+		
+		public static boolean isMember(String s){
+			for (WorkType wt : WorkType.values()){
+				if (wt.name().equals(s))
+					return true;
+			}
+			
+			return false;
+		}
 	}
 
 	@PrimaryKey
@@ -48,10 +74,13 @@ public class Event {
 
 	@Persistent
 	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
-	private Date minDuration;
+	private int minDuration;
 
 	@Persistent
 	private boolean isArriveAnyTime;
+	
+	@Persistent
+	private int howMany;
 
 	@Persistent
 	@Embedded
@@ -95,7 +124,7 @@ public class Event {
 		this.occurrences = new LinkedList<Occurrence>();
 	}
 	
-	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
+	public Event(String eventName, String description, String prerequisites, int minDuration, boolean isArriveAnyTime,
 				 Address eventAddress, String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
 				 Set<WorkType> workType, boolean trainingRequired){
 		this();
@@ -113,7 +142,7 @@ public class Event {
 		this.trainingRequired = trainingRequired;
 	}
 	
-	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
+	public Event(String eventName, String description, String prerequisites, int minDuration, boolean isArriveAnyTime,
 			 Address eventAddress, String NPOName, boolean trainingRequired){
 		
 		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, eventAddress, NPOName,
@@ -136,7 +165,7 @@ public class Event {
 		return prerequisites;
 	}
 
-	public Date getMinDuration() {
+	public int getMinDuration() {
 		return minDuration;
 	}
 
@@ -158,6 +187,14 @@ public class Event {
 
 	public String getNPOName() {
 		return NPOName;
+	}
+	
+	public double getDistance(int lon, int lat){
+		Good2GoPoint userGp =new Good2GoPoint();
+		userGp.setLon(lon);
+		userGp.setLat(lat);
+		Good2GoPoint eventgp = this.getEventAddress().getGood2GoPoint();
+		return eventgp.getDistance(userGp);
 	}
 
 	public Set<VolunteeringWith> getVolunteeringWith() {
@@ -200,7 +237,7 @@ public class Event {
 		this.prerequisites = prerequisites;
 	}
 
-	public void setMinDuration(Date minDuration) {
+	public void setMinDuration(int minDuration) {
 		this.minDuration = minDuration;
 	}
 
@@ -212,8 +249,8 @@ public class Event {
 		this.eventAddress = eventAddress;
 	}
 	
-	public void setEventAddress(String city, String street, short number, GeoPt geoPoint){
-		this.eventAddress = new Address(city,street,number,geoPoint);
+	public void setEventAddress(String city, String street, short number, Good2GoPoint good2GoPoint){
+		this.eventAddress = new Address(city,street,number,good2GoPoint);
 	}
 
 	public void setNumRaters(long numRaters) {
@@ -276,7 +313,7 @@ public class Event {
 		this.occurrenceKeys.add(occurrenceKey);
 	}
 	
-	public void removeOccurrenceKey(Key occurrenceKey) {
+	public void removeOccurrenceKey(String occurrenceKey) {
 		this.occurrenceKeys.remove(occurrenceKey);
 	}
 	
@@ -290,6 +327,22 @@ public class Event {
 	
 	public void removeOccurrence(Occurrence occurrence) {
 		this.occurrences.remove(occurrence);
+	}
+	
+	public void incNumRaters(){
+		numRaters++;
+	}
+	
+	public void addRating(int rating){
+		sumRatings+=(long) rating;
+	}
+
+	public int getHowMany() {
+		return howMany;
+	}
+
+	public void setHowMany(int howMany) {
+		this.howMany = howMany;
 	}
 
 	@PersistenceCapable
@@ -305,24 +358,25 @@ public class Event {
 		private short number;
 
 		@Persistent
-		private GeoPt geoPoint;
+		@Embedded
+		private Good2GoPoint good2GoPoint;
 
-		public Address(String city, String street, short number, GeoPt geoPoint) {
+		public Address(String city, String street, short number, Good2GoPoint good2GoPoint) {
 			this.setCity(city);
 			this.setStreet(street);
 			this.setNumber(number);
-			this.setGeoPoint(geoPoint);
+			this.setGood2GoPoint(good2GoPoint);
 		}
 		
 		public Address(){
 		}
 		
 		public Address(Address a) {
-			this(a.getCity(),a.getStreet(),a.getNumber(),a.getGeoPoint());
+			this(a.getCity(),a.getStreet(),a.getNumber(),a.getGood2GoPoint());
 		}
 
-		public Address(GeoPt geoPoint) {
-			this(null,null,(short) 0,geoPoint);
+		public Address(Good2GoPoint good2GoPoint) {
+			this(null,null,(short) 0,good2GoPoint);
 		}
 
 		public Address(String city, String street, short number) {
@@ -341,8 +395,8 @@ public class Event {
 			return number;
 		}
 
-		public GeoPt getGeoPoint() {
-			return geoPoint;
+		public Good2GoPoint getGood2GoPoint() {
+			return good2GoPoint;
 		}
 		
 		public void setCity(String city) {
@@ -357,8 +411,8 @@ public class Event {
 			this.number = number;
 		}
 
-		public void setGeoPoint(GeoPt geoPoint) {
-			this.geoPoint = geoPoint;
+		public void setGood2GoPoint(Good2GoPoint good2GoPoint) {
+			this.good2GoPoint = good2GoPoint;
 		}
 	}
 

@@ -3,7 +3,6 @@ import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
 import javax.jdo.annotations.Extension;
-import com.google.appengine.api.datastore.Key;
 import java.util.Date;
 import java.util.List;
 import java.util.LinkedList;
@@ -33,15 +32,16 @@ public class User {
 	private Date registrationDate;
 	
 	@Persistent
-	private List<Key> registeredOccurrenceKeys;
+	private List<String> registeredOccurrenceKeys;
 
 	public User(String userName, String firstName, String lastName, String email, int birthYear, Date registrationDate) {
 		this.userName = userName;
 		this.setFirstName(firstName);
 		this.setLastName(lastName);
 		this.setEmail(email);
+		this.setBirthYear(birthYear);
 		this.setregistrationDate(registrationDate);
-		this.registeredOccurrenceKeys = new LinkedList<Key>();
+		this.registeredOccurrenceKeys = new LinkedList<String>();
 	}
 	
 	public String getUserName() {
@@ -68,7 +68,7 @@ public class User {
 		return registrationDate;
 	}
 
-	public List<Key> getRegisteredOccurrenceKeys() {
+	public List<String> getRegisteredOccurrenceKeys() {
 		return registeredOccurrenceKeys;
 	}
 
@@ -92,11 +92,16 @@ public class User {
 		this.registrationDate = registrationDate;
 	}
 
-	public void addRegisteredOccurrenceKey(Key newKey) {
+	public void addRegisteredOccurrenceKey(String newKey) {
 		this.registeredOccurrenceKeys.add(newKey);
 	}
 	
-	public void removeRegisteredOccurrenceKey(Key registeredKey) {
+	public void removeRegisteredOccurrenceKey(String registeredKey) {
 		this.registeredOccurrenceKeys.remove(registeredKey);
+
+Date myDate = new Date();
+
+String dateToSend = Long.toString(myDate.getTime());
+		
 	}
 }
