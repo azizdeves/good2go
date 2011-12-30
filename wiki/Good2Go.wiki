@@ -17,7 +17,7 @@ GOOD2GO is a *mini volunteering* app for Android
 
 = Do some good =
 
-Download our [http://code.google.com/p/good2go/source/browse/trunk/GOOD2GO/bin/GOOD2GO.apk app]
+Download [http://code.google.com/p/good2go/source/browse/trunk/GOOD2GO/bin/GOOD2GO.apk GOOD2GO] and be awesome!
 
 
 <g:plusone size="medium"></g:plusone>
