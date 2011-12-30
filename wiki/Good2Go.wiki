@@ -13,3 +13,11 @@ GOOD2GO is a *mini volunteering* app for Android
 -Simple and easy
 
 -*Rewarding* through gamification mechanisms (badges and karma)
+
+
+= Do some good =
+
+Download our [http://code.google.com/p/good2go/source/browse/trunk/GOOD2GO/bin/GOOD2GO.apk app]
+
+
+<g:plusone size="medium"></g:plusone>
