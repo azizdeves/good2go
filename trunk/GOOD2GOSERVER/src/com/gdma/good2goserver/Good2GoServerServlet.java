@@ -4,8 +4,6 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.http.*;
 
-import java.text.DateFormat;
-import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -14,6 +12,8 @@ import java.util.Set;
 import java.util.logging.Logger;
 import java.util.HashSet;
 import flexjson.JSONSerializer;
+import flexjson.transformer.DateTransformer;
+
 import com.gdma.good2goserver.Occurrence;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -370,13 +370,6 @@ public class Good2GoServerServlet extends HttpServlet {
 				userDate = new Date();
 				userDate.setTime(Long.parseLong(userDateString));
 			}
-			
-			/*************************************
-			Calendar c = Calendar.getInstance();
-			c.set(2012, 12, 12, 8, 0, 0);
-			c.set(Calendar.MILLISECOND,0);
-			userDate = c.getTime();
-			/**************************************/
 
 			if (userName!=null && userDate!=null){
 				List<Event> events = dbm.getRegisteredFutureEvents(userName, userDate);
@@ -397,7 +390,8 @@ public class Good2GoServerServlet extends HttpServlet {
 				pw.print("Missing Parameters");
 		}
 		
-		else if (action.compareToIgnoreCase("getEvents")==0){	
+		else if (action.compareToIgnoreCase("getEvents")==0){
+			
 			Date userDate = null;
 			int duration = -1;
 			double distance = -1;
@@ -427,14 +421,6 @@ public class Good2GoServerServlet extends HttpServlet {
 				lon = Integer.parseInt(lonString);
 				lat = Integer.parseInt(latString);
 			}
-	
-			/**************************************/
-			Calendar c = Calendar.getInstance();
-			c.set(2011, Calendar.DECEMBER, 12, 8, 0, 0);
-			userDate = c.getTime();
-			long l = userDate.getTime();
-			String s = Long.toString(l);
-			/**************************************/
 			
 			List<Event.VolunteeringWith> vw = new LinkedList<Event.VolunteeringWith>();
 			List<Event.SuitableFor> sf = new LinkedList<Event.SuitableFor>();
@@ -469,7 +455,7 @@ public class Good2GoServerServlet extends HttpServlet {
 							o.setRegisteredUserNames(null);
 					}
 				
-					js = new JSONSerializer().include("address", "occurrences", "volunteeringWith", "suitableFor", "workType").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(events);
+					js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).include("address", "occurrences", "volunteeringWith", "suitableFor", "workType", "occurrences.endTime").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(events);
 				
 				}
 				
@@ -493,13 +479,6 @@ public class Good2GoServerServlet extends HttpServlet {
 				userDate.setTime(Long.parseLong(userDateString));
 			}
 			
-			
-			/**************************************/
-			Calendar c = Calendar.getInstance();
-			c.set(2012, 12, 12, 8, 0, 0);
-			userDate = c.getTime();
-			/**************************************/
-			
 			if (userName!=null && userDate!=null){
 				List<Event> results = dbm.getEventsToFeedback(userName,userDate);
 				
@@ -509,7 +488,7 @@ public class Good2GoServerServlet extends HttpServlet {
 						o.setRegisteredUserNames(null);
 				}
 				
-				String js = new JSONSerializer().include("address", "occurrences", "volunteeringWith", "suitableFor", "workType").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(results);
+				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).include("address", "occurrences", "volunteeringWith", "suitableFor", "workType").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(results);
 				
 				resp.setContentType("text/plain");
 				
@@ -564,7 +543,7 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 				User user = dbm.getUserDetails(userName);
 				
-				String js = new JSONSerializer().exclude("registeredOccurrenceKeys").serialize(user);
+				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);
 				
 				resp.setContentType("text/plain");
 				

@@ -1,8 +1,8 @@
 package com.gdma.good2goserver;
+import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.PersistenceCapable;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
-import com.google.appengine.api.datastore.Text;
 
 @PersistenceCapable
 public class NPO {
@@ -12,7 +12,8 @@ public class NPO {
 	private String NPOName;
 	
 	@Persistent
-	private Text description;
+	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
+	private String description;
 	
 	@Persistent
 	String email;
@@ -50,7 +51,7 @@ public class NPO {
 		return NPOName;
 	}
 
-	public Text getDescription() {
+	public String getDescription() {
 		return description;
 	}
 
@@ -62,7 +63,7 @@ public class NPO {
 		return phoneNumber;
 	}
 
-	public void setDescription(Text description) {
+	public void setDescription(String description) {
 		this.description = description;
 	}
 
