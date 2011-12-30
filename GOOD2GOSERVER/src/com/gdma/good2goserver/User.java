@@ -98,10 +98,5 @@ public class User {
 	
 	public void removeRegisteredOccurrenceKey(String registeredKey) {
 		this.registeredOccurrenceKeys.remove(registeredKey);
-
-Date myDate = new Date();
-
-String dateToSend = Long.toString(myDate.getTime());
-		
 	}
 }
