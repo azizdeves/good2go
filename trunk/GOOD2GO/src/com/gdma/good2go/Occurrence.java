@@ -87,6 +87,7 @@ public class Occurrence implements Comparable<Occurrence>{
 		Calendar calendar = Calendar.getInstance();
 		
 		calendar.set(year, month, day, 0, 0, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		this.occurrenceDate = calendar.getTime();
 	}
 
@@ -97,7 +98,8 @@ public class Occurrence implements Comparable<Occurrence>{
 	public void setStartTime(int hour, int minute) {
 		Calendar calendar = Calendar.getInstance();
 		
-		calendar.set(0, 0, 0, hour, minute, 0);
+		calendar.set(1970, Calendar.JANUARY, 1, hour, minute, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		this.startTime = calendar.getTime();
 	}
 
@@ -108,7 +110,8 @@ public class Occurrence implements Comparable<Occurrence>{
 	public void setEndTime(int hour, int minute) {
 		Calendar calendar = Calendar.getInstance();
 		
-		calendar.set(0, 0, 0, hour, minute, 0);
+		calendar.set(1970, Calendar.JANUARY, 1, hour, minute, 0);
+		calendar.set(Calendar.MILLISECOND, 0);
 		this.endTime = calendar.getTime();
 	}
 
@@ -124,7 +127,7 @@ public class Occurrence implements Comparable<Occurrence>{
 		this.registeredUserNames.remove(registeredName);
 	}
 
-	//@Override
+	@Override
 	public int compareTo(Occurrence o) {
 		int keyDiff = this.getContainingEventKey().compareTo(o.getContainingEventKey());
 		
