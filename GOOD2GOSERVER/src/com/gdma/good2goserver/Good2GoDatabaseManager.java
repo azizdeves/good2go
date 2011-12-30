@@ -508,7 +508,7 @@ public class Good2GoDatabaseManager {
 			@SuppressWarnings("unchecked")
 			List<Occurrence> results = (List<Occurrence>) query.execute(today,now);
 		
-			if (!results.isEmpty()) {
+			if (results!=null && !results.isEmpty()) {
 				Collections.sort(results);
 				
 				String eventKey = null;
