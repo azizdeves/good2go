@@ -35,4 +35,16 @@ public class Good2GoPoint {
 	public int getLon(){
 		return lon;
 	}
+	
+	public double getDistance(Good2GoPoint otherPoint){
+		double myLon = (double) this.getLon();
+		double otherLon = (double) otherPoint.getLon();
+		double lon = (myLon - otherLon)/10000;
+		
+		double myLat = (double) this.getLat();
+		double otherLat = (double) otherPoint.getLat();
+		double lat = (myLat - otherLat)/10000;
+		
+		return (Math.sqrt((lon*lon + lat*lat)))*1.852;
+	}
 }

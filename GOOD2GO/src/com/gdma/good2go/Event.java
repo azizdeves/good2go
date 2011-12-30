@@ -1,34 +1,60 @@
 package com.gdma.good2go;
 
-import java.util.Date;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
 
-import javax.jdo.annotations.Embedded;
-import javax.jdo.annotations.EmbeddedOnly;
 import javax.jdo.annotations.Extension;
 import javax.jdo.annotations.IdGeneratorStrategy;
-import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.PersistenceCapable;
+import javax.jdo.annotations.NotPersistent;
 import javax.jdo.annotations.Persistent;
 import javax.jdo.annotations.PrimaryKey;
+import javax.jdo.annotations.Embedded;
+import javax.jdo.annotations.EmbeddedOnly;
 
-
+//import com.google.appengine.api.datastore.GeoPt;
+import java.util.List;
+import java.util.LinkedList;
+import java.util.Set;
 
 @PersistenceCapable
 public class Event {
 
 	public enum VolunteeringWith {
-		ANIMALS, CHILDREN, ELDERLY, PHYSICALLY_CHALLENGED, MENTALLY_CHALLENGED, OTHER
+		ANIMALS, CHILDREN, ELDERLY, DISABLED, ENVIRONMENT, SPECIAL;
+		
+		public static boolean isMember(String s){
+			for (VolunteeringWith vw : VolunteeringWith.values()){
+				if (vw.name().equalsIgnoreCase(s))
+					return true;
+			}
+			
+			return false;
+		}
 	}
 
 	public enum SuitableFor {
-		CHILDREN, INDIVIDUALS, GROUPS
+		KIDS, INDIVIDUALS, GROUPS;
+		
+		public static boolean isMember(String s){
+			for (SuitableFor sf : SuitableFor.values()){
+				if (sf.name().equalsIgnoreCase(s))
+					return true;
+			}
+			
+			return false;
+		}
 	}
 
-	public enum WorkType {
-		MENIAL, MENTAL
+	public enum  WorkType{
+		MENIAL, MENTAL;
+		
+		public static boolean isMember(String s){
+			for (WorkType wt : WorkType.values()){
+				if (wt.name().equals(s))
+					return true;
+			}
+			
+			return false;
+		}
 	}
 
 	@PrimaryKey
@@ -49,10 +75,13 @@ public class Event {
 
 	@Persistent
 	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
-	private Date minDuration;
+	private int minDuration;
 
 	@Persistent
 	private boolean isArriveAnyTime;
+	
+	@Persistent
+	private int howMany;
 
 	@Persistent
 	@Embedded
@@ -96,7 +125,7 @@ public class Event {
 		this.occurrences = new LinkedList<Occurrence>();
 	}
 	
-	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
+	public Event(String eventName, String description, String prerequisites, int minDuration, boolean isArriveAnyTime,
 				 Address eventAddress, String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
 				 Set<WorkType> workType, boolean trainingRequired){
 		this();
@@ -114,7 +143,7 @@ public class Event {
 		this.trainingRequired = trainingRequired;
 	}
 	
-	public Event(String eventName, String description, String prerequisites, Date minDuration, boolean isArriveAnyTime,
+	public Event(String eventName, String description, String prerequisites, int minDuration, boolean isArriveAnyTime,
 			 Address eventAddress, String NPOName, boolean trainingRequired){
 		
 		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, eventAddress, NPOName,
@@ -137,7 +166,7 @@ public class Event {
 		return prerequisites;
 	}
 
-	public Date getMinDuration() {
+	public int getMinDuration() {
 		return minDuration;
 	}
 
@@ -159,6 +188,14 @@ public class Event {
 
 	public String getNPOName() {
 		return NPOName;
+	}
+	
+	public double getDistance(int lon, int lat){
+		Good2GoPoint userGp =new Good2GoPoint();
+		userGp.setLon(lon);
+		userGp.setLat(lat);
+		Good2GoPoint eventgp = this.getEventAddress().getGood2GoPoint();
+		return eventgp.getDistance(userGp);
 	}
 
 	public Set<VolunteeringWith> getVolunteeringWith() {
@@ -201,7 +238,7 @@ public class Event {
 		this.prerequisites = prerequisites;
 	}
 
-	public void setMinDuration(Date minDuration) {
+	public void setMinDuration(int minDuration) {
 		this.minDuration = minDuration;
 	}
 
@@ -291,6 +328,22 @@ public class Event {
 	
 	public void removeOccurrence(Occurrence occurrence) {
 		this.occurrences.remove(occurrence);
+	}
+	
+	public void incNumRaters(){
+		numRaters++;
+	}
+	
+	public void addRating(int rating){
+		sumRatings+=(long) rating;
+	}
+
+	public int getHowMany() {
+		return howMany;
+	}
+
+	public void setHowMany(int howMany) {
+		this.howMany = howMany;
 	}
 
 	@PersistenceCapable
