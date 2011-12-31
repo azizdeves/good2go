@@ -11,60 +11,62 @@
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"    
         android:textStyle="bold"
-        android:text="Show me this activity types: "/>
+        android:text="Show me these activity types: "/>
     
     <ToggleButton 	    
         android:id="@+id/childrenFilterButton"
-	    android:layout_width="105dip"
-	    android:layout_height="105dip"  
+        style="@style/FilterButton"
 	    android:layout_below ="@id/filterTitle"     
-        android:textOn="children on"
-        android:textOff="children" /> 
+        android:textOn="Children"
+        android:textOff="Children" 
+        
+        android:drawableTop="@drawable/btn_filter_children"/> 
 	
 	<ToggleButton
 	    android:id="@+id/envFilterButton"
-	    android:layout_width="105dip"
-	    android:layout_height="105dip" 
+        style="@style/FilterButton"
 	    android:layout_below ="@id/filterTitle"     
 	    android:layout_toRightOf ="@id/childrenFilterButton" 
-	    android:textOn="Env-on"	
-	    android:textOff="Env"	/>      
+	    android:textOn="Env"	
+	    android:textOff="Env"	
+	    
+	    android:drawableTop="@drawable/btn_filter_env"/>      
 
 	<ToggleButton
 	    android:id="@+id/animalsFilterButton"
-	    android:layout_width="105dip"
-	    android:layout_height="105dip" 
+        style="@style/FilterButton"
 	    android:layout_below ="@id/filterTitle"     
 	    android:layout_toRightOf ="@id/envFilterButton" 	    
-	    android:textOn="Animals-on"	
-	    android:textOff="Animals"	/>    
+	    android:textOn="Animals"	
+	    android:textOff="Animals"	
+	    
+	    android:drawableTop="@drawable/btn_filter_animals"/>    
 
 		
 	<ToggleButton 	    
         android:id="@+id/disabledFilterButton"
-	    android:layout_width="105dip"
-	    android:layout_height="105dip"  
+        style="@style/FilterButton"
 	    android:layout_below ="@id/childrenFilterButton"     
-        android:textOn="disabled on"
-        android:textOff="disabled" /> 
+        android:textOn="Disabled"
+        android:textOff="Disabled" 
+        
+        android:drawableTop="@drawable/btn_filter_disabled"/> 
 	
 	<ToggleButton
 	    android:id="@+id/specialFilterButton"
-	    android:layout_width="105dip"
-	    android:layout_height="105dip" 
+        style="@style/FilterButton"
 	    android:layout_below ="@+id/envFilterButton"     
 	    android:layout_toRightOf ="@id/disabledFilterButton" 
-	    android:textOn="special-on"	
-	    android:textOff="special"	/>      
+	    android:textOn="Special"	
+	    android:textOff="Special"	/>      
 
 	<ToggleButton
 	    android:id="@+id/elderlyFilterButton"
-	    android:layout_width="105dip"
-	    android:layout_height="105dip" 
+        style="@style/FilterButton"
 	    android:layout_below ="@+id/animalsFilterButton"     
 	    android:layout_toRightOf ="@id/specialFilterButton" 	    
-	    android:textOn="elderly-on"	
-	    android:textOff="elderly"	/>    
+	    android:textOn="Elderly"	
+	    android:textOff="Elderly"	/>    
 	
 	
 	

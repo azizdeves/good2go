@@ -17,7 +17,7 @@
 <menu xmlns:android="http://schemas.android.com/apk/res/android">
     <item android:id="@+id/menu_map"
         android:title="@string/menu_map"
-        android:icon="@drawable/ic_action_mappin"
+        android:icon="@drawable/ic_action_map"
         android:orderInCategory="0"
         android:showAsAction="always" />
 </menu>
