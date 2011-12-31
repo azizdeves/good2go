@@ -15,7 +15,18 @@
   -->
 
 <resources>
+    <!-- from compat -->
     <dimen name="actionbar_compat_height">48dp</dimen>
     <dimen name="actionbar_compat_button_width">48dp</dimen>
     <dimen name="actionbar_compat_button_home_width">56dp</dimen>
+    
+        
+        
+    <!-- body content from iosched -->
+    <dimen name="body_padding_medium">10dp</dimen>
+    <dimen name="body_padding_large">10dp</dimen>
+    <dimen name="text_size_small">14sp</dimen>
+    <dimen name="text_size_medium">18sp</dimen>
+    <dimen name="text_size_large">18sp</dimen>
+    <dimen name="text_size_xlarge">18sp</dimen>
 </resources>

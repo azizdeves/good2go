@@ -29,7 +29,7 @@
     </style>
 
     <style name="ActionBarCompat">
-        <item name="android:background">#eee</item>
+        <item name="android:background">#31a6c6</item>
     </style>
 
     <style name="ActionBarCompatItemBase">
@@ -47,6 +47,7 @@
         <!-- layout_width/height/weight must be set in code -->
         <item name="android:gravity">center_vertical</item>
         <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
         <item name="android:paddingLeft">6dp</item>
         <item name="android:paddingRight">6dp</item>
         <item name="android:singleLine">true</item>
@@ -61,6 +62,18 @@
     </style>
 
     <style name="ActionBarCompatHomeItem" parent="style/ActionBarCompatItemBase">
+    </style>
+    
+    <style name="DashboardButton">
+        <item name="android:layout_gravity">center_vertical</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:gravity">center_horizontal</item>
+        <item name="android:drawablePadding">2dp</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+<!--         <item name="android:textStyle">bold</item> -->
+        <item name="android:textColor">@color/accent_1</item>
+        <item name="android:background">@null</item>
     </style>
 
 </resources>
