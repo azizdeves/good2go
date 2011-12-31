@@ -201,23 +201,23 @@ public class MainActivity extends ActionBarActivity {
     
     //TODO create settings menu for the main screen
 
-//    @Override
-//    public boolean onCreateOptionsMenu(Menu menu) {
-//        MenuInflater menuInflater = getMenuInflater();
-//        menuInflater.inflate(R.menu.main, menu);
-//
-//        // Calling super after populating the menu is necessary here to ensure that the
-//        // action bar helpers have a chance to handle this event.
-//        return super.onCreateOptionsMenu(menu);
-//    }
-//
-//    @Override
-//    public boolean onOptionsItemSelected(MenuItem item) {
-//        switch (item.getItemId()) {
-//            case android.R.id.home:
-//                Toast.makeText(this, "Yes. You're awesome.", Toast.LENGTH_SHORT).show();
-//                break;
-//
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        MenuInflater menuInflater = getMenuInflater();
+        menuInflater.inflate(R.menu.main, menu);
+
+        // Calling super after populating the menu is necessary here to ensure that the
+        // action bar helpers have a chance to handle this event.
+        return super.onCreateOptionsMenu(menu);
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case android.R.id.home:
+                Toast.makeText(this, "Yes. You're awesome.", Toast.LENGTH_SHORT).show();
+                break;
+
 //            case R.id.menu_refresh:
 //                Toast.makeText(this, "Fake refreshing...", Toast.LENGTH_SHORT).show();
 //                getActionBarHelper().setRefreshActionItemState(true);
@@ -246,9 +246,9 @@ public class MainActivity extends ActionBarActivity {
 //            case R.id.menu_share:
 //                Toast.makeText(this, "Tapped share", Toast.LENGTH_SHORT).show();
 //                break;
-//        }
-//        return super.onOptionsItemSelected(item);
-//    }
+        }
+        return super.onOptionsItemSelected(item);
+    }
     
     
 	private List<Event> remote_getEventsFromServer(int lat, int lon) {
