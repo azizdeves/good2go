@@ -530,7 +530,7 @@ public class Good2GoDatabaseManager {
 					else {
 						isInserted = false;
 						event = (Event) pm.getObjectById(Event.class, eventKey);
-						
+						event.getEventAddress();
 						//Check lists.
 						
 						boolean containsVW = true;
