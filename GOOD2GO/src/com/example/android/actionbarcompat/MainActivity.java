@@ -17,6 +17,7 @@
 package com.example.android.actionbarcompat;
 
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -79,7 +80,7 @@ public class MainActivity extends ActionBarActivity {
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
         List<Event> eventList=remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
-        eventList=new ArrayList<Event>(); //TODO REMOVE!!!
+        //eventList=new ArrayList<Event>(); //TODO REMOVE!!!
         /**POPULATE DB**/
         /**TODO: drop what we have if it's a new day
          * or if there's been a change since last read
@@ -294,6 +295,13 @@ public class MainActivity extends ActionBarActivity {
 		client.AddParam("lat", String.valueOf(lat));
 		
 		Date myDate = new Date();
+		
+		/*Debugging*/
+		Calendar c = Calendar.getInstance();
+		c.setTime(myDate);
+		c.set(Calendar.HOUR_OF_DAY,8);
+		myDate = c.getTime();
+		/*Debugging*/
 
 		String dateToSend = Long.toString(myDate.getTime());
 
@@ -309,6 +317,7 @@ public class MainActivity extends ActionBarActivity {
 		}
 		
 		JSONResponse = client.getResponse();
+		JSONResponse.trim();
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		
 		//Parse the response from server
