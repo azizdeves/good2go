@@ -41,6 +41,7 @@ import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 
 import flexjson.JSONDeserializer;
+import flexjson.transformer.DateTransformer;
 
 public class MainActivity extends ActionBarActivity {
 	
@@ -66,7 +67,7 @@ public class MainActivity extends ActionBarActivity {
          *******GOOD2GO***
          *******************************************/
         
-/**GET MY LOCATION**/
+        /**GET MY LOCATION**/
         
         /**TODO: add actual calculation**/
         mMyGeoPoint=new GeoPoint((int)(32.055699*1E6),(int)(34.769540*1E6));       
@@ -97,8 +98,9 @@ public class MainActivity extends ActionBarActivity {
         			Integer.valueOf(eventLat)/1E6, Integer.valueOf(eventLon)/1E6, results);
         	String distance=String.format("%.1f", (float)(results[0]/1E3))+" km";
         	
-        	//calculate duration        	
-        	String duration=String.valueOf(event.getMinDuration().getMinutes())+ " min";
+        	//calculate duration 
+        	/**TODO this is in mins - if needed - convert to hours*/
+        	String duration=String.valueOf(event.getMinDuration())+ " min";
         	       	       	
         	//populate db.
 
@@ -138,30 +140,16 @@ public class MainActivity extends ActionBarActivity {
         getActionBarHelper().setRefreshActionItemState(true);
         
 
-        findViewById(R.id.toggle_title).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            	
-
-                if (mAlternateTitle) {
-                    setTitle(R.string.app_name);
-                } else {
-                    setTitle(R.string.alternate_title);
-                }
-                mAlternateTitle = !mAlternateTitle;
-            }
-        });
-        
-        
        
         //NEARBY
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-	            Intent newIntent = new Intent(view.getContext(), ListTab.class);
+	            Intent newIntent = new Intent(view.getContext(), MapTab.class);
 	            startActivity(newIntent);
             }
         });
+        
         
         //SEARCH
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
@@ -172,7 +160,8 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         
-       //ME 
+        
+        //ME 
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -190,61 +179,76 @@ public class MainActivity extends ActionBarActivity {
             	Toast.makeText(view.getContext(), "Tapped About", Toast.LENGTH_SHORT).show();
             }
         });
-    
+        
+//        findViewById(R.id.toggle_title).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//            	
+//
+//                if (mAlternateTitle) {
+//                    setTitle(R.string.app_name);
+//                } else {
+//                    setTitle(R.string.alternate_title);
+//                }
+//                mAlternateTitle = !mAlternateTitle;
+//            }
+//        });
+        
+  
     }
     
     
     
-    
+    //TODO create settings menu for the main screen
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main, menu);
-
-        // Calling super after populating the menu is necessary here to ensure that the
-        // action bar helpers have a chance to handle this event.
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    @Override
-    public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
-            case android.R.id.home:
-                Toast.makeText(this, "Yes. You're awesome.", Toast.LENGTH_SHORT).show();
-                break;
-
-            case R.id.menu_refresh:
-                Toast.makeText(this, "Fake refreshing...", Toast.LENGTH_SHORT).show();
-                getActionBarHelper().setRefreshActionItemState(true);
-                getWindow().getDecorView().postDelayed(
-                        new Runnable() 
-                        {
-                            @Override
-                            public void run() 
-                            {
-                                getActionBarHelper().setRefreshActionItemState(false);
-                            }
-                         },1000);
-                break;
-
-            case R.id.menu_search:
-                Toast.makeText(this, "Tapped search", Toast.LENGTH_SHORT).show();
-               
-                /**TESTTESTSTES*/
-         
-	            Intent newIntent = new Intent(this, ListTab.class);
-	            startActivity(newIntent);
-	            
-                /**TESTTESTSTES*/
-                break;
-
-            case R.id.menu_share:
-                Toast.makeText(this, "Tapped share", Toast.LENGTH_SHORT).show();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
+//    @Override
+//    public boolean onCreateOptionsMenu(Menu menu) {
+//        MenuInflater menuInflater = getMenuInflater();
+//        menuInflater.inflate(R.menu.main, menu);
+//
+//        // Calling super after populating the menu is necessary here to ensure that the
+//        // action bar helpers have a chance to handle this event.
+//        return super.onCreateOptionsMenu(menu);
+//    }
+//
+//    @Override
+//    public boolean onOptionsItemSelected(MenuItem item) {
+//        switch (item.getItemId()) {
+//            case android.R.id.home:
+//                Toast.makeText(this, "Yes. You're awesome.", Toast.LENGTH_SHORT).show();
+//                break;
+//
+//            case R.id.menu_refresh:
+//                Toast.makeText(this, "Fake refreshing...", Toast.LENGTH_SHORT).show();
+//                getActionBarHelper().setRefreshActionItemState(true);
+//                getWindow().getDecorView().postDelayed(
+//                        new Runnable() 
+//                        {
+//                            @Override
+//                            public void run() 
+//                            {
+//                                getActionBarHelper().setRefreshActionItemState(false);
+//                            }
+//                         },1000);
+//                break;
+//
+//            case R.id.menu_search:
+//                Toast.makeText(this, "Tapped search", Toast.LENGTH_SHORT).show();
+//               
+//                /**TESTTESTSTES*/
+//         
+//	            Intent newIntent = new Intent(this, ListTab.class);
+//	            startActivity(newIntent);
+//	            
+//                /**TESTTESTSTES*/
+//                break;
+//
+//            case R.id.menu_share:
+//                Toast.makeText(this, "Tapped share", Toast.LENGTH_SHORT).show();
+//                break;
+//        }
+//        return super.onOptionsItemSelected(item);
+//    }
     
     
 	private List<Event> remote_getEventsFromServer(int lat, int lon) {
@@ -255,9 +259,16 @@ public class MainActivity extends ActionBarActivity {
 		
 		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getEvents");
-		client.AddParam("lon", String.valueOf(lon/1000));
-		client.AddParam("lat", String.valueOf(lat/1000));
-		client.AddParam("userDate", (new Date()).toString());
+		client.AddParam("lon", String.valueOf(lon));
+		client.AddParam("lat", String.valueOf(lat));
+		
+		Date myDate = new Date();
+
+		String dateToSend = Long.toString(myDate.getTime());
+
+		client.AddParam("userDate", dateToSend);
+		
+		//client.AddParam("userDate", (new Date()).toString());
 		try{
 			client.Execute(1); //1 is HTTP GET
 		}
@@ -270,6 +281,8 @@ public class MainActivity extends ActionBarActivity {
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		
 		//Parse the response from server
-		return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+		//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+		 return new JSONDeserializer<List<Event>>().use(Date.class, 
+				 new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
 	}
 }

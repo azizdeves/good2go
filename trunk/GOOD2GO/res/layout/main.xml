@@ -14,34 +14,53 @@
   limitations under the License.
   -->
 
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:orientation="horizontal">
-    <Button android:id="@+id/toggle_title"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/toggle_title" />
-    
+    android:layout_height="fill_parent">
+     
+   
     <Button android:id="@+id/nearbybtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/nearby_btn" />
+        style="@style/DashboardButton"
+        android:text="@string/nearby_btn"
+        android:drawableTop="@drawable/btn_dashboard_map"
+        
+        android:layout_marginTop="30dip"
+        android:layout_marginLeft="30dip"/>
+    
+    
    <Button android:id="@+id/searchbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/search_btn" />
+        style="@style/DashboardButton"
+        android:text="@string/search_btn"
+        android:drawableTop="@drawable/btn_dashboard_search" 
+        
+        android:layout_toRightOf="@id/nearbybtn"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dip"/>
+    
    <Button android:id="@+id/mebtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/me_btn" />
+        style="@style/DashboardButton"
+        android:text="@string/me_btn"
+        android:drawableTop="@drawable/btn_dashboard_me" 
+        
+        android:layout_below="@id/nearbybtn"
+        android:layout_marginLeft="30dip"
+        android:layout_marginTop="30dip"/>
+        
    <Button android:id="@+id/aboutbtn"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="center"
-        android:text="@string/about_btn" />
-</LinearLayout>
+        style="@style/DashboardButton"
+        android:text="@string/about_btn"
+        android:drawableTop="@drawable/btn_dashboard_about" 
+        
+        android:layout_toRightOf="@id/mebtn"
+        android:layout_below="@id/searchbtn"
+        android:layout_alignParentRight="true"
+        android:layout_marginTop="30dip"/>
+   
+<!--        <Button android:id="@+id/toggle_title" -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:layout_gravity="center" -->
+<!--         android:text="@string/toggle_title"  -->
+<!--         android:layout_below="@id/mebtn"/> -->
+   
+</RelativeLayout>
