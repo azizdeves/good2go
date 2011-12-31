@@ -16,7 +16,9 @@ import com.gdma.good2go.communication.RestClient;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -31,8 +33,10 @@ public class CountMeIn extends ActionBarActivity {
     private String mEventName;
     private String mEventDesc;
     private String mFbStatus;
+    private String mFacebookToken;
 	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
-    RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");	
+    RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    private int mAuthAttempts = 0;
     
     
 	@Override
@@ -55,46 +59,7 @@ public class CountMeIn extends ActionBarActivity {
 	    eventName.setText(mEventName);
 	    fbStatus.setText(mFbStatus);
 	    
-        
-        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
-        		
-        		new DialogListener() {
-  //      	           @Override
-        	           public void onComplete(Bundle values) {
-        	        	   updateStatus(values.getString(facebook.getAccessToken()));
-        	           }
-
-        	           private void updateStatus(String accessToken) {
-        	        	   // TODO Auto-generated method stub
-        	        	   try{
-        	        		   Bundle bundle = new Bundle();
-        	        		   bundle.putString("message", mFbStatus);
-            	        	   bundle.putString(Facebook.TOKEN, accessToken);
-            	        	   String response = facebook.request("me/feed",bundle,"POST");
-            	        	   Log.d("UPDATE RESPONSE", ""+response);
-        	        	   }
-        	        	   catch(MalformedURLException e){
-        	        		   Log.e("MALFORMED URL",""+e.getMessage());
-        	        	   }
-        	        	   catch (IOException e){
-        	        		   Log.e("IOEX",""+e.getMessage());
-        	        	   }
-        	        	   
-        	        	   
-        	           }
-
-//      	           @Override
-        	           public void onFacebookError(FacebookError error) {}
-
-  //      	           @Override
-        	           public void onError(DialogError e) {}
-
-  //      	           @Override
-        	           public void onCancel() {}
-        	      }
-        	);
-        
-        
+	    
 
 		
 		
@@ -117,6 +82,20 @@ public class CountMeIn extends ActionBarActivity {
 	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
 	        	
+	        	mAuthAttempts = 0;
+	        	
+	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
+	        	mFacebookToken = prefs.getString("FacebookToken", "");
+	        	
+	        	
+	        	
+	        	if(mFacebookToken.equals("")){
+	        		fbAuthAndPost(mFbStatus);
+	        	}
+	        	else{
+	        		updateStatus(mFacebookToken);
+	        	}
+
 	        	//remote_registerToOccurrence(username, key);
 	        	
 	        	
@@ -128,11 +107,54 @@ public class CountMeIn extends ActionBarActivity {
 				Toast.LENGTH_LONG).show();
 	    		
 	    		setResult(Activity.RESULT_OK);
-	    		finish();
+	    		//finish();
 	        }
 	    });
 
 	}
+	
+	
+	private void saveFBToken(String token, long tokenExpires){
+	    SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(this);
+	    prefs.edit().putString("FacebookToken", token).commit();
+	}
+	
+	
+	private void fbAuthAndPost(final String message){
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
+        		new DialogListener() {
+        				@Override
+        				public void onComplete(Bundle values) {
+        					Log.d(this.getClass().getName(), "Facebook.authorize Complete: ");
+        					saveFBToken(facebook.getAccessToken(), facebook.getAccessExpires());
+        					updateStatus(values.getString(facebook.getAccessToken()));
+        				}
+
+        				@Override
+        				public void onFacebookError(FacebookError error) {
+        					Log.d(this.getClass().getName(), "Facebook.authorize Error: "+error.toString());
+        				}
+        				@Override
+        				public void onError(DialogError e) {
+        					Log.d(this.getClass().getName(),"Facebook.authorize DialogError: "+e.toString());
+        				}
+
+        				@Override
+        				public void onCancel() {
+        					Log.d(this.getClass().getName(),"Facebook authorization canceled");
+        				}
+                 }
+            );
+		
+		
+			
+	}
+	
+	
+	
+	
+	
+	
 	
     //added - FB
     @Override
@@ -189,4 +211,48 @@ public class CountMeIn extends ActionBarActivity {
         
         return super.onOptionsItemSelected(item);
     }
+    
+    
+    private void updateStatus(String accessToken) {
+ 	   // TODO Auto-generated method stub
+ 	   try{
+ 		   Bundle bundle = new Bundle();
+ 		   bundle.putString("message", mFbStatus);
+     	   bundle.putString(Facebook.TOKEN, accessToken);
+     	   String response = facebook.request("me/feed",bundle,"POST");
+     	   Log.d("UPDATE RESPONSE", ""+response);
+     	   showToast("Update process complete. Response:"+response);
+     	   if(response.indexOf("OAuthException")>-1){
+     		   if (mAuthAttempts==0){
+     			   mAuthAttempts++;
+     			   fbAuthAndPost(mFbStatus);
+     		   }
+     		   else{
+     			   showToast("OAuthException:");
+     		   }
+     	   }
+ 	   }
+ 	   catch(MalformedURLException e){
+ 		   Log.e("MALFORMED URL",""+e.getMessage());
+ 		   showToast("MalformedURLException:"+e.getMessage());
+ 	   }
+ 	   catch (IOException e){
+ 		   Log.e("IOEX",""+e.getMessage());
+ 		   showToast("IOException:"+e.getMessage());
+ 	   }
+ 	   
+ 	   /*
+ 	   String s = facebook.getAccessToken()+"\n";
+ 	   s+= String.valueOf(facebook.getAccessExpires())+"\n";
+ 	   s+="Now:"+String.valueOf(System.currentTimeMillis())+"\n";
+ 	   tv1.setText(s); */
+ 	   
+ 	   finish();
+    }
+    
+    private void showToast(String message){
+    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
+    
 }
