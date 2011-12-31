@@ -498,7 +498,7 @@ public class Good2GoDatabaseManager {
 		userCal.set(year, month,day,0,0,0);
 		userCal.set(Calendar.MILLISECOND, 0);
 		Date today = userCal.getTime();
-			
+		
 		userCal.set(1970, Calendar.JANUARY,1,hour,minute,0);
 		Date now = userCal.getTime();
 		
