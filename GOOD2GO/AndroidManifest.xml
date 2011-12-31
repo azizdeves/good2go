@@ -61,7 +61,12 @@
             android:label="@string/countmein"
             android:name="com.gdma.good2go.CountMeIn">
         </activity>
-        
+
+		<activity
+            android:label="@string/confirmation"
+            android:name="com.gdma.good2go.Confirmation">
+        </activity>    
+                    
         <activity
             android:label="@string/meview_name"
             android:name="com.gdma.good2go.MeTab" >

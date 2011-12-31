@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:layout_marginLeft="14.5sp"    
+    android:orientation="vertical" >
+
+    	<TextView
+        android:id="@+id/title_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dip"
+        android:text="Thank you for being awesome"/>
+
+    	<TextView
+        android:id="@+id/details_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/title_confirmationView"
+        android:text="We got you for"/>
+    	
+		<View
+		 android:id="@+id/separateLine1_confirmationView"
+		 android:layout_width="match_parent"
+		 android:layout_height="1dp"
+		 android:layout_below="@id/details_confirmationView"
+		 android:layout_marginTop="20dp"
+		 android:background="@android:color/black" />
+
+		<TextView
+        android:id="@+id/points_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/separateLine1_confirmationView"
+        android:layout_marginTop="20dp"
+        android:text="POINTS"/>
+
+    	<TextView
+        android:id="@+id/pointsDetails1_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/points_confirmationView"
+        android:text="Nice! You've just earned"/>
+    	
+    	<TextView
+        android:id="@+id/pointsDetails2_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pointsDetails1_confirmationView"
+		android:layout_centerHorizontal="true"
+        android:text="+ 100"/> 
+    	
+    	
+		<View
+		 android:id="@+id/separateLine2_confirmationView"
+		 android:layout_width="match_parent"
+		 android:layout_height="1dp"
+		 android:layout_below="@id/pointsDetails2_confirmationView"
+		 android:layout_marginTop="20dp"
+		 android:background="@android:color/black" />    	
+    	
+		
+		
+		<TextView
+        android:id="@+id/badges_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/separateLine2_confirmationView"
+        android:layout_marginTop="10dp"
+        android:text="BADGES"/>	
+        
+		
+		
+		<TextView
+        android:id="@+id/badgesDetails1_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/badges_confirmationView"
+        android:text="Whooo! You've just earned a new badge!!!"/>
+    	
+    	<TextView
+        android:id="@+id/badgesDetails2_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/badgesDetails1_confirmationView"
+		android:layout_centerHorizontal="true"
+        android:text="Saint"/> 
+			
+</RelativeLayout>

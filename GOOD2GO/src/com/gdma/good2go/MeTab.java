@@ -1,7 +1,9 @@
 package com.gdma.good2go;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 import android.R.drawable;
 import android.content.Context;
@@ -28,8 +30,12 @@ import com.example.android.actionbarcompat.ActionBarListActivity;
 import com.example.android.actionbarcompat.MainActivity;
 import com.example.android.actionbarcompat.R;
 import com.gdma.good2go.communication.RestClient;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 
 import flexjson.JSONDeserializer;
+import flexjson.transformer.DateTransformer;
 
 public class MeTab extends ActionBarListActivity {
     
@@ -37,10 +43,10 @@ public class MeTab extends ActionBarListActivity {
     long points;
     String badge;
     String userId;
-    String userName="";
+    String userName="596351";
     String userNiceName="";
     String userFirstName="Mor";
-    String userLastName="Yogev";
+    String userLastName="Cohen";
     List<Event> usersEvents;
     RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
     private UsersHistoryDbAdapter mDbHelper;
@@ -58,51 +64,33 @@ public class MeTab extends ActionBarListActivity {
         
 //("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
         points=70;
-        badge="BUDDHIST_MONK";
-//      points=remote_getUsersKarma(userName);
-// 		badge=Karma.Badge.getMyBadge(points);
-//      User u = getUsersDetails(userName);
-//      userFirstName=u.getFirstName();
-//      userLastName=u.getLastName();
-        userNiceName=userFirstName+" "+userLastName;
+       // badge="BUDDHIST_MONK";
+        points=remote_getUsersKarma(userName);
+ 		badge=Karma.Badge.getMyBadge(points).getName();
+        User u = remote_getUsersDetails(userName);
+        if (u!=null){
+        	userFirstName=u.getFirstName();
+        	userLastName=u.getLastName();
+        }
+        userNiceName=userFirstName+" "+ userLastName;
         TextView tvName = (TextView) findViewById(R.id.userNameMeView);
         TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);
         SeekBar pointsProg = (SeekBar)findViewById(R.id.pointSeekMeView);
         setBadgesPictures(badge);
         
-//        for (Iterator iterator = badges.iterator(); iterator.hasNext();) {
-//			String b= (String) iterator.next();
-//			if(b.compareTo("MR_NICE_GUY")==0){
-//				
-//			}
-//			
-//		}
-
         tvName.setText(userNiceName);
         tvPoints.setText(Integer.toString((int)points));
         pointsProg.setProgress((int)points);
         pointsProg.setEnabled(false);        
  
-//        List<Event> historyList=remote_getUsersHistory(userId);
-//        mDbHelper = new UsersHistoryDbAdapter(this);
-//        mDbHelper.open();
-//        for(Event event : historyList)
-//        {
-//        	mDbHelper.createUsersHistory(event.getEventKey(), event.getEventName(), event.getMinDuration(), event.getEventDate, event.getEventPoints);
-//        }
-//      List<Event> futureList=remote_getUsersFutureEvents(userId);
-//      mDbHelper = new UsersHistoryDbAdapter(this);
-//      mDbHelper.open();
-//      for(Event event : historyList)
-//      {
-//      	mDbHelper.createUsersHistory(event.getEventKey(), event.getEventName(), event.getMinDuration(), event.getEventDate, event.getEventPoints);
-//      }        
-//		
-//		mEventsCursor = mDbHelper.fetchAllUsersHistory();
-//		startManagingCursor(mEventsCursor);
-//	
-//		showHistoryInList();
-//        setContentView(R.layout.me);   
+      int status = remote_getUsersHistory(userId);
+      if (status==-1){} //TODO ADD HANDLER
+        mDbHelper = new UsersHistoryDbAdapter(this);
+        mDbHelper.open();
+		mEventsCursor = mDbHelper.fetchAllUsersHistory();
+		startManagingCursor(mEventsCursor);
+		showHistoryInList();
+
         
 /**********************************/
 /***********DEBUG AREA*************/
@@ -110,7 +98,7 @@ public class MeTab extends ActionBarListActivity {
         
       mDbHelper = new UsersHistoryDbAdapter(this);
       mDbHelper.open();
-      mDbHelper.createUsersHistory("mor1","Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
+      mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
       mDbHelper.createUsersHistory("mor2", "Clean the beach", "13/13/13", "30", "2h") ; 
       mEventsCursor=mDbHelper.fetchAllUsersHistory();
       startManagingCursor(mEventsCursor);
@@ -124,13 +112,13 @@ public class MeTab extends ActionBarListActivity {
     
     private long remote_getUsersKarma(String username){
 		client.AddParam("action", "getKarma");
-		client.AddParam("username", username);
+		client.AddParam("userName", username);
 
 		try{
 			client.Execute(1); //1 is HTTP GET
 		}
 		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server - faild", Toast.LENGTH_LONG);
+			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersKarma- failed", Toast.LENGTH_LONG);
 			debugging.show();
 			return -1;
 		}
@@ -138,21 +126,27 @@ public class MeTab extends ActionBarListActivity {
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		
 		//Parse the response from server
-		long p = Long.parseLong(JSONResponse);
+		long p=0;
+		if(JSONResponse!=null){
+			try{
+				p = Long.parseLong(JSONResponse);
+			}
+			catch(NumberFormatException nfe){
+				p=0;
+			}
+		}
 		return p;
 	}
 
-
-    private List<Event> remote_getUsersHistory(String username){
-		client.AddParam("action", "getUserHistory");
-		client.AddParam("username", username);
-		client.AddParam("userDate", (new Date()).toString());
+    private User remote_getUsersDetails(String username){
+    	client.AddParam("action", "geUserDetails");
+		client.AddParam("userName", username);
 		
 		try{
 			client.Execute(1); //1 is HTTP GET
 		}
 		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server - faild", Toast.LENGTH_LONG);
+			Toast debugging=Toast.makeText(this,"Connection to server - remote_getUsersDetails - failed", Toast.LENGTH_LONG);
 			debugging.show();
 			return null;
 		}
@@ -161,32 +155,82 @@ public class MeTab extends ActionBarListActivity {
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		
 		//Parse the response from server
-		return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);		
+		User u=null;
+		try{
+			 u= new JSONDeserializer<User>(). use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+		}
+		catch(ClassCastException e){
+			u=null;
+		}
+		return u;
+    	
+    }
+   private int remote_getUsersHistory(String username){
+		Date myDate = new Date();
+		String dateToSend = Long.toString(myDate.getTime());
+		client.AddParam("action", "getUserHistory");
+		client.AddParam("userName", username);
+		client.AddParam("userDate", dateToSend);
+		
+		try{
+			client.Execute(1); //1 is HTTP GET
+		}
+		catch (Exception e){
+			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
+			debugging.show();
+			return -1;
+		}
+		
+		
+		mDbHelper = new UsersHistoryDbAdapter(this);
+	    mDbHelper.open();
+	    mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
+	      
+	      
+		List<Event> history = new ArrayList<Event>();
+		String json = client.getResponse();
+		json = json.replaceAll("good2goserver", "good2go");
+		
+		JsonArray jsonArray = new JsonArray();
+		JsonParser parser = new JsonParser();
+		
+		KeyManager key = KeyManager.init();
+		jsonArray = parser.parse(json).getAsJsonArray();
+		for (int i=0;i<jsonArray.size();i++){
+			JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
+			String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
+			String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
+			long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
+			mDbHelper.createUsersHistory(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h");
+		}
+		
+		return 1;
+	
 
 		
 	}
 
     private List<Event> remote_getUsersFutureEvents(String username){
 		client.AddParam("action", "getRegisteredFutureEvents");
-		client.AddParam("username", username);
+		client.AddParam("userName", username);
 		client.AddParam("userDate", (new Date()).toString());
 		
 		try{
 			client.Execute(1); //1 is HTTP GET
 		}
 		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server - faild", Toast.LENGTH_LONG);
+			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersFutureEvents- failed", Toast.LENGTH_LONG);
 			debugging.show();
 			return null;
 		}
-				
+
 		String JSONResponse = client.getResponse();
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		
 		//Parse the response from server
-		return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);		
 
-		
+		List<Event> eventList = new JSONDeserializer<List<Event>>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+		return eventList;
 	}
     
     private void showHistoryInList(){
