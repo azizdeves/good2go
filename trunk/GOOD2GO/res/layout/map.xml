@@ -9,7 +9,7 @@
         android:layout_height="fill_parent" 
         android:clickable="true"
         android:layout_centerInParent="true"
-        android:apiKey="@string/mapskey_adi" />
+        android:apiKey="@string/mapskey_mor" />
 		
     <Button 
         android:layout_width="wrap_content"

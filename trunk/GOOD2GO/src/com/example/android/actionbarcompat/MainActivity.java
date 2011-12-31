@@ -16,6 +16,7 @@
 
 package com.example.android.actionbarcompat;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
@@ -78,7 +79,7 @@ public class MainActivity extends ActionBarActivity {
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
         List<Event> eventList=remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
-
+        eventList=new ArrayList<Event>(); //TODO REMOVE!!!
         /**POPULATE DB**/
         /**TODO: drop what we have if it's a new day
          * or if there's been a change since last read
@@ -114,14 +115,14 @@ public class MainActivity extends ActionBarActivity {
 					animals="1";
 				else if(volunteeringWith==VolunteeringWith.CHILDREN)
 					children="1";
-//				else if(volunteeringWith==VolunteeringWith.DISABLED)
-//					disabled="1";
-//				else if(volunteeringWith==VolunteeringWith.ELDERLY)
-//					elderly="1";
-//				else if(volunteeringWith==VolunteeringWith.ENVIRONMENT)
-//					environment="1";
-//				else if(volunteeringWith==VolunteeringWith.SPECIAL)
-//					special="1";
+				else if(volunteeringWith==VolunteeringWith.DISABLED)
+					disabled="1";
+				else if(volunteeringWith==VolunteeringWith.ELDERLY)
+					elderly="1";
+				else if(volunteeringWith==VolunteeringWith.ENVIRONMENT)
+					environment="1";
+				else if(volunteeringWith==VolunteeringWith.SPECIAL)
+					special="1";
 			}
         	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
         			event.getDescription(),
@@ -134,6 +135,36 @@ public class MainActivity extends ActionBarActivity {
         			elderly,environment,special);
         }
     
+        
+        /*******************************************
+         ***************DEBUG AREA******************
+         *******************************************/
+        
+//        mDbHelper.createEvent("eventForDebugging", "eventForDebugging", "Reading books for children", "Reading books for disabled children", Double.toString(mMyLocation.getAltitude()), Double.toString(mMyLocation.getLongitude()),
+//        		"5", "2", "Tel Aviv", "Shenkin", "3", "1", "0",  "0",  "0",  "0",  "0");
+        
+        
+        
+//        String JSONResponse = null; // this will hold the response from server
+//		
+//		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+//		client.AddParam("action", "addUser");
+//		client.AddParam("userName", "596351");
+//		client.AddParam("firstName", "Dina");
+//		client.AddParam("lastName", "Barzilay");
+//		client.AddParam("email", "DinaBarzilay@good2go.com");
+//		client.AddParam("birthYear", "1940");
+//		try{
+//			client.Execute(1); //1 is HTTP GET
+//		}
+//		catch (Exception e){
+//			Toast debugging=Toast.makeText(this, "Error: could not connect to the server", Toast.LENGTH_LONG);
+//			debugging.show();
+//		}
+        /*******************************************
+         ************END OF DEBUG AREA**************
+         *******************************************/
+		
     	/*******************************************
          *******GOOD2GO***
          *******************************************/

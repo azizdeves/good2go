@@ -22,10 +22,11 @@
         android:layout_height="wrap_content"
         android:layout_toRightOf="@id/mePicMeView"
         android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"
-        android:layout_alignTop="@id/mePicMeView"
-        android:textColor="@android:color/primary_text_dark"
+        android:layout_marginTop="35dip"
+        android:layout_marginLeft="30dp"
         android:textStyle="bold"
+        android:textSize="25dp"
+        android:layout_alignTop="@id/mePicMeView"
         android:text=""/>
     
      <TextView
@@ -51,6 +52,7 @@
 		android:layout_height="wrap_content"
         android:layout_toRightOf="@id/pointSeekMeView"
         android:layout_below ="@id/userPointsMeView"   
+        android:layout_marginLeft="10dp" 
 		android:text="0"/>         
 		
     <TextView
