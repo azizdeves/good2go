@@ -58,22 +58,55 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 
   public void getEventsWithFilters(View view){
  	
+	  
 		final ToggleButton togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
-  	final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
+		final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
 		final ToggleButton togglebutton_Disabled = (ToggleButton) findViewById(R.id.disabledFilterButton);
 		final ToggleButton togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
 		final ToggleButton togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
 		final ToggleButton togglebutton_Special = (ToggleButton) findViewById(R.id.specialFilterButton);
-//		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-//		client.AddParam("action", "getEventsWithFilters");
-//		for (ToggleButton tb : tbArray) {
-//			if(tb.isChecked()){ 
-//				client.AddParam((String)tb.getTextOff(), "true");
-//				debugString=debugString.concat((String)tb.getTextOff());
-//				types[i]=(String)tb.getTextOff();
-//				i++;
-//			}
-//				
+		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		client.AddParam("action", "getEvents");
+
+		/*mockup FOR MOR/ADI TO USE
+		
+		togglebutton_Animals.value = Event.VolunteeringWith.ANIMALS.name();
+		togglebutton_Children.value = Event.VolunteeringWith.CHILDREN.name();
+		.
+		.
+		.
+		Etc. (where value is something you need to come up with. the right-hand side of the equations is exactly as it should be.)
+		
+		boolean isFirst = true;
+		String types = new String("");
+		
+		for (ToggleButton tb : togglebuttons){
+			if (tb.isChecked()){
+				if (!isFirst)
+					types += ",";
+				else
+					isFirst = false;
+				
+				types += tb.value; //Again, the value thingie you need to come up with.
+			}
+		}
+		
+		if (!isFirst)
+			client.addParam("type",types);
+		
+		/*end of mockup*/
+		
+		
+		
+/*		
+		for (ToggleButton tb : tbArray) {
+			if(tb.isChecked()){ 
+				client.AddParam((String)tb.getTextOff(), "true");
+				debugString=debugString.concat((String)tb.getTextOff());
+				types[i]=(String)tb.getTextOff();
+				i++;
+			}
+	*/			
 //		}
 //		
 //		try{
@@ -85,6 +118,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 //		}
 //
 //		js = client.getResponse();
+//		js = js.trim();
 //		js = js.replaceAll("good2goserver", "good2go");
 //		Bundle b = new Bundle();
 //		b.putString("events", js);
