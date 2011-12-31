@@ -34,6 +34,10 @@ public class User {
 	@Persistent
 	private List<String> registeredOccurrenceKeys;
 
+	public User(){
+		this.registeredOccurrenceKeys = new LinkedList<String>();
+	}
+	
 	public User(String userName, String firstName, String lastName, String email, int birthYear, Date registrationDate) {
 		this.userName = userName;
 		this.setFirstName(firstName);

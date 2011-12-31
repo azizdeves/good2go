@@ -1,12 +1,4 @@
-<!-- Indices written at Fri, 30 Dec 2011 23:24:21 UTC -->
+<!-- Indices written at Sat, 31 Dec 2011 18:13:08 UTC -->
 
-<datastore-indexes>
+<datastore-indexes/>
 
-    <!-- Used 1 time in query history -->
-    <datastore-index kind="Occurrence" ancestor="false" source="auto">
-        <property name="occurrenceDate" direction="asc"/>
-        <property name="endTime" direction="asc"/>
-        <property name="containingEventKey" direction="asc"/>
-    </datastore-index>
-
-</datastore-indexes>

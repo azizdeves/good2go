@@ -11,6 +11,8 @@ import java.util.List;
 import java.util.Set;
 import java.util.logging.Logger;
 import java.util.HashSet;
+
+import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
 import flexjson.transformer.DateTransformer;
 
@@ -93,7 +95,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			Occurrence o = new Occurrence();
 			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 12);
+			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(10, 0);
 			o.setEndTime(20, 20);
 			//o.addRegisteredUser("Dana");
@@ -103,7 +105,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011,Calendar.DECEMBER,30);
+			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(12, 30);
 			o.setEndTime(15, 40);
 			//o.addRegisteredUser("Gil");
@@ -138,7 +140,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 12);
+			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(11, 30);
 			o.setEndTime(13, 40);
 			//o.addRegisteredUser("Mor");
@@ -148,7 +150,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011,Calendar.DECEMBER,30);
+			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(9, 20);
 			o.setEndTime(20, 15);
 			//o.addRegisteredUser("Dana");
@@ -181,7 +183,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 12);
+			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(10, 00);
 			o.setEndTime(13, 25);
 			//o.addRegisteredUser("Avi");
@@ -191,9 +193,9 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011,Calendar.DECEMBER,30);
+			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(14, 55);
-			//o.setEndTime(23, 00);
+			o.setEndTime(23, 00);
 			//o.addRegisteredUser("Shlomo");
 			
 			e.addOccurrence(o);
@@ -224,7 +226,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 12);
+			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(10, 00);
 			o.setEndTime(11, 00);
 			//o.addRegisteredUser("Johnny");
@@ -234,7 +236,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011,Calendar.DECEMBER,30);
+			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(13, 00);
 			o.setEndTime(14, 00);
 			//o.addRegisteredUser("Amos");
@@ -271,7 +273,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 12);
+			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(22, 00);
 			o.setEndTime(23, 59);
 			//o.addRegisteredUser("Maya");
@@ -281,7 +283,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011,Calendar.DECEMBER,30);
+			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(22, 00);
 			o.setEndTime(23, 59);
 			//o.addRegisteredUser("Terry");
@@ -316,7 +318,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 12);
+			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(8, 0);
 			o.setEndTime(14, 0);
 			
@@ -324,7 +326,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			o = new Occurrence();
 			
-			o.setOccurrenceDate(2011,Calendar.DECEMBER,30);
+			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(8, 0);
 			o.setEndTime(15, 0);
 			
@@ -398,6 +400,23 @@ public class Good2GoServerServlet extends HttpServlet {
 			String userDateString = req.getParameter(new String("userDate"));
 			String durationString = req.getParameter(new String("duration"));
 			String distanceString = req.getParameter(new String("distance"));
+			
+			/*debugging
+			Calendar c = Calendar.getInstance();
+			c.set(2011, Calendar.DECEMBER,31,8,0,0);
+			c.set(Calendar.MILLISECOND,0);
+			Date myDate = c.getTime();
+			
+			int d = myDate.getDay();
+			int m = myDate.getMonth();
+			int y = myDate.getYear();
+			int h = myDate.getHours();
+			int min = myDate.getMinutes();
+			int s = myDate.getSeconds();
+
+			String dateToSend = Long.toString(myDate.getTime());
+			
+			debugging*/
 			
 			if (userDateString!=null){
 				userDate = new Date();
@@ -544,6 +563,9 @@ public class Good2GoServerServlet extends HttpServlet {
 				User user = dbm.getUserDetails(userName);
 				
 				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);
+				
+				/*for debuging*/
+				User u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(js); 
 				
 				resp.setContentType("text/plain");
 				
