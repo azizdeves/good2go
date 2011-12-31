@@ -48,7 +48,7 @@ public class MeTab extends ActionBarListActivity {
     String userFirstName="Mor";
     String userLastName="Cohen";
     List<Event> usersEvents;
-    RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    RestClient client = null;
     private UsersHistoryDbAdapter mDbHelper;
 	Cursor mEventsCursor;
 	private String[] mColumns;
@@ -83,7 +83,7 @@ public class MeTab extends ActionBarListActivity {
         pointsProg.setProgress((int)points);
         pointsProg.setEnabled(false);        
  
-      int status = remote_getUsersHistory(userId);
+      int status = remote_getUsersHistory(userName);
       if (status==-1){} //TODO ADD HANDLER
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
@@ -111,6 +111,7 @@ public class MeTab extends ActionBarListActivity {
     }
     
     private long remote_getUsersKarma(String username){
+    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getKarma");
 		client.AddParam("userName", username);
 
@@ -123,7 +124,7 @@ public class MeTab extends ActionBarListActivity {
 			return -1;
 		}
 		String JSONResponse = client.getResponse();
-		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+		JSONResponse = JSONResponse.trim();
 		
 		//Parse the response from server
 		long p=0;
@@ -139,7 +140,8 @@ public class MeTab extends ActionBarListActivity {
 	}
 
     private User remote_getUsersDetails(String username){
-    	client.AddParam("action", "geUserDetails");
+    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    	client.AddParam("action", "getUserDetails");
 		client.AddParam("userName", username);
 		
 		try{
@@ -153,13 +155,14 @@ public class MeTab extends ActionBarListActivity {
 				
 		String JSONResponse = client.getResponse();
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+		JSONResponse = JSONResponse.trim();
 		
 		//Parse the response from server
 		User u=null;
 		try{
-			 u= new JSONDeserializer<User>(). use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+			 u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
 		}
-		catch(ClassCastException e){
+		catch(Exception e){
 			u=null;
 		}
 		return u;
@@ -168,6 +171,7 @@ public class MeTab extends ActionBarListActivity {
    private int remote_getUsersHistory(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
+		client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getUserHistory");
 		client.AddParam("userName", username);
 		client.AddParam("userDate", dateToSend);
@@ -189,7 +193,7 @@ public class MeTab extends ActionBarListActivity {
 	      
 		List<Event> history = new ArrayList<Event>();
 		String json = client.getResponse();
-		json = json.replaceAll("good2goserver", "good2go");
+		json = json.trim();
 		
 		JsonArray jsonArray = new JsonArray();
 		JsonParser parser = new JsonParser();
@@ -211,9 +215,12 @@ public class MeTab extends ActionBarListActivity {
 	}
 
     private List<Event> remote_getUsersFutureEvents(String username){
+		Date myDate = new Date();
+		String dateToSend = Long.toString(myDate.getTime());
+    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getRegisteredFutureEvents");
 		client.AddParam("userName", username);
-		client.AddParam("userDate", (new Date()).toString());
+		client.AddParam("userDate", dateToSend);
 		
 		try{
 			client.Execute(1); //1 is HTTP GET
@@ -226,6 +233,7 @@ public class MeTab extends ActionBarListActivity {
 
 		String JSONResponse = client.getResponse();
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+		JSONResponse = JSONResponse.trim();
 		
 		//Parse the response from server
 
