@@ -110,19 +110,25 @@
         
         
     <style name="TextHeader">
-        <item name="android:textSize">@dimen/text_size_medium</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textColor">@color/app_main_color</item>
+        <item name="android:textColor">@color/app_text_main</item>
+        <item name="android:layout_marginLeft">5dip</item>
     </style>
     
    <style name="TextBody">
-        <item name="android:textSize">@dimen/text_size_medium</item>
-        <item name="android:textColor">@color/app_main_color</item>
+        <item name="android:textColor">@color/app_text_main</item>
+        <item name="android:layout_marginLeft">5dip</item>
     </style>
     
-       
-    <style name="TextSecondary">
-        <item name="android:textSize">@dimen/text_size_small</item>
-        <item name="android:textColor">@color/app_secondary_color</item>
+  
+    <style name="TextRegular">
+        <item name="android:textColor">@color/app_text_main</item>
+        <item name="android:layout_height">wrap_content</item>
     </style>
+    
+   <style name="TextRegularList" parent="style/TextRegular">
+               <item name="android:textSize">@dimen/text_size_list</item>
+    </style>   
+    
+
 </resources>
