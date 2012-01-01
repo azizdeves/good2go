@@ -8,13 +8,18 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.Date;
 
+
 import com.facebook.android.DialogError;
 import com.facebook.android.Facebook;
 import com.facebook.android.FacebookError;
 import com.facebook.android.Facebook.DialogListener;
+import com.facebook.android.Util;
 import com.gdma.good2go.communication.RestClient;
 
 import android.app.Activity;
+import android.app.AlertDialog;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -37,6 +42,8 @@ public class CountMeIn extends ActionBarActivity {
 	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
     RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
     private int mAuthAttempts = 0;
+    ProgressDialog dialog;
+    private String graph_or_fql;
     
     
 	@Override
@@ -121,7 +128,7 @@ public class CountMeIn extends ActionBarActivity {
 	
 	
 	private void fbAuthAndPost(final String message){
-        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream" },
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream", "read_friendlists" },
         		new DialogListener() {
         				@Override
         				public void onComplete(Bundle values) {
@@ -145,13 +152,11 @@ public class CountMeIn extends ActionBarActivity {
         				}
                  }
             );
-		
-		
-			
+        
 	}
+
 	
-	
-	
+
 	
 	
 	
@@ -199,6 +204,8 @@ public class CountMeIn extends ActionBarActivity {
     @Override
     public boolean onOptionsItemSelected(MenuItem item) 
     {
+    	showToast("onOptionsItemSelected");
+    	
     	Intent newIntent = null;
         switch (item.getItemId()) {
         
@@ -253,6 +260,12 @@ public class CountMeIn extends ActionBarActivity {
     private void showToast(String message){
     	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
+    
+    
+    
+    
+    
+
 
     
 }
