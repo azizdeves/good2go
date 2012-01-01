@@ -85,12 +85,28 @@
 <!-- 	     <item name="android:layout_height">105dip</item> -->
         <item name="android:gravity">center_horizontal</item>
         <item name="android:drawablePadding">2dp</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
+        <item name="android:textSize">@dimen/text_size_tiny</item>
 <!--         <item name="android:textStyle">bold</item> -->
         <item name="android:textColor">@color/app_text_secondary</item>
         <item name="android:background">@null</item>
     </style>
+    
+        
+	<style name="SeekBar">
+        <item name="android:paddingLeft">7dip</item>
+        <item name="android:paddingRight">7dip</item>
+    </style>
+    
+    <style name="BadgeImage">
+        <item name="android:src">@drawable/badge_empty</item>
+        <item name="android:layout_width">wrap_content</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:layout_marginLeft">3dp</item>
+    </style>
 
+    <style name="HistoryListText">
+        <item name="android:textColor">@color/app_text_main</item>
+    </style>
         
         
     <style name="TextHeader">
