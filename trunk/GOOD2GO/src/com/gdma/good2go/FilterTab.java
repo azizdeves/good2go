@@ -230,6 +230,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 //        	newIntent = new Intent(this, MainActivity.class);
 //        	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
 //        	startActivity(newIntent);	
+        	getEventsWithFilters(null);
         	break;
         }
         
