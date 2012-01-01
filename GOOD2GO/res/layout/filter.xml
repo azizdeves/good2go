@@ -6,11 +6,14 @@
     
 	<TextView
         android:id="@+id/filterTitle"
+        
+        android:textColor="@color/app_text_main"
+        android:textStyle="bold"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"    
-        android:textStyle="bold"
+
         android:text="Show me these activity types: "/>
     
     <ToggleButton 	    
@@ -58,7 +61,9 @@
 	    android:layout_below ="@+id/envFilterButton"     
 	    android:layout_toRightOf ="@id/disabledFilterButton" 
 	    android:textOn="Special"	
-	    android:textOff="Special"	/>      
+	    android:textOff="Special"	
+	    
+	    android:drawableTop="@drawable/btn_filter_special"/>      
 
 	<ToggleButton
 	    android:id="@+id/elderlyFilterButton"
@@ -66,7 +71,9 @@
 	    android:layout_below ="@+id/animalsFilterButton"     
 	    android:layout_toRightOf ="@id/specialFilterButton" 	    
 	    android:textOn="Elderly"	
-	    android:textOff="Elderly"	/>    
+	    android:textOff="Elderly"	
+	    
+	    android:drawableTop="@drawable/btn_filter_elderly"/>    
 	
 	
 	
@@ -75,48 +82,67 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 	    android:layout_below ="@id/disabledFilterButton"    
+        android:textColor="@color/app_text_main"
+        android:text="Duration "
         android:textStyle="bold"
-        android:text="Duration "/>	
-
+        android:layout_marginTop="30dip"   
+        android:layout_marginBottom="10dip"/>	
+        
+  <TextView
+        android:id="@+id/ihave_duration"
+        android:layout_width="60dip"
+        android:layout_height="wrap_content"
+	    android:layout_below ="@id/duration"  
+	    android:textColor="@color/app_text_main"
+        android:text="I have"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"/>	
+        
+  
 
    	<SeekBar android:id="@+id/durationSeek"
-        android:layout_width="280dip"
+        android:layout_width="200dip"
         android:layout_height="wrap_content"
-        android:layout_below ="@id/duration"   
+        android:layout_below ="@id/duration"  
+        android:layout_toRightOf ="@id/ihave_duration"  
         android:max="24"
-        android:progress="2" />
-   		    
-	<TextView
-		android:id="@+id/durationSeekVal"
-		android:layout_width="80dip"
-		android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/durationSeek"
-        android:layout_below ="@id/duration"   
-		/>
+        android:progress="2" 
+        
+        android:progressDrawable="@drawable/seekbar_progress"/>
 
         	
     <TextView
-        android:id="@+id/radius"
+        android:id="@+id/distance"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below ="@id/durationSeek"  
 		android:textStyle="bold"
-        android:text="Radius"/>	
+		android:textColor="@color/app_text_main"
+        android:text="Distance"
+        android:layout_marginTop="30dip"
+        android:layout_marginBottom="10dip"/>	
+        
+    
+    
+      <TextView
+        android:id="@+id/radius"
+        android:layout_width="60dip"
+        android:layout_height="wrap_content"
+	    android:layout_below ="@id/distance"  
+	    android:textColor="@color/app_text_main"
+        android:text="Radius"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"/>	
     
    	<SeekBar android:id="@+id/radiusSeek"
-        android:layout_width="280dip"
+        android:layout_width="200dip"
         android:layout_height="wrap_content"
-        android:layout_below ="@id/radius"  
+        android:layout_below ="@id/distance"  
+        android:layout_toRightOf ="@id/radius"
         android:max="100"
-        android:progress="15" />
-   
- 	<TextView
-		android:id="@+id/radiusSeekVal"
-		android:layout_width="80dip"
-		android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/radiusSeek"
-        android:layout_below ="@id/radius"   
-		/>  		
+        android:progress="15" 
+        
+        android:progressDrawable="@drawable/seekbar_progress"/>  		
     
     <Button 
         android:layout_width="wrap_content"
@@ -125,5 +151,30 @@
 		android:layout_alignParentLeft="true"
         android:layout_alignParentBottom="true" 
         android:id="@+id/getEventsWithFiltersButton" 
-    	android:onClick="getEventsWithFilters" />		
+    	android:onClick="getEventsWithFilters" />
+
+    <TextView
+        android:id="@+id/durationSeekVal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/durationSeek"
+        android:layout_alignParentRight="true" 
+        
+        android:layout_marginLeft="10dip"
+        android:layout_toRightOf ="@id/durationSeek"
+        android:textColor="@color/app_text_main"/>
+
+    <TextView
+        android:id="@+id/radiusSeekVal"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/radiusSeek"
+        android:layout_alignParentRight="true" 
+        
+        android:layout_marginLeft="10dip"
+        android:layout_toRightOf ="@id/radiusSeek"
+        android:textColor="@color/app_text_main"/>
+    
+
+		
 </RelativeLayout>	
