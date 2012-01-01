@@ -30,8 +30,8 @@
         style="@style/FilterButton"
 	    android:layout_below ="@id/filterTitle"     
 	    android:layout_toRightOf ="@id/childrenFilterButton" 
-	    android:textOn="Env"	
-	    android:textOff="Env"	
+	    android:textOn="Environment"	
+	    android:textOff="Environment"	
 	    
 	    android:drawableTop="@drawable/btn_filter_env"/>      
 
@@ -85,7 +85,7 @@
         android:textColor="@color/app_text_main"
         android:text="Duration "
         android:textStyle="bold"
-        android:layout_marginTop="30dip"   
+        android:layout_marginTop="20dip"   
         android:layout_marginBottom="10dip"/>	
         
   <TextView
@@ -101,6 +101,7 @@
   
 
    	<SeekBar android:id="@+id/durationSeek"
+   	    style="@style/SeekBar"
         android:layout_width="200dip"
         android:layout_height="wrap_content"
         android:layout_below ="@id/duration"  
@@ -119,7 +120,7 @@
 		android:textStyle="bold"
 		android:textColor="@color/app_text_main"
         android:text="Distance"
-        android:layout_marginTop="30dip"
+        android:layout_marginTop="20dip"
         android:layout_marginBottom="10dip"/>	
         
     
@@ -135,6 +136,7 @@
         android:layout_marginTop="10dip"/>	
     
    	<SeekBar android:id="@+id/radiusSeek"
+   	    style="@style/SeekBar"
         android:layout_width="200dip"
         android:layout_height="wrap_content"
         android:layout_below ="@id/distance"  
@@ -160,7 +162,7 @@
         android:layout_alignBottom="@+id/durationSeek"
         android:layout_alignParentRight="true" 
         
-        android:layout_marginLeft="10dip"
+        android:layout_marginLeft="20dip"
         android:layout_toRightOf ="@id/durationSeek"
         android:textColor="@color/app_text_main"/>
 
@@ -171,7 +173,7 @@
         android:layout_alignBottom="@+id/radiusSeek"
         android:layout_alignParentRight="true" 
         
-        android:layout_marginLeft="10dip"
+        android:layout_marginLeft="20dip"
         android:layout_toRightOf ="@id/radiusSeek"
         android:textColor="@color/app_text_main"/>
     

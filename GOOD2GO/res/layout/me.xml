@@ -11,9 +11,10 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="10dip"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="0dip"
-        android:src="@drawable/child_event" />
+        android:layout_marginTop="5dip"
+        android:src="@drawable/user_pic" 
+        
+        />
 
      
     <TextView
@@ -23,11 +24,13 @@
         android:layout_toRightOf="@id/mePicMeView"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="35dip"
-        android:layout_marginLeft="30dp"
+        android:layout_marginLeft="20dip"
         android:textStyle="bold"
         android:textSize="25dp"
         android:layout_alignTop="@id/mePicMeView"
-        android:text=""/>
+        android:text="Dina Barzilay"
+        
+        android:textColor="@color/app_text_main"/>
     
      <TextView
         android:id="@+id/userPointsMeView"
@@ -35,90 +38,90 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mePicMeView"
         android:layout_marginRight="10dip"
-        android:text="Points" />
+        android:text="Points" 
+        
+        android:textColor="@color/app_text_main"
+        android:layout_marginTop="10dip"/>
         
     <SeekBar 
         android:id="@+id/pointSeekMeView"
+        style="@style/SeekBar"
         android:layout_width="280dip"
         android:layout_height="wrap_content"
         android:layout_below="@id/userPointsMeView"
-        android:max="100"
-        android:progress="1"
-        android:secondaryProgress="2" />
-  
+        android:max="1000"
+        android:progress="7200"
+        android:secondaryProgress="2" 
+        android:progressDrawable="@drawable/seekbar_progress"
+        android:thumb="@drawable/seekbar_thumb"/>
+  
  	<TextView
-		android:id="@+id/pointSeekValMeView"
-		android:layout_width="80dip"
-		android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/pointSeekMeView"
-        android:layout_below ="@id/userPointsMeView"   
-        android:layout_marginLeft="10dp" 
-		android:text="0"/>         
+ 	    android:id="@+id/pointSeekValMeView"
+ 	    android:layout_width="80dip"
+ 	    android:layout_height="wrap_content"
+ 	    android:layout_below="@id/userPointsMeView"
+ 	    android:layout_toRightOf="@+id/userNameMeView"
+ 	    android:text="7200"
+ 	    android:textColor="@color/app_text_main" />
 		
     <TextView
         android:id="@+id/userBadgesMeView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/pointSeekMeView"
-        android:text="Badges"/>
+        android:text="Badges"
+        android:textColor="@color/app_text_main"
+        
+        android:layout_marginTop="10dip"/>
 
     <ImageView
         android:id="@+id/mrNiceGuy_PicMeView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
-		android:layout_below="@id/userBadgesMeView"
-		android:layout_marginLeft="5dp"
-        android:src="@drawable/child_event" />
+        style="@style/BadgeImage"
+        
+		android:layout_below="@id/userBadgesMeView" />
     <ImageView
         android:id="@+id/angle_PicMeView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BadgeImage"
+        
 		android:layout_below="@id/userBadgesMeView"
-				android:layout_marginLeft="5dp"
-	    android:layout_toRightOf ="@id/mrNiceGuy_PicMeView" 
-        android:src="@drawable/child_event" />
+	    android:layout_toRightOf ="@id/mrNiceGuy_PicMeView" />
     <ImageView
         android:id="@+id/motherTeresa_PicMeView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BadgeImage"
+
 		android:layout_below="@id/userBadgesMeView"
-				android:layout_marginLeft="5dp"
-	    android:layout_toRightOf ="@id/angle_PicMeView" 
-        android:src="@drawable/child_event" />
+	    android:layout_toRightOf ="@id/angle_PicMeView" />
 
     <ImageView
         android:id="@+id/buddhistMonk_PicMeView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BadgeImage"
+        
 		android:layout_below="@id/userBadgesMeView"
-		android:layout_marginLeft="5dp"
-	    android:layout_toRightOf ="@id/motherTeresa_PicMeView" 
-        android:src="@drawable/child_event" />
+	    android:layout_toRightOf ="@id/motherTeresa_PicMeView" />
     
     <ImageView
         android:id="@+id/dalaiLama_PicMeView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BadgeImage"
+        
 		android:layout_below="@id/userBadgesMeView"
-		android:layout_marginLeft="5dp"
-	    android:layout_toRightOf ="@id/buddhistMonk_PicMeView" 
-        android:src="@drawable/child_event" />    
+	    android:layout_toRightOf ="@id/buddhistMonk_PicMeView" />    
 
-        <ImageView
+    <ImageView
         android:id="@+id/god_PicMeView"
-        android:layout_width="30dp"
-        android:layout_height="30dp"
+        style="@style/BadgeImage"
+        
 		android:layout_below="@id/userBadgesMeView"
-		android:layout_marginLeft="5dp"
-	    android:layout_toRightOf ="@id/dalaiLama_PicMeView" 
-        android:src="@drawable/child_event" />   
+	    android:layout_toRightOf ="@id/dalaiLama_PicMeView" />   
         
 	<TextView
 	        android:id="@+id/userHistoryMeView"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/mrNiceGuy_PicMeView"
-	        android:text="History"/>
+	        android:text="History"
+	        
+	        android:textColor="@color/app_text_main"
+	        android:layout_marginTop="10dip"/>
 
 	<ListView android:id="@android:id/list"
                android:layout_width="fill_parent"

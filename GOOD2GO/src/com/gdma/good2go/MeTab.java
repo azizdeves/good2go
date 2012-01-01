@@ -63,7 +63,7 @@ public class MeTab extends ActionBarListActivity {
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
         
 //("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
-        points=70;
+        points=7200;
        // badge="BUDDHIST_MONK";
         points=remote_getUsersKarma(userName);
  		badge=Karma.Badge.getMyBadge(points).getName();
@@ -77,6 +77,11 @@ public class MeTab extends ActionBarListActivity {
         TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);
         SeekBar pointsProg = (SeekBar)findViewById(R.id.pointSeekMeView);
         setBadgesPictures(badge);
+        
+        //TEST - ADI - THIS IS JUST SO SOME BADGES SHOW UP
+		setPicture1();
+		setPicture2();
+        //TEST - ADI
         
         tvName.setText(userNiceName);
         tvPoints.setText(Integer.toString((int)points));
@@ -99,7 +104,7 @@ public class MeTab extends ActionBarListActivity {
       mDbHelper = new UsersHistoryDbAdapter(this);
       mDbHelper.open();
       mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
-      mDbHelper.createUsersHistory("mor2", "Clean the beach", "13/13/13", "30", "2h") ; 
+      mDbHelper.createUsersHistory("mor2", "Clean the beach", "13/12/11", "30", "2h") ; 
       mEventsCursor=mDbHelper.fetchAllUsersHistory();
       startManagingCursor(mEventsCursor);
       showHistoryInList();
@@ -316,27 +321,27 @@ public class MeTab extends ActionBarListActivity {
 	
 	private void setPicture1(){
 		ImageView im1=(ImageView)findViewById(R.id.mrNiceGuy_PicMeView);
-		im1.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+		im1.setImageResource(R.drawable.badge_mrniceguy);
 	}
 	private void setPicture2(){
 		ImageView im2=(ImageView)findViewById(R.id.angle_PicMeView);
-		im2.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+		im2.setImageResource(R.drawable.badge_angel); 
 	}
 	private void setPicture3(){
 		ImageView im3=(ImageView)findViewById(R.id.motherTeresa_PicMeView);
-		im3.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+		im3.setImageResource(R.drawable.badge_mothertheresa); 
 	}
 	private void setPicture4(){
 		ImageView im4=(ImageView)findViewById(R.id.buddhistMonk_PicMeView);
-		im4.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+		im4.setImageResource(R.drawable.badge_buddhistmonk); 
 	}
 	private void setPicture5(){
 		ImageView im5=(ImageView)findViewById(R.id.dalaiLama_PicMeView);
-		im5.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+		im5.setImageResource(R.drawable.badge_dalailama); 
 	}
 	private void setPicture6(){
 		ImageView im6=(ImageView)findViewById(R.id.god_PicMeView);
-		im6.setImageResource(R.drawable.ic_launcher); //PUT THE RIGHT PICTURE HERE
+		im6.setImageResource(R.drawable.badge_god); 
 	}
     
 
