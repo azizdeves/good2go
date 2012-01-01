@@ -12,9 +12,7 @@
         android:layout_alignParentTop="true"
         android:layout_marginRight="10dip"
         android:layout_marginTop="5dip"
-        android:src="@drawable/user_pic" 
-        
-        />
+        android:src="@drawable/user_pic"/>
 
      
     <TextView
@@ -34,14 +32,15 @@
     
      <TextView
         android:id="@+id/userPointsMeView"
+        style="@style/TextBody"
+        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/mePicMeView"
         android:layout_marginRight="10dip"
-        android:text="Points" 
-        
-        android:textColor="@color/app_text_main"
-        android:layout_marginTop="10dip"/>
+        android:text="Points"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="4dip"/>
         
     <SeekBar 
         android:id="@+id/pointSeekMeView"
@@ -66,13 +65,16 @@
 		
     <TextView
         android:id="@+id/userBadgesMeView"
+        style="@style/TextBody"
+        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/pointSeekMeView"
         android:text="Badges"
-        android:textColor="@color/app_text_main"
+
         
-        android:layout_marginTop="10dip"/>
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="4dip"/>
 
     <ImageView
         android:id="@+id/mrNiceGuy_PicMeView"
@@ -115,13 +117,15 @@
         
 	<TextView
 	        android:id="@+id/userHistoryMeView"
+	        style="@style/TextBody"
+	        
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/mrNiceGuy_PicMeView"
 	        android:text="History"
 	        
-	        android:textColor="@color/app_text_main"
-	        android:layout_marginTop="10dip"/>
+	        android:layout_marginTop="10dip"
+	        android:layout_marginBottom="4dip"/>
 
 	<ListView android:id="@android:id/list"
                android:layout_width="fill_parent"

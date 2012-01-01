@@ -6,13 +6,12 @@
     
 	<TextView
         android:id="@+id/filterTitle"
-        
-        android:textColor="@color/app_text_main"
-        android:textStyle="bold"
+        style="@style/TextHeader"
+
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"    
+        android:layout_marginTop="10dip"   
 
         android:text="Show me these activity types: "/>
     
@@ -79,21 +78,24 @@
 	
     <TextView
         android:id="@+id/duration"
+        style="@style/TextHeader"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
 	    android:layout_below ="@id/disabledFilterButton"    
-        android:textColor="@color/app_text_main"
+
         android:text="Duration "
-        android:textStyle="bold"
+
         android:layout_marginTop="20dip"   
         android:layout_marginBottom="10dip"/>	
         
   <TextView
         android:id="@+id/ihave_duration"
+        style="@style/TextBody"
+        
         android:layout_width="60dip"
         android:layout_height="wrap_content"
 	    android:layout_below ="@id/duration"  
-	    android:textColor="@color/app_text_main"
+
         android:text="I have"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"/>	
@@ -102,6 +104,7 @@
 
    	<SeekBar android:id="@+id/durationSeek"
    	    style="@style/SeekBar"
+   	    
         android:layout_width="200dip"
         android:layout_height="wrap_content"
         android:layout_below ="@id/duration"  
@@ -114,11 +117,12 @@
         	
     <TextView
         android:id="@+id/distance"
+        style="@style/TextHeader"
+        
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below ="@id/durationSeek"  
-		android:textStyle="bold"
-		android:textColor="@color/app_text_main"
+        
         android:text="Distance"
         android:layout_marginTop="20dip"
         android:layout_marginBottom="10dip"/>	
@@ -127,16 +131,19 @@
     
       <TextView
         android:id="@+id/radius"
+        style="@style/TextBody"
+        
         android:layout_width="60dip"
         android:layout_height="wrap_content"
 	    android:layout_below ="@id/distance"  
-	    android:textColor="@color/app_text_main"
+	    
         android:text="Radius"
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"/>	
     
    	<SeekBar android:id="@+id/radiusSeek"
    	    style="@style/SeekBar"
+   	    
         android:layout_width="200dip"
         android:layout_height="wrap_content"
         android:layout_below ="@id/distance"  
@@ -146,14 +153,14 @@
         
         android:progressDrawable="@drawable/seekbar_progress"/>  		
     
-    <Button 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Go!"
-		android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true" 
-        android:id="@+id/getEventsWithFiltersButton" 
-    	android:onClick="getEventsWithFilters" />
+<!--     <Button  -->
+<!--         android:layout_width="wrap_content" -->
+<!--         android:layout_height="wrap_content" -->
+<!--         android:text="Go!" -->
+<!-- 		android:layout_alignParentLeft="true" -->
+<!--         android:layout_alignParentBottom="true"  -->
+<!--         android:id="@+id/getEventsWithFiltersButton"  -->
+<!--     	android:onClick="getEventsWithFilters" /> -->
 
     <TextView
         android:id="@+id/durationSeekVal"
@@ -161,6 +168,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/durationSeek"
         android:layout_alignParentRight="true" 
+        android:text="2h" 
         
         android:layout_marginLeft="20dip"
         android:layout_toRightOf ="@id/durationSeek"
@@ -172,6 +180,7 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/radiusSeek"
         android:layout_alignParentRight="true" 
+        android:text="1km" 
         
         android:layout_marginLeft="20dip"
         android:layout_toRightOf ="@id/radiusSeek"

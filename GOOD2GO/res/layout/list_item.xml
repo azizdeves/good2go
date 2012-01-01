@@ -19,28 +19,33 @@
 		android:layout_width="200dip"
 		android:layout_height="wrap_content"
         android:layout_toRightOf="@id/childPic2"
-		android:textSize="16dip"
-		android:textColor="@android:color/primary_text_dark" 
+		style="@style/TextRegularList"
+
 		android:text="Playing with autistic kids"/>
 	
      <TextView
 		android:id="@+id/eventinfo_entry"
 		android:layout_width="200dip"
 		android:layout_height="wrap_content"
+
 		android:layout_below="@id/eventname_entry"
 		android:layout_alignLeft="@id/eventname_entry"
+		
 		android:textSize="12dip"
-		android:textColor="@android:color/secondary_text_dark" 
+		android:textColor="@color/app_text_secondary"
+
 		android:text="Help autistic kids be awesome and do many other stuff"/>
 
      <TextView
          android:id="@+id/eventdistance_entry"
+         style="@style/TextRegular"
+         
          android:layout_width="wrap_content"
-         android:layout_height="wrap_content"
+         
          android:layout_marginTop="10dip"
          android:layout_alignParentRight="true"
          android:text="0.4 km"
-         android:textColor="@android:color/secondary_text_dark"
+
          android:textSize="20dip" />
        
 </RelativeLayout>
