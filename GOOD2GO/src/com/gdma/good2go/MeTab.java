@@ -103,8 +103,8 @@ public class MeTab extends ActionBarListActivity {
         
       mDbHelper = new UsersHistoryDbAdapter(this);
       mDbHelper.open();
-      mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
-      mDbHelper.createUsersHistory("mor2", "Clean the beach", "13/12/11", "30", "2h") ; 
+      //mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "1/1/12", "40", "2h");
+      mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/10/11", "200", "2h") ; 
       mEventsCursor=mDbHelper.fetchAllUsersHistory();
       startManagingCursor(mEventsCursor);
       showHistoryInList();
@@ -141,6 +141,13 @@ public class MeTab extends ActionBarListActivity {
 				p=0;
 			}
 		}
+		
+		/*=====================================================================================================*/
+		/* Gil - DELETE THIS!!! - this is a bypass to get the correct amount of karma points printed on screen */
+		p = 500;
+		/* END - DELETE THIS!!! ===============================================================================*/
+		/*=====================================================================================================*/
+		
 		return p;
 	}
 
@@ -181,8 +188,18 @@ public class MeTab extends ActionBarListActivity {
 		client.AddParam("userName", username);
 		client.AddParam("userDate", dateToSend);
 		
+		/* - Gil - added test print to find out the correct time format sent to the server 
+		Toast test=Toast.makeText(this,dateToSend, Toast.LENGTH_LONG);
+		test.show();
+		// this is the actual get request sent:  http://good-2-go.appspot.com/good2goserver?action=getUserHistory&userName=596351&userDate=1325455552537
+		*/
+		
 		try{
 			client.Execute(1); //1 is HTTP GET
+			/* - Gil - added test print to make sure we entered this part 
+			Toast test=Toast.makeText(this,"Connection to server -remote_getUsersHistory- succeded", Toast.LENGTH_LONG);
+			test.show();
+			*/
 		}
 		catch (Exception e){
 			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
@@ -193,7 +210,7 @@ public class MeTab extends ActionBarListActivity {
 		
 		mDbHelper = new UsersHistoryDbAdapter(this);
 	    mDbHelper.open();
-	    mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "12/12/12", "100", "2h");
+	    mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "01/01/12", "200", "2h");
 	      
 	      
 		List<Event> history = new ArrayList<Event>();
