@@ -5,16 +5,16 @@ import com.example.android.actionbarcompat.R;
 
 import com.gdma.good2go.communication.RestClient;
 
-import android.app.Activity;
+
 import android.content.Intent;
-import android.database.Cursor;
+
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
-import android.widget.Toast;
+
 import android.widget.ToggleButton;
 import android.widget.SeekBar;
 
@@ -29,42 +29,59 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 	  
 	  int duration=0;
 	  int radius=0;
+	  String caller="";
+	  ToggleButton togglebutton_Animals;
+	  ToggleButton togglebutton_Children;
+	  ToggleButton togglebutton_Disabled;
+	  ToggleButton togglebutton_Env;
+	  ToggleButton togglebutton_Elderly;
+	  ToggleButton togglebutton_Special;
   @Override
   public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
       setContentView(R.layout.filter);
-//      TextView textview = new TextView(this);
-//      textview.setText("This is the Search tab");
-//      setContentView(textview);
-      
-      durationSeekBar = (SeekBar)findViewById(R.id.durationSeek);
+
+      Bundle b = getIntent().getExtras();
+	  caller =(b!=null)?b.getString("caller"):null;
+	  
+	  durationSeekBar = (SeekBar)findViewById(R.id.durationSeek);
       durationSeekBar.setOnSeekBarChangeListener(this);
 
       radiusSeekBar = (SeekBar)findViewById(R.id.radiusSeek);
       radiusSeekBar.setOnSeekBarChangeListener(this);
        
-  	durationTrackingText = (TextView)findViewById(R.id.durationSeekVal);
-  	radiusTrackingText = (TextView)findViewById(R.id.radiusSeekVal);
+  		durationTrackingText = (TextView)findViewById(R.id.durationSeekVal);
+  		radiusTrackingText = (TextView)findViewById(R.id.radiusSeekVal);
   	
-  	duration=durationSeekBar.getProgress();
-  	radius=radiusSeekBar.getProgress();
+  		duration=durationSeekBar.getProgress();
+  		radius=radiusSeekBar.getProgress();
   	
 
-  	durationTrackingText.setText(Integer.toString(duration)+"h");
-  	radiusTrackingText.setText(Integer.toString(radius)+"km");
+  		durationTrackingText.setText(Integer.toString(duration)+"h");
+  		radiusTrackingText.setText(Integer.toString(radius)+"km");
+  	
+  	
+  
+	togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
+	togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
+	togglebutton_Disabled = (ToggleButton) findViewById(R.id.disabledFilterButton);
+	togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
+	togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
+	togglebutton_Special = (ToggleButton) findViewById(R.id.specialFilterButton);
+	
+	togglebutton_Animals.setChecked(true);
+	togglebutton_Children.setChecked(true);
+	togglebutton_Disabled.setChecked(true);
+	togglebutton_Env.setChecked(true);
+	togglebutton_Elderly.setChecked(true);
+	togglebutton_Special.setChecked(true);
   }
   
 	
 
   public void getEventsWithFilters(View view){
  	
-	  
-		final ToggleButton togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
-		final ToggleButton togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
-		final ToggleButton togglebutton_Disabled = (ToggleButton) findViewById(R.id.disabledFilterButton);
-		final ToggleButton togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
-		final ToggleButton togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
-		final ToggleButton togglebutton_Special = (ToggleButton) findViewById(R.id.specialFilterButton);
+
 		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "getEvents");
 
@@ -166,10 +183,20 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 		b.putInt("durationInMinutes", duration);
 		b.putInt("radius", radius);
 
-		Intent intent = new Intent();
-		intent.putExtras(b);
-		setResult(RESULT_OK, intent);
-		finish();
+		
+		if (caller!= null && caller.compareTo("MainTab")==0){
+			Intent newIntent = new Intent(this, MapTab.class);
+			b.putString("action","MainTab");
+			newIntent.putExtras(b);
+			startActivity(newIntent);
+		}
+		
+		else{
+			Intent intent = new Intent();
+			intent.putExtras(b);
+			setResult(RESULT_OK, intent);
+			finish();
+		}
 	}
 
 

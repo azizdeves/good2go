@@ -44,109 +44,10 @@ public class MapTab extends ActionBarMapActivity {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
-		 if (requestCode == GET_FILTERED_EVENTS) {
-			if(resultCode==RESULT_OK){
-				Bundle bundleResult = data.getExtras();
-				int i=0;
-				int arrSize=0;
-				int duration=-1;
-				int radius=-1;
-				String[] types= new String[bundleResult.size()-2];
-				for (int j = 0; j < types.length; j++) {
-					types[i]="";
-				}
-				
-				if(bundleResult!=null){
-					if(bundleResult.getString("animals").compareTo("1")==0){
-						types[i]="animals";
-						i++;
-						arrSize++;
-					}	
-					if(bundleResult.getString("children").compareTo("1")==0){
-						types[i]="children";
-						i++;
-						arrSize++;
-					}
-					if(bundleResult.getString("disabled").compareTo("1")==0){
-						types[i]="disabled";
-						i++;
-						arrSize++;
-					}
-					if(bundleResult.getString("elderly").compareTo("1")==0){
-						types[i]="elderly";
-						i++;
-						arrSize++;
-					}
-					if(bundleResult.getString("environment").compareTo("1")==0){
-						types[i]="environment";
-						i++;
-						arrSize++;
-					}
-					if(bundleResult.getString("special").compareTo("1")==0){
-						types[i]="special";
-						i++;
-						arrSize++;
-					}
-					if( bundleResult.getInt("durationInMinutes")>-1)
-						duration= bundleResult.getInt("durationInMinutes");
-					if( bundleResult.getInt("radius")>-1)
-						radius =  bundleResult.getInt("radius");
-				
-				}
-				/******DEBUGGING AREA******/
-//				Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
-//				debugging.show();	
-//				debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
-//				debugging.show();	
-//				for (int j = 0; j < arrSize; j++) {
-//					debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
-//					debugging.show();					
-//				}
+		
+		Bundle bundleResult = data.getExtras();
+		showFilteredEventsOnMap(bundleResult);
 	
-				/***END OF DEBUGGING AREA***/	
-				
-				//Cursor eventsCursor = mDbHelper.fetchAllEvents();
-				Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
-//				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
-//				debugging.show();
-				MapView mapView = (MapView) findViewById(R.id.mapview);
-		        List<Overlay> mapOverlays = mapView.getOverlays();
-		        mapOverlays.clear();
-		        Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
-		        EventsItemizedOverlay itemizedoverlay = new EventsItemizedOverlay(drawable,mapView);
-
-		        startManagingCursor(eventsCursor); 
-		        
-		        int cnt=0;
-		        if(eventsCursor.moveToFirst()){
-		        	do{
-		        		EventOverlayItem point=MakeEventPoint(eventsCursor);
-		        		itemizedoverlay.addOverlay(point);
-		        		cnt++;
-		        		}
-		        	while(eventsCursor.moveToNext()&&cnt!=eventsCursor.getCount());
-		        }
-
-		        mapOverlays.add(itemizedoverlay);
-		        
-				final MapController mc = mapView.getController();
-				mc.animateTo(new GeoPoint (32069156,34774003));
-				mc.setZoom(16);
-				buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_launcher); 
-				
-				buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
-		            public void onClick(View v) {
-		            	onCreateHelper();
-		            }
-		        });
-
-				
-			}
-			if(resultCode==RESULT_CANCELED){
-				Toast debugging=Toast.makeText(this, "failed", Toast.LENGTH_LONG);
-				debugging.show();				
-			}		
-		 }
 	}
 	
     private EventOverlayItem MakeEventPoint(Cursor eventsCursor) {    
@@ -185,7 +86,15 @@ public class MapTab extends ActionBarMapActivity {
 	
 	
 	private void onCreateHelper(){
-		 MapView mapView = (MapView) findViewById(R.id.mapview);
+		
+		Bundle bundleResult = getIntent().getExtras();
+	    String action=(bundleResult!=null)?bundleResult.getString("action"):null;
+	    
+	    if (action!=null && action.compareTo("MainTab")==0){
+	    	showFilteredEventsOnMap(bundleResult);
+	    }
+	    else{
+			MapView mapView = (MapView) findViewById(R.id.mapview);
 	        mapView.setBuiltInZoomControls(true);
 	        
 	        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
@@ -195,7 +104,7 @@ public class MapTab extends ActionBarMapActivity {
 	            	getFilterScreen(v);
 	            }
 	        });
-
+	
 	        /**OVERLAY*/ 
 	        
 	        //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
@@ -223,12 +132,12 @@ public class MapTab extends ActionBarMapActivity {
 	        		}
 	        	while(eventsCursor.moveToNext()&&cnt!=6/*BUG IN CURSOR*/);
 	        }
-//	        if(eventsCursor!=null&&!eventsCursor.isClosed()){
-//	        	mDbHelper.close();
-//	        }
+	//	        if(eventsCursor!=null&&!eventsCursor.isClosed()){
+	//	        	mDbHelper.close();
+	//	        }
 	        
 	        //GeoPoint gp=new GeoPoint (32074938,34775591);
-
+	
 	        //itemizedoverlay.addOverlay(new EventOverlayItem(gp, "adi", "anna", "230"));
 	             
 	        /**SHOW ON MAP*/ 
@@ -238,6 +147,7 @@ public class MapTab extends ActionBarMapActivity {
 			final MapController mc = mapView.getController();
 			mc.animateTo(new GeoPoint (32069156,34774003));
 			mc.setZoom(16);
+	    }
 	        
 	}
 	
@@ -273,6 +183,106 @@ public class MapTab extends ActionBarMapActivity {
         }
         
         return super.onOptionsItemSelected(item);
+    }
+    
+    
+    private void showFilteredEventsOnMap(Bundle bundleResult){
+		int i=0;
+		int arrSize=0;
+		int duration=-1;
+		int radius=-1;
+		String[] types= new String[bundleResult.size()-2];
+		for (int j = 0; j < types.length; j++) {
+			types[i]="";
+		}
+		
+		if(bundleResult!=null){
+			if(bundleResult.getString("animals").compareTo("1")==0){
+				types[i]="animals";
+				i++;
+				arrSize++;
+			}	
+			if(bundleResult.getString("children").compareTo("1")==0){
+				types[i]="children";
+				i++;
+				arrSize++;
+			}
+			if(bundleResult.getString("disabled").compareTo("1")==0){
+				types[i]="disabled";
+				i++;
+				arrSize++;
+			}
+			if(bundleResult.getString("elderly").compareTo("1")==0){
+				types[i]="elderly";
+				i++;
+				arrSize++;
+			}
+			if(bundleResult.getString("environment").compareTo("1")==0){
+				types[i]="environment";
+				i++;
+				arrSize++;
+			}
+			if(bundleResult.getString("special").compareTo("1")==0){
+				types[i]="special";
+				i++;
+				arrSize++;
+			}
+			if( bundleResult.getInt("durationInMinutes")>-1)
+				duration= bundleResult.getInt("durationInMinutes");
+			if( bundleResult.getInt("radius")>-1)
+				radius =  bundleResult.getInt("radius");
+		
+		}
+		/******DEBUGGING AREA******/
+//				Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
+//				debugging.show();	
+//				debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
+//				debugging.show();	
+//				for (int j = 0; j < arrSize; j++) {
+//					debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
+//					debugging.show();					
+//				}
+
+		/***END OF DEBUGGING AREA***/	
+		
+		//Cursor eventsCursor = mDbHelper.fetchAllEvents();
+		mDbHelper = new EventsDbAdapter(this);
+	    mDbHelper.open();
+		Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
+//				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
+//				debugging.show();
+		MapView mapView = (MapView) findViewById(R.id.mapview);
+        List<Overlay> mapOverlays = mapView.getOverlays();
+        mapOverlays.clear();
+        Drawable drawable = this.getResources().getDrawable(R.drawable.marker);
+        EventsItemizedOverlay itemizedoverlay = new EventsItemizedOverlay(drawable,mapView);
+
+        startManagingCursor(eventsCursor); 
+        
+        int cnt=0;
+        if(eventsCursor.moveToFirst()){
+        	do{
+        		EventOverlayItem point=MakeEventPoint(eventsCursor);
+        		itemizedoverlay.addOverlay(point);
+        		cnt++;
+        		}
+        	while(eventsCursor.moveToNext()&&cnt!=eventsCursor.getCount());
+        }
+
+        mapOverlays.add(itemizedoverlay);
+        
+		final MapController mc = mapView.getController();
+		mc.animateTo(new GeoPoint (32069156,34774003));
+		mc.setZoom(16);
+		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
+		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_launcher); 
+		
+		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	onCreateHelper();
+            }
+        });
+   	
     }
 }
 

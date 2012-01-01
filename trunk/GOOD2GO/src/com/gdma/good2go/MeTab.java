@@ -3,7 +3,7 @@ package com.gdma.good2go;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
+
 
 import android.R.drawable;
 import android.content.Context;
@@ -25,7 +25,7 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import com.example.android.actionbarcompat.ActionBarActivity;
+
 import com.example.android.actionbarcompat.ActionBarListActivity;
 import com.example.android.actionbarcompat.MainActivity;
 import com.example.android.actionbarcompat.R;
@@ -103,8 +103,8 @@ public class MeTab extends ActionBarListActivity {
         
       mDbHelper = new UsersHistoryDbAdapter(this);
       mDbHelper.open();
-      //mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "1/1/12", "40", "2h");
-      mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/10/11", "200", "2h") ; 
+      mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "01/02/12", "40", "2h");
+      mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/02/12", "200", "2h") ; 
       mEventsCursor=mDbHelper.fetchAllUsersHistory();
       startManagingCursor(mEventsCursor);
       showHistoryInList();
