@@ -16,7 +16,7 @@
 
 package com.example.android.actionbarcompat;
 
-import java.util.ArrayList;
+
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -35,7 +35,6 @@ import android.widget.Toast;
 import com.gdma.good2go.Event;
 import com.gdma.good2go.EventsDbAdapter;
 import com.gdma.good2go.FilterTab;
-import com.gdma.good2go.ListTab;
 import com.gdma.good2go.MapTab;
 import com.gdma.good2go.MeTab;
 import com.gdma.good2go.Event.VolunteeringWith;
@@ -188,6 +187,9 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
 	            Intent newIntent = new Intent(view.getContext(), FilterTab.class);
+	            Bundle caller = new Bundle();
+	            caller.putString("caller", "MainTab");
+	            newIntent.putExtras(caller);
 	            startActivity(newIntent);
             }
         });

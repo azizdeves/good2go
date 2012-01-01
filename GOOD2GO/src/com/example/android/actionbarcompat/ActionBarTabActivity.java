@@ -18,7 +18,7 @@ package com.example.android.actionbarcompat;
 
 
 import android.app.Activity;
-import android.app.ListActivity;
+
 import android.app.TabActivity;
 import android.os.Bundle;
 import android.view.Menu;

@@ -23,7 +23,7 @@ import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
-import android.widget.Toast;
+
 
 /**
  * Simple notes database access helper class. Defines the basic CRUD operations
@@ -103,7 +103,6 @@ public class EventsDbAdapter {
 
         @Override
         public void onCreate(SQLiteDatabase db) {
-
             db.execSQL(DATABASE_CREATE);
         }
 
@@ -242,19 +241,18 @@ public class EventsDbAdapter {
 
     }
    
-    @SuppressWarnings("null")
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
 
     	int i=0;
     	String q = "SELECT * FROM events WHERE 1=1 ";
     	String arr[] = {"", ""};
     	if(timeInMinutes>0){
-    		q=q+" AND "+ KEY_EVENT_DURATION + ">=" + "\' " +Integer.toString(timeInMinutes)+"\'";
+    		q=q+" AND "+ KEY_EVENT_DURATION + "<=" + "\'" +Integer.toString(timeInMinutes)+"\'";
     		arr[i]=Integer.toString(timeInMinutes);
     		i++;
     	}
     	if(radius>0){
-    		q=q+" AND "+ KEY_EVENT_DISTANCE+" <" +  "\' "+ Integer.toString(radius)+ "\'";
+    		q=q+" AND "+ KEY_EVENT_DISTANCE+" <" +  "\'"+ Integer.toString(radius)+ "\'";
     		arr[i]=Integer.toString(radius);
     		i++;
     	}
