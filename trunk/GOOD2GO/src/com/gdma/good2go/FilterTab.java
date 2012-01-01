@@ -206,7 +206,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main, menu);
+        menuInflater.inflate(R.menu.filter, menu);
 
         // Calling super after populating the menu is necessary here to ensure that the
         // action bar helpers have a chance to handle this event.
@@ -223,6 +223,13 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
         	newIntent = new Intent(this, MainActivity.class);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
+        	break;
+        	
+        case R.id.menu_go:	
+        	/**TODO add the go button implementation*/
+//        	newIntent = new Intent(this, MainActivity.class);
+//        	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
+//        	startActivity(newIntent);	
         	break;
         }
         
