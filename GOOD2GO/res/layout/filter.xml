@@ -170,7 +170,7 @@
         android:layout_alignParentRight="true" 
         android:text="2h" 
         
-        android:layout_marginLeft="20dip"
+        android:layout_marginLeft="10dip"
         android:layout_toRightOf ="@id/durationSeek"
         android:textColor="@color/app_text_main"/>
 
@@ -180,9 +180,9 @@
         android:layout_height="wrap_content"
         android:layout_alignBottom="@+id/radiusSeek"
         android:layout_alignParentRight="true" 
-        android:text="1km" 
+        android:text="15km" 
         
-        android:layout_marginLeft="20dip"
+        android:layout_marginLeft="10dip"
         android:layout_toRightOf ="@id/radiusSeek"
         android:textColor="@color/app_text_main"/>
     

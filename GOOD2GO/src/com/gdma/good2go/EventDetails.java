@@ -7,6 +7,7 @@ import com.example.android.actionbarcompat.R;
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -14,6 +15,7 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.TabHost;
+import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
 
 public class EventDetails extends ActionBarTabActivity {
@@ -28,6 +30,9 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventCity;
     private String mEventSreet;
     private String mEventStreetNumber;
+    private String mEventWhen;
+    private String mEventDuration;
+    
     
         
 	private EventsDbAdapter mDbHelper;
@@ -76,11 +81,20 @@ public class EventDetails extends ActionBarTabActivity {
 	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
 	    mEventCity=event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_CITY));
+	   
+	    mEventDuration=event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_DURATION));
+	    //mEventWhen
+	    
+	    
 	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
 	    eventDetails.setText(mEventDetails);
+	    
 	    eventWhere.setText(mEventCity);
+	    eventDuration.setText(mEventDuration);
+	    //eventWhen.setText();
 	    
 	    /**TODO: add distance*/
 
@@ -99,6 +113,10 @@ public class EventDetails extends ActionBarTabActivity {
 	    
 	    mTabHost.setCurrentTab(0);
 	    
+
+	    
+	    initTabsAppearance(mTabHost);
+	    
 	    
 	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
 	   
@@ -114,6 +132,16 @@ public class EventDetails extends ActionBarTabActivity {
 	            startActivityForResult(newIntent, 1);
 	        }
 	    });
+	}
+	
+	
+	public static void initTabsAppearance(TabHost tabhost) 
+	{
+	    for(int i=0;i<tabhost.getTabWidget().getChildCount();i++)
+	    {
+	    	tabhost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.event_details_tab_bg);
+	        tabhost.getTabWidget().getChildAt(i).getLayoutParams().height = 50; 
+	    }
 	}
 	
     @Override

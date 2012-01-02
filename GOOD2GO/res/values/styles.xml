@@ -127,8 +127,44 @@
     </style>
     
    <style name="TextRegularList" parent="style/TextRegular">
-               <item name="android:textSize">@dimen/text_size_list</item>
+        <item name="android:textSize">@dimen/text_size_list</item>
     </style>   
     
+   <style name="TextWhite">
+        <item name="android:textColor">@color/app_text_white</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:textSize">@dimen/text_size_small</item>
+        
+    </style>    
+       
+    
 
+    <style name="ButtonCountMeIn" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:textSize">18sp</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/btn_count_me_in_details</item>
+        <item name="android:focusable">true</item>
+        <item name="android:clickable">true</item>
+        
+        <item name="android:layout_width">fill_parent</item>
+
+        
+            
+    </style>
+      
+        
+        
+     <style name="ButtonDummy" parent="@android:style/Widget.Button">
+        <item name="android:gravity">center_vertical|center_horizontal</item>
+        <item name="android:textColor">#FFFFFFFF</item>
+        <item name="android:textStyle">bold</item>
+        <item name="android:background">@drawable/btn_dummy</item>
+        <item name="android:clickable">false</item>
+        <item name="android:layout_width">110dip</item>
+        <item name="android:layout_height">40dip</item>
+                
+
+    </style>
 </resources>

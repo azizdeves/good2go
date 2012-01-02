@@ -26,5 +26,7 @@
      
      <color name="app_text_main">#717D7D</color>    
      <color name="app_text_secondary">#AFC7C7</color>
+     
+     <color name="app_text_white">#FFFFFF</color>
 
 </resources>
