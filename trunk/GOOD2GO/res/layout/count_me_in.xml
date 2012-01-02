@@ -8,8 +8,13 @@
         android:id="@+id/eventname"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        
+        android:textColor="@color/app_text_main"
+        
         android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"    
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+          
         android:textStyle="bold"
         android:text="Volunteering with kids"/>
 
@@ -17,10 +22,17 @@
         android:id="@+id/fbstatus"
         android:layout_width="fill_parent"
         android:layout_height="wrap_content"
+        
+        android:textColor="@color/app_secondary_color"
+        
         android:layout_marginBottom="10dip"
         android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        
         android:layout_below="@id/eventname"
         android:inputType="textMultiLine"
+        
         android:text="Adi Anna is awesome. She's going to volunteer with kids!"/>
     
      
@@ -28,39 +40,60 @@
         android:id="@+id/fbpost"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        
+        android:textColor="@color/app_text_main"
+        
         android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"    
+        android:layout_marginTop="10dip"   
+        android:layout_marginLeft="10dip"
+         
         android:layout_below="@id/fbstatus"
+        
         android:textStyle="bold"
         android:text="Share with friends?"/>
     
 	<ToggleButton
 	    android:id="@+id/fbposttoggleBtn"
+	    style="@style/TextWhite"
+	    
+	    android:background="@drawable/btn_share_with_friends"
+	    
 	    android:layout_width="70dip"
-	    android:layout_height="60dip"
+	    android:layout_height="30dip"
+	    
+	    
 	    android:layout_above="@+id/fbinvite"
 	    android:layout_alignRight="@id/fbstatus"
 	    android:layout_below="@id/fbstatus"
+	    
 	    android:checked="true"
 	    android:text="ToggleButton"
 	    android:textOff="No"
-	    android:textOn="Yes"
-	    android:textSize="10dp" />
+	    android:textOn="Yes"/>
          
     <TextView
         android:id="@+id/fbinvite"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
+        
+        android:textColor="@color/app_text_main"
+        
         android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"    
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+          
         android:layout_below="@id/fbpost"
         android:textStyle="bold"
         android:text="Invite ..."/>
     
      <Button
         android:id="@+id/fbinvitebtn"
+        style="@style/TextWhite"
+        
+        android:background="@drawable/btn_invite_friends"
+        
         android:layout_width="70dip"
-        android:layout_height="40dip"
+        android:layout_height="30dip"
 		
         android:layout_below="@id/fbposttoggleBtn"
         android:layout_alignRight="@id/fbposttoggleBtn"
@@ -71,9 +104,13 @@
 
 	<Button
         android:id="@+id/countmeinbtn2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dip"    
+        style="@style/ButtonCountMeIn"
+		android:layout_height="50dip"
+        
+        android:layout_marginTop="20dip"
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+            
         android:layout_below="@id/fbinvite"
         android:text="Count Me In!" />
 

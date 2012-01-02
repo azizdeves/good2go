@@ -11,6 +11,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="10dip"
+        android:layout_marginLeft="5dip"
         android:layout_marginTop="5dip"
         android:src="@drawable/user_pic"/>
 
@@ -58,8 +59,10 @@
  	    android:id="@+id/pointSeekValMeView"
  	    android:layout_width="80dip"
  	    android:layout_height="wrap_content"
+ 	    
  	    android:layout_below="@id/userPointsMeView"
- 	    android:layout_toRightOf="@+id/userNameMeView"
+ 	    android:layout_toRightOf="@+id/pointSeekMeView"
+ 	    
  	    android:text="7200"
  	    android:textColor="@color/app_text_main" />
 		

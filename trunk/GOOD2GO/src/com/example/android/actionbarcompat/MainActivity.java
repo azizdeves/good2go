@@ -16,7 +16,6 @@
 
 package com.example.android.actionbarcompat;
 
-
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -24,7 +23,6 @@ import java.util.List;
 import java.util.Set;
 
 import android.content.Intent;
-import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -33,11 +31,11 @@ import android.view.View;
 import android.widget.Toast;
 
 import com.gdma.good2go.Event;
+import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.EventsDbAdapter;
 import com.gdma.good2go.FilterTab;
 import com.gdma.good2go.MapTab;
 import com.gdma.good2go.MeTab;
-import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.communication.RestClient;
 import com.google.android.maps.GeoPoint;
 
@@ -51,7 +49,7 @@ public class MainActivity extends ActionBarActivity {
 	 ******************************************/
 	private EventsDbAdapter mDbHelper;
 	private GeoPoint mMyGeoPoint;
-	private Location mMyLocation;
+	
 	/*******************************************
      *******GOOD2GO***
      *******************************************/
@@ -71,103 +69,140 @@ public class MainActivity extends ActionBarActivity {
         /**GET MY LOCATION**/
         
         /**TODO: add actual calculation**/
+        
         mMyGeoPoint=new GeoPoint((int)(32.055699*1E6),(int)(34.769540*1E6));       
-        mMyLocation = new Location("myLocation"); 	
-        mMyLocation.setLatitude(mMyGeoPoint.getLatitudeE6()/1E6);
-        mMyLocation.setLongitude(mMyGeoPoint.getLongitudeE6()/1E6);
+
         
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
+        
         List<Event> eventList=remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
         //eventList=new ArrayList<Event>(); //TODO REMOVE!!!
-        /**POPULATE DB**/
-        /**TODO: drop what we have if it's a new day
-         * or if there's been a change since last read
-         */
-        mDbHelper = new EventsDbAdapter(this);
-        mDbHelper.open();
-        for(Event event : eventList)
+        
+        
+        if (eventList!=null)
         {
-        	String eventLat=Integer.toString(
-        			event.getEventAddress().getGood2GoPoint().getLat());
-        	String eventLon=Integer.toString(
-        			event.getEventAddress().getGood2GoPoint().getLon());
-        	    	        	
-        	//calculate distance
-    	   	float results[]=new float[3];
-        	Location.distanceBetween(mMyLocation.getLatitude(), mMyLocation.getLongitude(), 
-        			Integer.valueOf(eventLat)/1E6, Integer.valueOf(eventLon)/1E6, results);
-        	String distance=String.format("%.1f", (float)(results[0]/1E3))+" km";
-        	
-        	//calculate duration 
-        	/**TODO this is in mins - if needed - convert to hours*/
-        	String duration=String.valueOf(event.getMinDuration())+ " min";
-        	       	       	
-        	//populate db.
-
-        	Set<VolunteeringWith> listType = event.getVolunteeringWith();
-        	String animals="0", children="0", disabled="0", elderly="0", environment="0", special="0" ;
-        	
-        	for (Iterator<VolunteeringWith> iterator = listType.iterator(); iterator.hasNext();) 
-        	{
-				VolunteeringWith volunteeringWith = (VolunteeringWith) iterator.next();
-				if(volunteeringWith==VolunteeringWith.ANIMALS)
-					animals="1";
-				else if(volunteeringWith==VolunteeringWith.CHILDREN)
-					children="1";
-				else if(volunteeringWith==VolunteeringWith.DISABLED)
-					disabled="1";
-				else if(volunteeringWith==VolunteeringWith.ELDERLY)
-					elderly="1";
-				else if(volunteeringWith==VolunteeringWith.ENVIRONMENT)
-					environment="1";
-				else if(volunteeringWith==VolunteeringWith.SPECIAL)
-					special="1";
-			}
-        	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
-        			event.getDescription(),
-        			event.getPrerequisites(),
-        			eventLat, eventLon,distance,duration,
-        			event.getEventAddress().getCity(),
-        			event.getEventAddress().getStreet(),
-        			String.valueOf(event.getEventAddress().getNumber()),
-        			animals, children,disabled,
-        			elderly,environment,special);
+	        /**POPULATE DB**/
+	        
+	        /**TODO: drop what we have if it's a new day
+	         * or if there's been a change since last read
+	         */
+	        
+	        mDbHelper = new EventsDbAdapter(this);
+	        mDbHelper.open();
+	        for(Event event : eventList)
+	        {
+	        	String eventLat=Integer.toString(
+	        			event.getEventAddress().getGood2GoPoint().getLat());
+	        	String eventLon=Integer.toString(
+	        			event.getEventAddress().getGood2GoPoint().getLon());
+	        	    	        	
+	        	//calculate distance
+	
+	
+	        	String distance=String.format("%.1f", 
+	        			(float)(event.getDistance(mMyGeoPoint.getLongitudeE6(),mMyGeoPoint.getLatitudeE6())))
+	        			+" km";
+	        	
+	        	//calculate duration 
+	        	int totalDurationMins = event.getMinDuration();
+	        	int actualDurationHours = totalDurationMins/60;
+	        	int actualDurationMins = totalDurationMins%60;
+	        	String duration = actualDurationMins!=0 ? actualDurationMins + "min" : "";
+	        	if (actualDurationHours!=0)
+	        		duration = actualDurationHours + "h " + duration;
+	        	       	
+	        	
+	        	//assign an image to event 
+	        	/**TODO actual assignment according to types*/   	
+	        	
+	        	
+	        	//get eventTime
+ 	 	        /**TODO add startTime and endTime to DB*/
+ 	 	         
+	     		Calendar c = Calendar.getInstance();
+	     		
+	     		Date startTimeDate = event.getOccurrences().get(0).getStartTime();
+	    		c.setTime(startTimeDate);
+	    		int startHour = c.get(Calendar.HOUR_OF_DAY);
+	    		int startMin = c.get(Calendar.MINUTE);
+	    		String startTime = startHour + ":" + startMin;
+	    		
+	    		Date endTimeDate = event.getOccurrences().get(0).getEndTime();
+	    		c.setTime(endTimeDate);
+	    		int endHour = c.get(Calendar.HOUR_OF_DAY);
+		    	int endMin = c.get(Calendar.MINUTE);
+	        	String endTime = endHour + ":" + endMin;
+	        	       	       	
+	        	
+	        	//assign event types
+	        	Set<VolunteeringWith> listType = event.getVolunteeringWith();
+	        	String animals="0", children="0", disabled="0", elderly="0", environment="0", special="0" ;
+	        	
+	        	for (Iterator<VolunteeringWith> iterator = listType.iterator(); iterator.hasNext();) 
+	        	{
+					VolunteeringWith volunteeringWith = (VolunteeringWith) iterator.next();
+					if(volunteeringWith==VolunteeringWith.ANIMALS)
+						animals="1";
+					else if(volunteeringWith==VolunteeringWith.CHILDREN)
+						children="1";
+					else if(volunteeringWith==VolunteeringWith.DISABLED)
+						disabled="1";
+					else if(volunteeringWith==VolunteeringWith.ELDERLY)
+						elderly="1";
+					else if(volunteeringWith==VolunteeringWith.ENVIRONMENT)
+						environment="1";
+					else if(volunteeringWith==VolunteeringWith.SPECIAL)
+						special="1";
+				}
+	        	
+	        	//populate db
+	        	
+	        	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
+	        			event.getDescription(),
+	        			event.getPrerequisites(),
+	        			eventLat, eventLon,distance,duration,
+	        			event.getEventAddress().getCity(),
+	        			event.getEventAddress().getStreet(),
+	        			String.valueOf(event.getEventAddress().getNumber()),
+	        			animals, children,disabled,
+	        			elderly,environment,special);
+	        }
+	    
+	        
+	        /*******************************************
+	         ***************DEBUG AREA******************
+	         *******************************************/
+	        
+	//        mDbHelper.createEvent("eventForDebugging", "eventForDebugging", "Reading books for children", "Reading books for disabled children", Double.toString(mMyLocation.getAltitude()), Double.toString(mMyLocation.getLongitude()),
+	//        		"5", "2", "Tel Aviv", "Shenkin", "3", "1", "0",  "0",  "0",  "0",  "0");
+	        
+	        
+	        
+	//        String JSONResponse = null; // this will hold the response from server
+	//		
+	//		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+	//		client.AddParam("action", "addUser");
+	//		client.AddParam("userName", "596351");
+	//		client.AddParam("firstName", "Dina");
+	//		client.AddParam("lastName", "Barzilay");
+	//		client.AddParam("email", "DinaBarzilay@good2go.com");
+	//		client.AddParam("birthYear", "1940");
+	//		try{
+	//			client.Execute(1); //1 is HTTP GET
+	//		}
+	//		catch (Exception e){
+	//			Toast debugging=Toast.makeText(this, "Error: could not connect to the server", Toast.LENGTH_LONG);
+	//			debugging.show();
+	//		}
+	        /*******************************************
+	         ************END OF DEBUG AREA**************
+	         *******************************************/
+			
+	    	/*******************************************
+	         *******GOOD2GO***
+	         *******************************************/
         }
-    
-        
-        /*******************************************
-         ***************DEBUG AREA******************
-         *******************************************/
-        
-//        mDbHelper.createEvent("eventForDebugging", "eventForDebugging", "Reading books for children", "Reading books for disabled children", Double.toString(mMyLocation.getAltitude()), Double.toString(mMyLocation.getLongitude()),
-//        		"5", "2", "Tel Aviv", "Shenkin", "3", "1", "0",  "0",  "0",  "0",  "0");
-        
-        
-        
-//        String JSONResponse = null; // this will hold the response from server
-//		
-//		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-//		client.AddParam("action", "addUser");
-//		client.AddParam("userName", "596351");
-//		client.AddParam("firstName", "Dina");
-//		client.AddParam("lastName", "Barzilay");
-//		client.AddParam("email", "DinaBarzilay@good2go.com");
-//		client.AddParam("birthYear", "1940");
-//		try{
-//			client.Execute(1); //1 is HTTP GET
-//		}
-//		catch (Exception e){
-//			Toast debugging=Toast.makeText(this, "Error: could not connect to the server", Toast.LENGTH_LONG);
-//			debugging.show();
-//		}
-        /*******************************************
-         ************END OF DEBUG AREA**************
-         *******************************************/
-		
-    	/*******************************************
-         *******GOOD2GO***
-         *******************************************/
         getActionBarHelper().setRefreshActionItemState(true);
         
 
@@ -299,9 +334,12 @@ public class MainActivity extends ActionBarActivity {
 		Date myDate = new Date();
 		
 		/*Debugging*/
+		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
 		c.setTime(myDate);
 		c.set(Calendar.HOUR_OF_DAY,8);
+		c.set(Calendar.DAY_OF_MONTH,1);
+		
 		myDate = c.getTime();
 		/*Debugging*/
 
@@ -319,12 +357,16 @@ public class MainActivity extends ActionBarActivity {
 		}
 		
 		JSONResponse = client.getResponse();
-		JSONResponse.trim();
-		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-		
-		//Parse the response from server
-		//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-		 return new JSONDeserializer<List<Event>>().use(Date.class, 
-				 new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+		if (JSONResponse!=null)
+		{
+			JSONResponse.trim();
+			JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+			
+			//Parse the response from server
+			//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+			 return new JSONDeserializer<List<Event>>().use(Date.class, 
+					 new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+		}
+		return null;
 	}
 }
