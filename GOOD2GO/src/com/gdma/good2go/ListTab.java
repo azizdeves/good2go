@@ -127,7 +127,7 @@ public class ListTab extends ActionBarListActivity {
 				startManagingCursor(mEventsCursor);
  				showPointsInList();
  				
-				buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_launcher); 
+				buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
 				buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
 		            public void onClick(View v) {
 		            	onCreateHelper();
@@ -170,7 +170,7 @@ public class ListTab extends ActionBarListActivity {
 		showPointsInList();
         setContentView(R.layout.list);
 		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
-        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_grey); 
+        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
         buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	getFilterScreen(v);

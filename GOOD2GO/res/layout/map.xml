@@ -9,12 +9,12 @@
         android:layout_height="fill_parent" 
         android:clickable="true"
         android:layout_centerInParent="true"
-        android:apiKey="@string/mapskey_mor" />
+        android:apiKey="@string/mapskey_adi" />
 		
     <Button 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-		android:layout_alignParentLeft="true"
+		android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true" 
         android:id="@+id/FilterEventsMapViewButton" 
     	android:background="@null"

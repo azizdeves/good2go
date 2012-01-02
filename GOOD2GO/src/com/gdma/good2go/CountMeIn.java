@@ -64,6 +64,7 @@ public class CountMeIn extends ActionBarActivity {
 	    fbStatus.setText(mFbStatus);
 	    
 	    
+	    
 
 		
 		
@@ -91,6 +92,12 @@ public class CountMeIn extends ActionBarActivity {
 	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
 	        	mFacebookToken = prefs.getString("FacebookToken", "");
 	        	
+	        	//ADI - added this to get new status in case user changed it
+	    
+	    	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
+	    	    mFbStatus=fbStatus.getText().toString();
+	    	    
+	    	    //ADI - added this to get new status in case user changed it
 	        	
 	        	
 	        	if(mFacebookToken.equals("")){
@@ -107,8 +114,8 @@ public class CountMeIn extends ActionBarActivity {
 	            /*Intent newIntent = new Intent(view.getContext(), 
 	                            CountMeIn.class);
 	            startActivityForResult(newIntent, 1);*/
-	    		Toast.makeText(view.getContext(), "Thanks for being awesome! We'll love to see you at: " +mEventName+ ".",
-				Toast.LENGTH_LONG).show();
+	    		//Toast.makeText(view.getContext(), "Thanks for being awesome! We'll love to see you at: " +mEventName+ ".",
+				//Toast.LENGTH_LONG).show();
 	    		
 	    		setResult(Activity.RESULT_OK);
 	    		//finish();
@@ -225,7 +232,8 @@ public class CountMeIn extends ActionBarActivity {
      	   bundle.putString(Facebook.TOKEN, accessToken);
      	   String response = facebook.request("me/feed",bundle,"POST");
      	   Log.d("UPDATE RESPONSE", ""+response);
-     	   showToast("Update process complete. Response:"+response);
+     	   //ADI - put the below in comment so it wont show in recording
+     	   //showToast("Update process complete. Response:"+response);
      	   if(response.indexOf("OAuthException")>-1){
      		   if (mAuthAttempts==0){
      			   mAuthAttempts++;
@@ -250,7 +258,8 @@ public class CountMeIn extends ActionBarActivity {
  	   s+= String.valueOf(facebook.getAccessExpires())+"\n";
  	   s+="Now:"+String.valueOf(System.currentTimeMillis())+"\n";
  	   tv1.setText(s); */
- 	   
+ 	  
+ 	   setResult(Activity.RESULT_OK);
  	   finish();
     }
     

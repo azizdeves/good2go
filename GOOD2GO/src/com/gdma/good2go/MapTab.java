@@ -98,7 +98,7 @@ public class MapTab extends ActionBarMapActivity {
 	        mapView.setBuiltInZoomControls(true);
 	        
 	        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
-	        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_grey); 
+	        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
 	        buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
 	            public void onClick(View v) {
 	            	getFilterScreen(v);
@@ -275,7 +275,7 @@ public class MapTab extends ActionBarMapActivity {
 		mc.animateTo(new GeoPoint (32069156,34774003));
 		mc.setZoom(16);
 		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
-		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_launcher); 
+		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
 		
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
