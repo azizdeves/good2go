@@ -1,22 +1,21 @@
 package com.gdma.good2go.ui;
 
-import com.gdma.good2go.R;
-import com.gdma.good2go.actionbarcompat.ActionBarTabActivity;
-import com.gdma.good2go.utils.EventsDbAdapter;
-
 import android.app.Activity;
 import android.content.Intent;
 import android.database.Cursor;
-import android.graphics.Color;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TabHost;
-import android.widget.TabHost.OnTabChangeListener;
 import android.widget.TextView;
+
+import com.gdma.good2go.R;
+import com.gdma.good2go.actionbarcompat.ActionBarTabActivity;
+import com.gdma.good2go.utils.EventsDbAdapter;
 
 public class EventDetails extends ActionBarTabActivity {
 	
@@ -32,6 +31,7 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventStreetNumber;
     private String mEventWhen;
     private String mEventDuration;
+    private int mEventImage;
     
     
         
@@ -69,32 +69,37 @@ public class EventDetails extends ActionBarTabActivity {
 	    TextView eventDuration = (TextView) findViewById(R.id.howlong);
 	    TextView eventWhen = (TextView) findViewById(R.id.when);
 	    TextView eventWhere = (TextView) findViewById(R.id.where);
+	    ImageView eventImage = (ImageView) findViewById(R.id.eventPic);
 
 	    
-	    mEventName=event.getString(event.getColumnIndexOrThrow
+	    mEventName = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENTNAME));
-	    mEventDesc=event.getString(event.getColumnIndexOrThrow(
+	    mEventDesc = event.getString(event.getColumnIndexOrThrow(
 	    		EventsDbAdapter.KEY_EVENT_SHORT_INFO));
-	    mEventDetails=event.getString(event.getColumnIndexOrThrow
+	    mEventDetails = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DETAILS));
-	    mEventDistance=event.getString(event.getColumnIndexOrThrow
+	    mEventDistance = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
-	    mEventCity=event.getString(event.getColumnIndexOrThrow
-	    		(EventsDbAdapter.KEY_EVENT_CITY));
-	   
-	    mEventDuration=event.getString(event.getColumnIndexOrThrow
-	    		(EventsDbAdapter.KEY_EVENT_DURATION));
-	    //mEventWhen
+	    mEventCity = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_CITY));	   
+	    mEventDuration = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_DURATION));	    
+	    mEventImage = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_IMAGE));
+	    mEventWhen = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_START_TIME)) 
+	    		+ "-" 
+	    		+ event.getInt(event.getColumnIndexOrThrow
+	    				(EventsDbAdapter.KEY_EVENT_END_TIME));
 	    
-	    
-	    
+	    	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
-	    eventDetails.setText(mEventDetails);
-	    
+	    eventDetails.setText(mEventDetails);	    
 	    eventWhere.setText(mEventCity);
 	    eventDuration.setText(mEventDuration);
-	    //eventWhen.setText();
+	    eventWhen.setText(mEventWhen);	    
+	    eventImage.setImageResource(mEventImage);
 	    
 	    /**TODO: add distance*/
 
