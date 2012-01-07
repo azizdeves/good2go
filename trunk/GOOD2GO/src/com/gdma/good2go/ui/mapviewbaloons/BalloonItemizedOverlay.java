@@ -13,7 +13,7 @@
  * 
  */
 
-package com.gdma.good2go.mapviewbaloons;
+package com.gdma.good2go.ui.mapviewbaloons;
 
 
 
@@ -25,7 +25,7 @@ import android.view.View;
 import android.view.View.OnTouchListener;
 import android.view.ViewGroup.LayoutParams;
 
-import com.example.android.actionbarcompat.R;
+import com.gdma.good2go.R;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.ItemizedOverlay;
 import com.google.android.maps.MapController;

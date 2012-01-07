@@ -13,7 +13,7 @@
  * 
  */
 
-package com.gdma.good2go.mapviewbaloons;
+package com.gdma.good2go.ui.mapviewbaloons;
 
 import android.content.Context;
 import android.view.Gravity;
@@ -25,7 +25,7 @@ import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
-import com.example.android.actionbarcompat.R;
+import com.gdma.good2go.R;
 import com.google.android.maps.OverlayItem;
 
 /**
