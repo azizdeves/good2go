@@ -54,7 +54,7 @@ public class CountMeIn extends ActionBarActivity {
 	    mEventDesc=(extras!=null)?extras.getString("desc"):null;
 	    
 	    /**POPULATE VIEWS FROM EXTRAS*/
-	    mFbStatus="This is awesome! I'm going to " + mEventDesc + ".";
+	    mFbStatus="This is awesome! I'm going to " + mEventDesc.toLowerCase() + ".";
 	    
 	    TextView eventName = (TextView) findViewById(R.id.eventname);
 	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
@@ -206,9 +206,7 @@ public class CountMeIn extends ActionBarActivity {
     
     @Override
     public boolean onOptionsItemSelected(MenuItem item) 
-    {
-    	showToast("onOptionsItemSelected");
-    	
+    {    	
     	Intent newIntent = null;
         switch (item.getItemId()) {
         
