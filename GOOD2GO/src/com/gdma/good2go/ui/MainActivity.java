@@ -20,7 +20,6 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Random;
 import java.util.Set;
 
 import android.content.Intent;
@@ -31,10 +30,9 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Toast;
 
-import com.gdma.good2go.R;
-
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.VolunteeringWith;
+import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.EventsDbAdapter;

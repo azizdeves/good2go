@@ -59,6 +59,9 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_END_TIME = "endtime";
 	public static final String KEY_EVENTID = "_id";
 	
+	
+	public static final String EVENTS_ORDER = KEY_EVENT_DISTANCE + " ASC ";
+	
 
     private static final String TAG = "EventsDbAdapter";
     private DatabaseHelper mDbHelper;
@@ -97,7 +100,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 10;
+    private static final int DATABASE_VERSION = 12;
 
     private final Context mCtx;
 
@@ -222,7 +225,7 @@ public class EventsDbAdapter {
         		KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
         		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER,
         		KEY_EVENT_IMAGE, KEY_EVENT_START_TIME, KEY_EVENT_END_TIME},
-        		null, null, null, null, null, null);
+        		null, null, null, null, EVENTS_ORDER, null);
     }
 
     /**
@@ -329,6 +332,8 @@ public class EventsDbAdapter {
     		if(flag)
     			q=q+")";
     	}
+    	
+    	q = q + " ORDER BY " + EVENTS_ORDER;  
        	Cursor mCursor = mDb.rawQuery(q, null);
     	if (mCursor != null) {
             mCursor.moveToFirst();
