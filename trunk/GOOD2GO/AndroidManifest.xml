@@ -15,7 +15,7 @@
   -->
 
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.example.android.actionbarcompat"
+    package="com.gdma.good2go"
     android:versionCode="1"
     android:versionName="1.0">
 
@@ -32,7 +32,7 @@
         
         <uses-library android:name="com.google.android.maps" />
         
-        <activity android:name=".MainActivity" android:label="@string/app_name">
+        <activity android:name=".ui.MainActivity" android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -42,39 +42,39 @@
        
         <activity
             android:label="@string/listview_name"
-            android:name="com.gdma.good2go.ListTab" >
+            android:name=".ui.ListTab" >
         </activity>
         
         <activity
             android:label="@string/searchview_name"
-            android:name="com.gdma.good2go.FilterTab" >
+            android:name=".ui.FilterTab" >
         </activity>
         
      
         <activity
             android:label="@string/eventdetails_tabs"
-            android:name="com.gdma.good2go.EventDetails">
+            android:name=".ui.EventDetails">
         </activity>
         
             
         <activity
             android:label="@string/countmein"
-            android:name="com.gdma.good2go.CountMeIn">
+            android:name=".ui.CountMeIn">
         </activity>
 
 		<activity
             android:label="@string/confirmation"
-            android:name="com.gdma.good2go.Confirmation">
+            android:name=".ui.Confirmation">
         </activity>    
                     
         <activity
             android:label="@string/meview_name"
-            android:name="com.gdma.good2go.MeTab" >
+            android:name=".ui.MeTab" >
         </activity>
         
         <activity
             android:label="@string/mapview_name"
-            android:name="com.gdma.good2go.MapTab">
+            android:name=".ui.MapTab">
         </activity>
 
        
