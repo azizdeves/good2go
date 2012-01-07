@@ -54,6 +54,9 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_TYPE_ELDERLY = "type_elderly";
 	public static final String KEY_EVENT_TYPE_ENVIRONMENT = "type_environment";
 	public static final String KEY_EVENT_TYPE_SPECIAL = "type_special";
+	public static final String KEY_EVENT_IMAGE = "image";
+	public static final String KEY_EVENT_START_TIME = "starttime";
+	public static final String KEY_EVENT_END_TIME = "endtime";
 	public static final String KEY_EVENTID = "_id";
 	
 
@@ -84,6 +87,9 @@ public class EventsDbAdapter {
 	        + KEY_EVENT_TYPE_ENVIRONMENT + " text not null, "
 	        + KEY_EVENT_TYPE_SPECIAL + " text not null, "
 	        + KEY_EVENT_KEY + " text not null, "
+	        + KEY_EVENT_IMAGE + " text not null, "
+	        + KEY_EVENT_START_TIME + " text not null, "
+	        + KEY_EVENT_END_TIME + " text not null, "
 	        + "UNIQUE ("
 	        + KEY_EVENT_KEY
 	        + "));";
@@ -91,7 +97,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 7;
+    private static final int DATABASE_VERSION = 10;
 
     private final Context mCtx;
 
@@ -161,7 +167,8 @@ public class EventsDbAdapter {
     		String gplat, String gplong, String distance, String duration,
     		String city, String street, String streetNumber,
     		String typeAnimal, String typeChildren,String typeDisabled,
-    		String typeElderly,String typeEnvironment,String typeSpecial) 
+    		String typeElderly,String typeEnvironment,String typeSpecial, 
+    		String eventImage, String startTime, String endTime) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -182,6 +189,9 @@ public class EventsDbAdapter {
         initialValues.put(KEY_EVENT_TYPE_ELDERLY, typeElderly);
         initialValues.put(KEY_EVENT_TYPE_ENVIRONMENT, typeEnvironment);
         initialValues.put(KEY_EVENT_TYPE_SPECIAL, typeSpecial);
+        initialValues.put(KEY_EVENT_IMAGE, eventImage);
+        initialValues.put(KEY_EVENT_START_TIME, startTime);
+        initialValues.put(KEY_EVENT_END_TIME, endTime);
         
 
         long result=mDb.insert(DATABASE_TABLE, null, initialValues);
@@ -210,7 +220,8 @@ public class EventsDbAdapter {
         		KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
         		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
         		KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
-        		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER},
+        		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER,
+        		KEY_EVENT_IMAGE, KEY_EVENT_START_TIME, KEY_EVENT_END_TIME},
         		null, null, null, null, null, null);
     }
 
@@ -231,7 +242,8 @@ public class EventsDbAdapter {
                     KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
             		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER,
             		KEY_EVENT_TYPE_ANIMAL, KEY_EVENT_TYPE_CHILDREN, KEY_EVENT_TYPE_DISABLED,
-            		KEY_EVENT_TYPE_ELDERLY,KEY_EVENT_TYPE_ENVIRONMENT,KEY_EVENT_TYPE_SPECIAL}, 
+            		KEY_EVENT_TYPE_ELDERLY,KEY_EVENT_TYPE_ENVIRONMENT,KEY_EVENT_TYPE_SPECIAL,
+            		KEY_EVENT_IMAGE , KEY_EVENT_START_TIME, KEY_EVENT_END_TIME}, 
                     KEY_EVENTID + "=" + eventId, null,
                     null, null, null, null);
         if (mCursor != null) {
@@ -334,7 +346,7 @@ public class EventsDbAdapter {
      * @param body value to set note body to
      * @return true if the event was successfully updated, false otherwise
      */
-    public boolean updatEvent(long eventId, String name, String info, String details,
+    public boolean updateEvent(long eventId, String name, String info, String details,
     		String gplong, String gplat) 
     {
     	/**TODO: add new columns**/
