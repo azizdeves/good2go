@@ -53,7 +53,7 @@
      
         <activity
             android:label="@string/eventdetails_tabs"
-            android:name=".ui.EventDetails">
+            android:name=".ui.EventDetails" >
         </activity>
         
             

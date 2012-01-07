@@ -9,6 +9,7 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.SimpleCursorAdapter;
 
@@ -31,6 +32,22 @@ public class ListTab extends ActionBarListActivity {
 	
 	private String[] mColumns;
 	private Button buttonFilterEvents;
+	
+	
+	private class EventsViewBinder implements SimpleCursorAdapter.ViewBinder 
+	{    
+	    public boolean setViewValue(View view, Cursor cursor, int columnIndex) 
+	    {
+	    	if(view instanceof ImageView) 
+			{
+				ImageView iv = (ImageView) view;
+				int imageResource = cursor.getInt(columnIndex);
+				iv.setImageResource(imageResource);
+				return true;
+			}		
+			return false;
+		}
+	}
 
     /** Called when the activity is first created. */
     @Override
@@ -220,10 +237,22 @@ public class ListTab extends ActionBarListActivity {
 	
     
     private void showPointsInList(){
-        mColumns = new String[] {EventsDbAdapter.KEY_EVENTNAME, EventsDbAdapter.KEY_EVENT_SHORT_INFO,EventsDbAdapter.KEY_EVENT_DISTANCE};
-        int[] to = new int[] {R.id.eventname_entry, R.id.eventinfo_entry, R.id.eventdistance_entry };
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.list_item,mEventsCursor, mColumns, to);
-        setListAdapter(mAdapter);
+        mColumns = new String[] {EventsDbAdapter.KEY_EVENTNAME, 
+        		EventsDbAdapter.KEY_EVENT_SHORT_INFO,
+        		EventsDbAdapter.KEY_EVENT_DISTANCE,
+        		EventsDbAdapter.KEY_EVENT_IMAGE};
+       
+        int[] to = new int[] {R.id.eventname_entry, 
+        		R.id.eventinfo_entry, 
+        		R.id.eventdistance_entry,
+        		R.id.eventPicList};
+        
+        SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, 
+        		R.layout.list_item, 
+        		mEventsCursor, mColumns, to);
+        
+        adapter.setViewBinder(new EventsViewBinder());
+        setListAdapter(adapter);
         
     }
 }
