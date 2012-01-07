@@ -4,7 +4,7 @@
     android:layout_height="fill_parent">
     
     <ImageView
-        android:id="@+id/childPic2"
+        android:id="@+id/eventPicList" 
         android:layout_width="50dip"
         android:layout_height="50dip"
         android:layout_alignParentLeft="true"
@@ -18,7 +18,7 @@
 		android:id="@+id/eventname_entry"
 		android:layout_width="200dip"
 		android:layout_height="wrap_content"
-        android:layout_toRightOf="@id/childPic2"
+        android:layout_toRightOf="@id/eventPicList"
 		style="@style/TextRegularList"
 
 		android:text="Playing with autistic kids"/>
