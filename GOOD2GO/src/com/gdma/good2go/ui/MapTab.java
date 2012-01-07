@@ -37,8 +37,14 @@ public class MapTab extends ActionBarMapActivity {
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.map);
-        onCreateHelper();
+        Bundle bundleResult = FilterTab.getFilterBundle();
+		if (bundleResult!=null)
+			showFilteredEventsOnMap(bundleResult);
+		else
+			onCreateHelper();
        
+
+        
     }
 
     
@@ -47,7 +53,8 @@ public class MapTab extends ActionBarMapActivity {
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		Bundle bundleResult = data.getExtras();
+//		Bundle bundleResult = data.getExtras();
+		Bundle bundleResult = FilterTab.getFilterBundle();
 		showFilteredEventsOnMap(bundleResult);
 	
 	}

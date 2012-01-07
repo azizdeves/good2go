@@ -26,6 +26,8 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 	  TextView durationTrackingText;
 	  TextView radiusTrackingText;
 	  
+	  private static Bundle b =null;
+	  
 	  int duration=0;
 	  int radius=0;
 	  String caller="";
@@ -152,7 +154,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 //		}
 
 
-		Bundle b = new Bundle();
+		this.b = new Bundle();
 		
 		if(togglebutton_Animals.isChecked())
 			b.putString("animals","1");		
@@ -197,6 +199,10 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 			finish();
 		}
 	}
+  
+  public static Bundle getFilterBundle(){
+	  return FilterTab.b;
+  }
 
 
 
