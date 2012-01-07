@@ -10,7 +10,7 @@
         android:layout_alignParentLeft="true"
         android:layout_alignParentTop="true"
         android:layout_marginRight="10dip"
-        android:layout_marginBottom="10dip"
+        android:layout_marginBottom="0dip"
         android:layout_marginTop="0dip"
         android:src="@drawable/child_event" />
     
@@ -20,8 +20,11 @@
 		android:layout_height="wrap_content"
         android:layout_toRightOf="@id/eventPicList"
 		style="@style/TextRegularList"
+		
+		android:singleLine="true"
+		android:ellipsize="end"
 
-		android:text="Playing with autistic kids"/>
+		android:text="Playing with autistic kids "/>
 	
      <TextView
 		android:id="@+id/eventinfo_entry"
@@ -31,10 +34,13 @@
 		android:layout_below="@id/eventname_entry"
 		android:layout_alignLeft="@id/eventname_entry"
 		
+		android:maxLines="2"
+		android:ellipsize="end"
+		
 		android:textSize="12dip"
-		android:textColor="@color/app_text_secondary"
+		android:textColor="@color/app_secondary_color"
 
-		android:text="Help autistic kids be awesome and do many other stuff"/>
+		android:text="Help autistic kids be awesome and do many other stuff. Help autistic kids be awesome and do many other stuff"/>
 
      <TextView
          android:id="@+id/eventdistance_entry"
