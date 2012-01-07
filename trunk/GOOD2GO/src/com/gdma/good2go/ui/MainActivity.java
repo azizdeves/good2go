@@ -20,6 +20,7 @@ import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import android.content.Intent;
@@ -97,42 +98,17 @@ public class MainActivity extends ActionBarActivity {
 	        	String eventLon=Integer.toString(
 	        			event.getEventAddress().getGood2GoPoint().getLon());
 	        	    	        	
-	        	//calculate distance
-	
-	
+	        	//calculate distance	
 	        	String distance=String.format("%.1f", 
 	        			(float)(event.getDistance(mMyGeoPoint.getLongitudeE6(),mMyGeoPoint.getLatitudeE6())))
 	        			+" km";
 	        	
-	        	//calculate duration 
-	        	int totalDurationMins = event.getMinDuration();
-	        	int actualDurationHours = totalDurationMins/60;
-	        	int actualDurationMins = totalDurationMins%60;
-	        	String duration = actualDurationMins!=0 ? actualDurationMins + "min" : "";
-	        	if (actualDurationHours!=0)
-	        		duration = actualDurationHours + "h " + duration;
-	        	       	
-	        	
-	        	//assign an image to event 
-	        	/**TODO actual assignment according to types*/   	
-	        	
-	        	
+	        	//calculate duration
+	        	String duration = getDuration (event.getMinDuration());
+	        	        		        	
 	        	//get eventTime
- 	 	        /**TODO add startTime and endTime to DB*/
- 	 	         
-	     		Calendar c = Calendar.getInstance();
-	     		
-	     		Date startTimeDate = event.getOccurrences().get(0).getStartTime();
-	    		c.setTime(startTimeDate);
-	    		int startHour = c.get(Calendar.HOUR_OF_DAY);
-	    		int startMin = c.get(Calendar.MINUTE);
-	    		String startTime = startHour + ":" + startMin;
-	    		
-	    		Date endTimeDate = event.getOccurrences().get(0).getEndTime();
-	    		c.setTime(endTimeDate);
-	    		int endHour = c.get(Calendar.HOUR_OF_DAY);
-		    	int endMin = c.get(Calendar.MINUTE);
-	        	String endTime = endHour + ":" + endMin;
+	        	String startTime = getTime (event.getOccurrences().get(0).getStartTime());
+	        	String endTime = getTime (event.getOccurrences().get(0).getEndTime());
 	        	       	       	
 	        	
 	        	//assign event types
@@ -156,6 +132,9 @@ public class MainActivity extends ActionBarActivity {
 						special="1";
 				}
 	        	
+	        	//assign an image to event 
+	        	String eventImage = chooseImage (animals, children, disabled, elderly, environment, special);	
+	        	
 	        	//populate db
 	        	
 	        	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
@@ -166,7 +145,7 @@ public class MainActivity extends ActionBarActivity {
 	        			event.getEventAddress().getStreet(),
 	        			String.valueOf(event.getEventAddress().getNumber()),
 	        			animals, children,disabled,
-	        			elderly,environment,special);
+	        			elderly,environment,special,eventImage, startTime, endTime);
 	        }
 	    
 	        
@@ -268,7 +247,59 @@ public class MainActivity extends ActionBarActivity {
     
     
     
-    //TODO create settings menu for the main screen
+    private String getDuration(int totalDurationInMins) 
+    {
+    	int actualDurationHours = totalDurationInMins/60;
+    	int actualDurationMins = totalDurationInMins%60;
+    	String duration = actualDurationMins!=0 ? actualDurationMins + "min" : "";
+    	if (actualDurationHours!=0)
+    		duration = actualDurationHours + "h " + duration;
+    	
+    	return duration;
+	}
+
+
+
+	private String getTime(Date dateFromEvent) {
+ 		Calendar c = Calendar.getInstance();
+ 		
+		c.setTime(dateFromEvent);
+		int eventHour = c.get(Calendar.HOUR_OF_DAY);
+		int eventMin = c.get(Calendar.MINUTE);
+		return eventHour + ":" + eventMin;
+	}
+
+
+
+	private String chooseImage(String animals, String children, String disabled, 
+    		String elderly, String environment, String special) 
+    {
+    	  int imageId=R.drawable.event_paint;;
+    	  
+    	  if (animals=="1")
+    		  imageId=R.drawable.event_animals;
+    	  
+    	  if (children=="1")
+    		  imageId=R.drawable.event_children;
+    	  
+    	  if (disabled=="1")
+    		  imageId=R.drawable.event_handicapped;
+    	  
+    	  if (elderly=="1")
+    		  imageId=R.drawable.event_elderly;
+    	  
+    	  if (environment=="1")
+    		  imageId=R.drawable.event_env;
+    	  
+    	  if (special=="1")
+    		  imageId=R.drawable.event_special;
+    	      	  
+		return Integer.toString(imageId);
+	}
+
+
+
+	//TODO create settings menu for the main screen
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
