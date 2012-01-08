@@ -107,6 +107,12 @@ public class MainActivity extends ActionBarActivity {
 	        	//get eventTime
 	        	String startTime = getTime (event.getOccurrences().get(0).getStartTime());
 	        	String endTime = getTime (event.getOccurrences().get(0).getEndTime());
+	        	
+	        	//get eventAdditionalDetails
+	        	event.getNPOName();
+	        	event.getSuitableFor();
+	        	event.getWorkType();
+	        	
 	        	       	       	
 	        	
 	        	//assign event types
