@@ -24,7 +24,8 @@
 		android:singleLine="true"
 		android:ellipsize="end"
 
-		android:text="Playing with autistic kids "/>
+
+		android:text="Playing with autistic kids Playing with autistic kids"/>
 	
      <TextView
 		android:id="@+id/eventinfo_entry"
@@ -35,7 +36,9 @@
 		android:layout_alignLeft="@id/eventname_entry"
 		
 		android:maxLines="2"
-		android:ellipsize="end"
+		android:ellipsize="marquee"
+		android:marqueeRepeatLimit="marquee_forever"
+
 		
 		android:textSize="12dip"
 		android:textColor="@color/app_secondary_color"
