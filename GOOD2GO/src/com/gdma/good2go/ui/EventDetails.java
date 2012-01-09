@@ -32,7 +32,7 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventWhen;
     private String mEventDuration;
     private int mEventImage;
-    
+    private String mSender;    
     
         
 	private EventsDbAdapter mDbHelper;
@@ -53,7 +53,8 @@ public class EventDetails extends ActionBarTabActivity {
 		Bundle extras = getIntent().getExtras();
 		mRowId=extras!= null?
 				mRowId = extras.getLong(EventsDbAdapter.KEY_EVENTID):0;
-	       
+		mSender= extras!= null?
+				mSender = extras.getString("sender"):null;
 	    
 	    /**GET DATA FROM DB*/
 	    mDbHelper = new EventsDbAdapter(this);
@@ -122,14 +123,15 @@ public class EventDetails extends ActionBarTabActivity {
 	    
 	    initTabsAppearance(mTabHost);
 	    
-	    
+
 	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
-	   
+	    if (mSender.compareTo("confirmation")!=0){	   
 	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
 	    		Bundle extraInfo = new Bundle();
 	            extraInfo.putString("name", mEventName);
 	            extraInfo.putString("desc", mEventDesc);
+	            extraInfo.putString("event_id", Long.toString(mRowId));
 	            
 	            Intent newIntent = new Intent(view.getContext(), 
 	                            CountMeIn.class);
@@ -137,6 +139,10 @@ public class EventDetails extends ActionBarTabActivity {
 	            startActivityForResult(newIntent, 1);
 	        }
 	    });
+	    }
+	    else{
+	    	//buttonCountMeIn.setBackgroundColor(1);//TODO SET TO GRAY(OR ANY OTHER COLOR)  
+	    }
 	}
 	
 	
