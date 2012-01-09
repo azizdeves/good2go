@@ -6,19 +6,15 @@ import java.util.List;
 
 
 import android.R.drawable;
-import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
-import android.view.Gravity;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
@@ -30,11 +26,11 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Karma;
 import com.gdma.good2go.User;
-import com.gdma.good2go.Karma.Badge;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.KeyManager;
 import com.gdma.good2go.utils.UsersHistoryDbAdapter;
+import com.gdma.good2go.utils.UsersUtil;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -48,7 +44,7 @@ public class MeTab extends ActionBarListActivity {
     long points;
     String badge;
     String userId;
-    String userName="596351";
+    String userName="496351";
     String userNiceName="";
     String userFirstName="Mor";
     String userLastName="Cohen";
@@ -68,11 +64,11 @@ public class MeTab extends ActionBarListActivity {
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
         
 //("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
-        points=7200;
+       // points=7200;
        // badge="BUDDHIST_MONK";
-        points=remote_getUsersKarma(userName);
+        points=UsersUtil.remote_getUsersKarma(userName);
  		badge=Karma.Badge.getMyBadge(points).getName();
-        User u = remote_getUsersDetails(userName);
+        User u = UsersUtil.remote_getUsersDetails(userName);
         if (u!=null){
         	userFirstName=u.getFirstName();
         	userLastName=u.getLastName();
@@ -93,8 +89,8 @@ public class MeTab extends ActionBarListActivity {
         pointsProg.setProgress((int)points);
         pointsProg.setEnabled(false);        
  
-      int status = remote_getUsersHistory(userName);
-      if (status==-1){} //TODO ADD HANDLER
+        int status = remote_getUsersHistory(userName);
+        if (status==-1){} //TODO ADD HANDLER
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
 		mEventsCursor = mDbHelper.fetchAllUsersHistory();
@@ -120,71 +116,64 @@ public class MeTab extends ActionBarListActivity {
       
     }
     
-    private long remote_getUsersKarma(String username){
-    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "getKarma");
-		client.AddParam("userName", username);
+//    private long remote_getUsersKarma(String username){
+//    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+//		client.AddParam("action", "getKarma");
+//		client.AddParam("userName", username);
+//
+//		try{
+//			client.Execute(1); //1 is HTTP GET
+//		}
+//		catch (Exception e){
+//			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersKarma- failed", Toast.LENGTH_LONG);
+//			debugging.show();
+//			return -1;
+//		}
+//		String JSONResponse = client.getResponse();
+//		JSONResponse = JSONResponse.trim();
+//		
+//		//Parse the response from server
+//		long p=0;
+//		if(JSONResponse!=null){
+//			try{
+//				p = Long.parseLong(JSONResponse);
+//			}
+//			catch(NumberFormatException nfe){
+//				p=0;
+//			}
+//		}
+//		return p;
+//	}
 
-		try{
-			client.Execute(1); //1 is HTTP GET
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersKarma- failed", Toast.LENGTH_LONG);
-			debugging.show();
-			return -1;
-		}
-		String JSONResponse = client.getResponse();
-		JSONResponse = JSONResponse.trim();
-		
-		//Parse the response from server
-		long p=0;
-		if(JSONResponse!=null){
-			try{
-				p = Long.parseLong(JSONResponse);
-			}
-			catch(NumberFormatException nfe){
-				p=0;
-			}
-		}
-		
-		/*=====================================================================================================*/
-		/* Gil - DELETE THIS!!! - this is a bypass to get the correct amount of karma points printed on screen */
-		p = 500;
-		/* END - DELETE THIS!!! ===============================================================================*/
-		/*=====================================================================================================*/
-		
-		return p;
-	}
-
-    private User remote_getUsersDetails(String username){
-    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-    	client.AddParam("action", "getUserDetails");
-		client.AddParam("userName", username);
-		
-		try{
-			client.Execute(1); //1 is HTTP GET
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server - remote_getUsersDetails - failed", Toast.LENGTH_LONG);
-			debugging.show();
-			return null;
-		}
-				
-		String JSONResponse = client.getResponse();
-		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-		JSONResponse = JSONResponse.trim();
-		
-		//Parse the response from server
-		User u=null;
-		try{
-			 u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
-		}
-		catch(Exception e){
-			u=null;
-		}
-		return u;
-    	
-    }
+//    private User remote_getUsersDetails(String username){
+//    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+//    	client.AddParam("action", "getUserDetails");
+//		client.AddParam("userName", username);
+//		
+//		try{
+//			client.Execute(1); //1 is HTTP GET
+//		}
+//		catch (Exception e){
+//			Toast debugging=Toast.makeText(this,"Connection to server - remote_getUsersDetails - failed", Toast.LENGTH_LONG);
+//			debugging.show();
+//			return null;
+//		}
+//				
+//		String JSONResponse = client.getResponse();
+//		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+//		JSONResponse = JSONResponse.trim();
+//		
+//		//Parse the response from server
+//		User u=null;
+//		try{
+//			 u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+//		}
+//		catch(Exception e){
+//			u=null;
+//		}
+//		return u;
+//    	
+//    }
    private int remote_getUsersHistory(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
@@ -267,6 +256,7 @@ public class MeTab extends ActionBarListActivity {
 		List<Event> eventList = new JSONDeserializer<List<Event>>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
 		return eventList;
 	}
+
     
     private void showHistoryInList(){
 	
@@ -281,19 +271,7 @@ public class MeTab extends ActionBarListActivity {
 //    	Intent myIntent = new Intent(view.getContext(),FutureEventsTab.class);
 //    	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
 //	}
-	public void getUsersFutureEvents(View view){
-		LinearLayout layout = new LinearLayout(this);
-		LayoutInflater inflater = (LayoutInflater)
-		this.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-		pw = new PopupWindow(
-				 inflater.inflate(R.layout.me_future_list, null, false), 
-			       100, 
-			       100, 
-			       true);
-			    // The code below assumes that the root container has an id called 'main'
-			    pw.showAtLocation(layout, Gravity.CENTER,10,10); 
 
-	}
 	
 	public void closeFutureEvents(View view){
 

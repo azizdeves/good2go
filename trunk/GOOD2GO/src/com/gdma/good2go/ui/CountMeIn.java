@@ -20,6 +20,7 @@ import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
+import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -35,6 +36,7 @@ public class CountMeIn extends ActionBarActivity {
     private String mEventDesc;
     private String mFbStatus;
     private String mFacebookToken;
+    private Long mEventId; 
 	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
     RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
     private int mAuthAttempts = 0;
@@ -52,6 +54,8 @@ public class CountMeIn extends ActionBarActivity {
 	    Bundle extras = getIntent().getExtras();
 	    mEventName=(extras!=null)?extras.getString("name"):null;
 	    mEventDesc=(extras!=null)?extras.getString("desc"):null;
+	    String EvenIdString=(extras!=null)?extras.getString("event_id"):null;
+	    mEventId = Long.valueOf(EvenIdString);
 	    
 	    /**POPULATE VIEWS FROM EXTRAS*/
 	    mFbStatus="This is awesome! I'm going to " + mEventDesc.toLowerCase() + ".";
@@ -88,23 +92,23 @@ public class CountMeIn extends ActionBarActivity {
 	        	
 	        	mAuthAttempts = 0;
 	        	
-	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
-	        	mFacebookToken = prefs.getString("FacebookToken", "");
-	        	
-	        	//ADI - added this to get new status in case user changed it
-	    
-	    	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
-	    	    mFbStatus=fbStatus.getText().toString();
-	    	    
-	    	    //ADI - added this to get new status in case user changed it
-	        	
-	        	
-	        	if(mFacebookToken.equals("")){
-	        		fbAuthAndPost(mFbStatus);
-	        	}
-	        	else{
-	        		updateStatus(mFacebookToken);
-	        	}
+//	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
+//	        	mFacebookToken = prefs.getString("FacebookToken", "");
+//	        	
+//	        	//ADI - added this to get new status in case user changed it
+//	    
+//	    	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
+//	    	    mFbStatus=fbStatus.getText().toString();
+//	    	    
+//	    	    //ADI - added this to get new status in case user changed it
+//	        	
+//	        	
+//	        	if(mFacebookToken.equals("")){
+//	        		fbAuthAndPost(mFbStatus);
+//	        	}
+//	        	else{
+//	        		updateStatus(mFacebookToken);
+//	        	}
 
 	        	//remote_registerToOccurrence(username, key);
 	        	
@@ -116,8 +120,18 @@ public class CountMeIn extends ActionBarActivity {
 	    		//Toast.makeText(view.getContext(), "Thanks for being awesome! We'll love to see you at: " +mEventName+ ".",
 				//Toast.LENGTH_LONG).show();
 	    		
-	    		setResult(Activity.RESULT_OK);
+	    		//setResult(Activity.RESULT_OK);
 	    		//finish();
+	        	
+	        	Bundle extraInfo = new Bundle();
+	            extraInfo.putString("name", mEventName);
+	            extraInfo.putString("desc", mEventDesc);
+	            extraInfo.putString("event_id", mEventId.toString());
+	            extraInfo.putInt("points", 100);
+	            
+	            Intent newIntent = new Intent(view.getContext(), Confirmation.class);
+	            newIntent.putExtras(extraInfo);
+	            startActivityForResult(newIntent, 1);
 	        }
 	    });
 

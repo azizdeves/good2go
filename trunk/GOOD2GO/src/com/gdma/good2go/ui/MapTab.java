@@ -18,6 +18,7 @@ import com.gdma.good2go.actionbarcompat.ActionBarMapActivity;
 import com.gdma.good2go.ui.maputils.EventOverlayItem;
 import com.gdma.good2go.ui.maputils.EventsItemizedOverlay;
 import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -208,36 +209,7 @@ public class MapTab extends ActionBarMapActivity {
 		}
 		
 		if(bundleResult!=null){
-			if(bundleResult.getString("animals").compareTo("1")==0){
-				types[i]="animals";
-				i++;
-				arrSize++;
-			}	
-			if(bundleResult.getString("children").compareTo("1")==0){
-				types[i]="children";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("disabled").compareTo("1")==0){
-				types[i]="disabled";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("elderly").compareTo("1")==0){
-				types[i]="elderly";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("environment").compareTo("1")==0){
-				types[i]="environment";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("special").compareTo("1")==0){
-				types[i]="special";
-				i++;
-				arrSize++;
-			}
+			types = FiltersUtil.getArrayOfFiltersParams(bundleResult);
 			if( bundleResult.getInt("durationInMinutes")>-1)
 				duration= bundleResult.getInt("durationInMinutes");
 			if( bundleResult.getInt("radius")>-1)
@@ -290,6 +262,8 @@ public class MapTab extends ActionBarMapActivity {
 		
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	Bundle b = null;
+            	FilterTab.setFilterBundle(b);
             	onCreateHelper();
             }
         });

@@ -58,7 +58,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
   		radius=radiusSeekBar.getProgress();
   	
 
-  		durationTrackingText.setText(Integer.toString(duration)+"h");
+  		durationTrackingText.setText("0:"+Integer.toString(duration)+"h");
   		radiusTrackingText.setText(Integer.toString(radius)+"km");
   	
   	
@@ -204,7 +204,9 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 	  return FilterTab.b;
   }
 
-
+  public static void setFilterBundle(Bundle b){
+	  FilterTab.b=b;
+  }
 
   public void onProgressChanged(SeekBar seekBar, int progress, boolean fromTouch) {
 //	        mProgressText.setText(getString(R.string.duration));
@@ -212,7 +214,9 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 
 		if (seekBar.getId()==R.id.durationSeek){
 			duration = progress;
-			durationTrackingText.setText(Integer.toString(duration)+"h");
+			int hours=duration/60;
+			int min = duration%60;
+			durationTrackingText.setText(Integer.toString(hours)+":"+Integer.toString(min)+"h");
 		}
 		if(seekBar.getId()==R.id.radiusSeek){
 			radius = progress;
