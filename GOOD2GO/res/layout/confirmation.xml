@@ -48,7 +48,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pointsDetails1_confirmationView"
 		android:layout_centerHorizontal="true"
-        android:text="+ 100"/> 
+        android:text=""/> 
     	
     	
 		<View
@@ -76,7 +76,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_below="@id/badges_confirmationView"
-        android:text="Whooo! You've just earned a new badge!!!"/>
+        android:text=""/>
     	
     	<TextView
         android:id="@+id/badgesDetails2_confirmationView"
@@ -85,5 +85,16 @@
         android:layout_below="@id/badgesDetails1_confirmationView"
 		android:layout_centerHorizontal="true"
         android:text="Saint"/> 
+        
+    	
+    	
+    	<Button
+        android:id="@+id/DoneConfirmationViewButton" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true" 
+    	android:background="@null"/>
 			
 </RelativeLayout>

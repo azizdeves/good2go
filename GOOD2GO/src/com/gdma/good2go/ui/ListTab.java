@@ -16,6 +16,7 @@ import android.widget.SimpleCursorAdapter;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.FiltersUtil;
 
 
 //import android.support.v4.app.Fragment;
@@ -163,36 +164,7 @@ public class ListTab extends ActionBarListActivity {
 		}
 		
 		if(bundleResult!=null){
-			if(bundleResult.getString("animals").compareTo("1")==0){
-				types[i]="animals";
-				i++;
-				arrSize++;
-			}	
-			if(bundleResult.getString("children")=="1"){
-				types[i]="children";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("disabled")=="1"){
-				types[i]="disabled";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("elderly")=="1"){
-				types[i]="elderly";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("environment")=="1"){
-				types[i]="environment";
-				i++;
-				arrSize++;
-			}
-			if(bundleResult.getString("special")=="1"){
-				types[i]="special";
-				i++;
-				arrSize++;
-			}
+			types = FiltersUtil.getArrayOfFiltersParams(bundleResult);
 			if( bundleResult.getInt("durationInMinutes")>-1)
 				duration= bundleResult.getInt("durationInMinutes");
 			if( bundleResult.getInt("radius")>-1)
@@ -222,6 +194,8 @@ public class ListTab extends ActionBarListActivity {
 		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	Bundle b = null;
+            	FilterTab.setFilterBundle(b);
             	onCreateHelper();
             }
         }); 
