@@ -8,6 +8,7 @@ import android.graphics.drawable.Drawable;
 
 import com.gdma.good2go.ui.EventDetails;
 import com.gdma.good2go.ui.mapviewbaloons.BalloonItemizedOverlay;
+import com.gdma.good2go.ui.mapviewbaloons.BalloonOverlayView;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.MapView;
 
@@ -54,6 +55,7 @@ public class EventsItemizedOverlay extends BalloonItemizedOverlay<EventOverlayIt
 	  return mOverlays.size();
 	}
 	
+	@Override
 	protected boolean onBalloonTap(int index, EventOverlayItem item) {
         
 		Intent i = new Intent(mContext, EventDetails.class);
@@ -62,5 +64,11 @@ public class EventsItemizedOverlay extends BalloonItemizedOverlay<EventOverlayIt
     
 		mContext.startActivity(i);
 		return true;
-}
+		}
+	
+	@Override
+	protected BalloonOverlayView<EventOverlayItem> createBalloonOverlayView() {
+		// use our custom balloon view with our custom overlay item type:
+		return new EventBalloonOverlayView<EventOverlayItem>(getMapView().getContext(), getBalloonBottomOffset());
+	}
 }

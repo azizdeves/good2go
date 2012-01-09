@@ -21,13 +21,19 @@ import com.google.android.maps.OverlayItem;
 public class EventOverlayItem extends OverlayItem {
 
 	protected Long mRowID;
+	protected int mImage;
 	
-	public EventOverlayItem(GeoPoint point, String title, String snippet, Long rowID) {
+	public EventOverlayItem(GeoPoint point, String title, String snippet, Long rowID, int image) {
 		super(point, title, snippet);
 		mRowID = rowID;
+		mImage=image;
 	}
 
 	public Long getRowID() {
 		return mRowID;
+	}
+	
+	public int getImage() {
+		return mImage;
 	}
 }
