@@ -48,5 +48,11 @@
  	<string name="eventdetails_name">Event Details</string>
  	<string name="eventdetails_tabs">Event Details</string>
  	<string name="countmein">Count Me In</string>
-	<string name="confirmation">Confirmation</string> 	
+	<string name="confirmation">Confirmation</string>
+	<string name="welcome">Welcome to GOOD2GO!</string>
+	<string name="wlecome_choose_act">Please Choose Your Account</string>
+	<string name="welcome_YOB">Year of brith</string>
+	<string name="welcome_lstName">Last Name</string>
+	<string name="welcome_fstName">First Name</string>
+	<string name="welcom_go">GO!</string> 	
 </resources>
