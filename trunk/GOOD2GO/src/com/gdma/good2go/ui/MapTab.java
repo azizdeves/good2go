@@ -71,10 +71,12 @@ public class MapTab extends ActionBarMapActivity {
     			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENTNAME));
     	String info=eventsCursor.getString
     			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_SHORT_INFO));
+    	int image = eventsCursor.getInt
+    			(eventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_IMAGE));
 
     	
     	GeoPoint gp= new GeoPoint(gplat,gplong); 
-    	EventOverlayItem overlayitem = new EventOverlayItem(gp, name, info, rowID);
+    	EventOverlayItem overlayitem = new EventOverlayItem(gp, name, info, rowID, image);
 
     	return overlayitem;	
 	}
