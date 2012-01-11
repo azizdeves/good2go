@@ -1,120 +1,80 @@
-/*
- * Copyright 2011 The Android Open Source Project
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *     http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
- */
-
 package com.gdma.good2go.ui;
+
+
 
 import android.accounts.Account;
 import android.accounts.AccountManager;
+import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.Button;
+import android.widget.AdapterView;
+import android.widget.AdapterView.OnItemSelectedListener;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 import android.widget.Toast;
 
 import com.gdma.good2go.R;
-import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.communication.RestClient;
 
-public class Login extends ActionBarListActivity {
-
-    private boolean mAlternateTitle = false;
-    private Button buttonGo;
-    
-    
-    public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.login);
-//        this.buttonGo = (Button) this.findViewById(R.id.goButton);
-//        this.buttonGo.setOnClickListener(this);
-    
-        
-        
-        getActionBarHelper().setRefreshActionItemState(true);
-        
-    
-        //get userName from prefs
-        String mLocalUsername = getLocalUsername();
-        if ((mLocalUsername == null) || (mLocalUsername.equals("Anonymous"))){
-        	newLocalUser();	
-        }
-
-        
-        //go to main menu
-        
-  
-    }
 
 
-
-	private void newLocalUser() {
-		Account[] accounts;
-        String email = null, firstName = null, lastName = null, yearOfBirth = null;
-        
-        accounts = getAccounts(this);
-        
-        //list accounts
-        // accounts[0].name is email address
-        
-        
-        //get email from accounts list
-        //get firstname
-        //get lastname
-        //get yearOfBirth
-        
-        if (updateServer(email, firstName, lastName, email, yearOfBirth) == 1){
-        	saveLocalUsername(email);
-        	//move to menu page
-        }
-        else {
-        	saveLocalUsername("Anonymous");
-        	//move to menu page
-        }
+public class Login extends Activity {
+	private String actsArr[];
+	private String selectedAccount;
+	
+	@Override
+	public void onCreate(Bundle savedInstanceState){
+		super.onCreate(savedInstanceState);
+		setContentView(R.layout.login);
+		
+		Account[] accounts = getAccounts(this);
+		/*
+		AccountManager am = AccountManager.get(this);
+		String authTokType = "com.google";
+		accounts = am.getAccountsByType(authTokType);
+		*/
+		actsArr = new String[accounts.length];
+		for (int i = 0; i<accounts.length; i++){
+			actsArr[i] = accounts[i].name.toString();
+		}
+		/*
+		actsArr[0]=accounts[0].name.toString(); 
+		actsArr[1]=accounts[1].name.toString(); 
+		actsArr[2]="option 3"; 
+		actsArr[3]="option 4"; 
+		actsArr[4]="option 5"; 
+*/
+		
+		Spinner s = (Spinner) findViewById(R.id.spinner);
+		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, actsArr); 
+		s.setAdapter(adapter);
+		s.setOnItemSelectedListener(new MyOnItemSelectedListener());
+		
 	}
-    
-
-    
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.main, menu);
-
-        // Calling super after populating the menu is necessary here to ensure that the
-        // action bar helpers have a chance to handle this event.
-        return super.onCreateOptionsMenu(menu);
-    }
-
-    
 	
-    public void onClick(View view){
-    	if (view == this.buttonGo){
-    		Intent goIntent = new Intent(this, MainActivity.class);
-    		startActivity(goIntent);
-    	}
-    }
-    
+	public class MyOnItemSelectedListener implements OnItemSelectedListener {    
+		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {      
+			//Toast.makeText(parent.getContext(), "The planet is " + parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
+			selectedAccount = parent.getItemAtPosition(pos).toString();
+			Toast.makeText(parent.getContext(), "The planet is " + selectedAccount, Toast.LENGTH_LONG).show();
+			
+			
+		}    
+		public void onNothingSelected(AdapterView<?> parent) {
+			// Do nothing.    
+		}
+	}
 	
-    private void showToast(String message){
-    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-    }
-    
+	private void saveLocalUsername(String userName){
+		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("userNameVal", userName);
+		editor.commit();
+	}
+	
+	
     private Account[] getAccounts(Context cntxt){
 
 		AccountManager am = AccountManager.get(cntxt);
@@ -147,17 +107,25 @@ public class Login extends ActionBarListActivity {
 			return 0;
 		}
 	}
+
+	private void newLocalUser() {
+		Account[] accounts;
+        String email = null, firstName = null, lastName = null, yearOfBirth = null;
+        
+        accounts = getAccounts(this);
+        
+        if (updateServer(email, firstName, lastName, email, yearOfBirth) == 1){
+        	saveLocalUsername(email);
+        	//move to menu page
+        }
+        else {
+        	saveLocalUsername("Anonymous");
+        	//move to menu page
+        }
+	}
 	
-	private void saveLocalUsername(String userName){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("userNameVal", userName);
-		editor.commit();
-	}
-    
-	private String getLocalUsername(){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		return settings.getString("userNameVal", null);
-	}
-    
 }
+
+
+
+
