@@ -45,50 +45,24 @@
         android:text="@string/wlecome_choose_act"
         android:textAppearance="?android:attr/textAppearanceMedium"
         android:textColor="@color/app_secondary_color" />
-
-    <ListView
-        android:id="@+id/accountList"
-        android:layout_width="280dp"
-        android:layout_height="200dp"
+
+    <Spinner
+        android:id="@+id/spinner"
+        android:layout_width="270dp"
+        android:layout_height="wrap_content"
         android:layout_alignLeft="@+id/textView2"
         android:layout_below="@+id/textView2"
-        android:layout_marginTop="19dp" >
-    </ListView>
-
-    <EditText
-        android:id="@+id/firstName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/accountList"
-        android:layout_marginTop="22dp"
-        android:text="@string/welcome_fstName" />
-
-    <EditText
-        android:id="@+id/lastName"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_below="@+id/firstName"
-        android:layout_marginTop="14dp"
-        android:text="@string/welcome_lstName" >
-    </EditText>
-
-    <EditText
-        android:id="@+id/yearOfBirth"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignParentLeft="true"
-        android:text="@string/welcome_YOB" />
+        android:layout_marginTop="24dp"
+        android:drawSelectorOnTop="true"
+        android:prompt="@string/account_prompt" />
 
     <Button
         android:id="@+id/goButton"
         style="@style/ButtonCountMeIn"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_alignParentBottom="true"
-        android:layout_alignRight="@+id/accountList"
+        android:layout_alignRight="@+id/spinner"
+        android:layout_centerVertical="true"
         android:text="@string/welcom_go" />
 
 </RelativeLayout>
