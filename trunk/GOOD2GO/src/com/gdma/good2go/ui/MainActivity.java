@@ -68,6 +68,15 @@ public class MainActivity extends ActionBarActivity {
          *******************************************/
 
         
+        
+        
+    	/********************************************Remove this to work with Android Accounts**********************/
+    	saveLocalUsername("Bypass Account");
+        /***********************************************************************************************************/
+        
+        
+        
+        
         /*check accounts*/
         String mLocalUsername = getLocalUsername();
         if (mLocalUsername == null){
@@ -76,28 +85,15 @@ public class MainActivity extends ActionBarActivity {
         	Intent newIntent = new Intent(this, Login.class);
         	startActivityForResult(newIntent,7);
             	
-        	/*
-        	saveLocalUsername("gil");
-        	mLocalUsername = getLocalUsername();
-        	showToast("new local username is: " + mLocalUsername);
-        	*/
+
         }
         else{
-        	
-        	showToast("local username is: " + mLocalUsername);
+        	continueActivityStart();
         }
-
-        
-        
-        
-        
-        
-        contStart();
-        
-  
     }
 
-	private void contStart() {
+    
+	private void continueActivityStart() {
 		/**GET MY LOCATION**/
         
         /**TODO: add actual calculation**/
@@ -287,7 +283,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		if (resultCode==Activity.RESULT_OK)
 		{
-			contStart();
+			continueActivityStart();
 		}
 	}
 
