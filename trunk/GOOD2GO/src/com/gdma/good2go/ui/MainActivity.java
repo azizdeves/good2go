@@ -34,7 +34,7 @@ import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
-import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.communication.*;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.GeoPoint;
 
@@ -371,9 +371,8 @@ public class MainActivity extends ActionBarActivity {
 		/*Debugging*/
 		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
-		c.setTime(myDate);
+		c.set(2011,Calendar.DECEMBER,31,0,0,0);
 		c.set(Calendar.HOUR_OF_DAY,8);
-		c.set(Calendar.DAY_OF_MONTH,1);
 		
 		myDate = c.getTime();
 		/*Debugging*/
@@ -394,14 +393,19 @@ public class MainActivity extends ActionBarActivity {
 		JSONResponse = client.getResponse();
 		if (JSONResponse!=null)
 		{
-			JSONResponse.trim();
+			JSONResponse = JSONResponse.trim();
 			JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 			
 			//Parse the response from server
 			//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-			 return new JSONDeserializer<List<Event>>().use(Date.class, 
-					 new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
+			List<Event> events = new JSONDeserializer<List<Event>>().use(Date.class, new DateParser()).deserialize(JSONResponse);
+			
+			
+			String startTime = getTime(events.get(0).getOccurrences().get(0).getStartTime());
+			String endTime = getTime(events.get(0).getOccurrences().get(0).getEndTime());
+			return events;
 		}
+		
 		return null;
 	}
 }
