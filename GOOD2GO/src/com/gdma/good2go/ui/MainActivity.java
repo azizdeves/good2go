@@ -71,7 +71,7 @@ public class MainActivity extends ActionBarActivity {
         
         
     	/********************************************Remove this to work with Android Accounts**********************/
-    	saveLocalUsername("Bypass Account");
+    	//saveLocalUsername("Bypass Account");
         /***********************************************************************************************************/
         
         
