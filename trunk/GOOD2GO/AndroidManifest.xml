@@ -25,6 +25,7 @@
     <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />
     <uses-permission android:name="android.permission.ACCESS_LOCATION_EXTRA_COMMANDS" />
+    <uses-permission android:name="android.permission.GET_ACCOUNTS" />
 
     <application android:label="@string/app_name"
         android:icon="@drawable/ic_app" 
@@ -75,6 +76,10 @@
         <activity
             android:label="@string/mapview_name"
             android:name=".ui.MapTab">
+        </activity>
+        <activity 
+            android:label="@string/spinner"
+            android:name=".ui.Login">
         </activity>
 
        
