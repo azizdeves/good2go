@@ -22,7 +22,9 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import android.app.Activity;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -64,8 +66,39 @@ public class MainActivity extends ActionBarActivity {
     	/*******************************************
          *******GOOD2GO***
          *******************************************/
+
         
-        /**GET MY LOCATION**/
+        /*check accounts*/
+        String mLocalUsername = getLocalUsername();
+        if (mLocalUsername == null){
+        	showToast("no local username");
+
+        	Intent newIntent = new Intent(this, Login.class);
+        	startActivityForResult(newIntent,7);
+            	
+        	/*
+        	saveLocalUsername("gil");
+        	mLocalUsername = getLocalUsername();
+        	showToast("new local username is: " + mLocalUsername);
+        	*/
+        }
+        else{
+        	
+        	showToast("local username is: " + mLocalUsername);
+        }
+
+        
+        
+        
+        
+        
+        contStart();
+        
+  
+    }
+
+	private void contStart() {
+		/**GET MY LOCATION**/
         
         /**TODO: add actual calculation**/
         
@@ -245,11 +278,21 @@ public class MainActivity extends ActionBarActivity {
 //                mAlternateTitle = !mAlternateTitle;
 //            }
 //        });
-        
-  
-    }
+	}
     
-    
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (resultCode==Activity.RESULT_OK)
+		{
+			contStart();
+		}
+	}
+
+	
+	
     
     private String getDuration(int totalDurationInMins) 
     {
@@ -407,5 +450,21 @@ public class MainActivity extends ActionBarActivity {
 		}
 		
 		return null;
+	}
+	
+	private String getLocalUsername(){
+		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
+		return settings.getString("userNameVal", null);
+	}
+	
+    private void showToast(String message){
+    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+    
+	private void saveLocalUsername(String userName){
+		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("userNameVal", userName);
+		editor.commit();
 	}
 }
