@@ -6,12 +6,14 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.Toast;
 
@@ -52,20 +54,38 @@ public class Login extends Activity {
 		s.setAdapter(adapter);
 		s.setOnItemSelectedListener(new MyOnItemSelectedListener());
 		
+	
+	
+		final Button buttonGo = (Button) findViewById(R.id.goButton);
+		   
+	    buttonGo.setOnClickListener(new View.OnClickListener() {
+	        public void onClick(View view) {
+	        	
+				showToast("The account you selected is: " + selectedAccount);
+				newLocalUser(selectedAccount);
+				
+				
+	        	setResult(Activity.RESULT_OK);
+	        	finish();
+	        	
+	        }
+	    });
+
+	
+	
 	}
+	
+	
 	
 	public class MyOnItemSelectedListener implements OnItemSelectedListener {    
 		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {      
-			//Toast.makeText(parent.getContext(), "The planet is " + parent.getItemAtPosition(pos).toString(), Toast.LENGTH_LONG).show();
-			selectedAccount = parent.getItemAtPosition(pos).toString();
-			Toast.makeText(parent.getContext(), "The planet is " + selectedAccount, Toast.LENGTH_LONG).show();
-			
-			
+			selectedAccount = parent.getItemAtPosition(pos).toString();		
 		}    
 		public void onNothingSelected(AdapterView<?> parent) {
 			// Do nothing.    
 		}
 	}
+	
 	
 	private void saveLocalUsername(String userName){
 		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
@@ -108,11 +128,8 @@ public class Login extends Activity {
 		}
 	}
 
-	private void newLocalUser() {
-		Account[] accounts;
-        String email = null, firstName = null, lastName = null, yearOfBirth = null;
-        
-        accounts = getAccounts(this);
+	private void newLocalUser(String email) {
+        String firstName = "", lastName = "", yearOfBirth = "";
         
         if (updateServer(email, firstName, lastName, email, yearOfBirth) == 1){
         	saveLocalUsername(email);
@@ -123,6 +140,12 @@ public class Login extends Activity {
         	//move to menu page
         }
 	}
+	
+	
+    private void showToast(String message){
+    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+
 	
 }
 
