@@ -23,8 +23,11 @@ import java.util.List;
 import java.util.Set;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -38,6 +41,7 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.*;
 import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.MyLocationListener;
 import com.google.android.maps.GeoPoint;
 
 import flexjson.JSONDeserializer;
@@ -59,33 +63,20 @@ public class MainActivity extends ActionBarActivity {
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);
+        setContentView(R.layout.main);       
         
-        
-        getActionBarHelper().setRefreshActionItemState(true);
-    	/*******************************************
-         *******GOOD2GO***
-         *******************************************/
-
-        
-        
+        getActionBarHelper().setRefreshActionItemState(true);           
         
     	/********************************************Remove this to work with Android Accounts**********************/
     	//saveLocalUsername("Bypass Account");
-        /***********************************************************************************************************/
-        
-        
-        
-        
+        /***********************************************************************************************************/             
+               
         /*check accounts*/
         String mLocalUsername = getLocalUsername();
         if (mLocalUsername == null){
         	showToast("no local username");
-
         	Intent newIntent = new Intent(this, Login.class);
-        	startActivityForResult(newIntent,7);
-            	
-
+        	startActivityForResult(newIntent,7);            	
         }
         else{
         	continueActivityStart();
@@ -98,7 +89,9 @@ public class MainActivity extends ActionBarActivity {
         
         /**TODO: add actual calculation**/
         
-        mMyGeoPoint=new GeoPoint((int)(32.055699*1E6),(int)(34.769540*1E6));       
+        mMyGeoPoint=new GeoPoint((int)(32.055699*1E6),(int)(34.769540*1E6));
+        
+        //mMyGeoPoint = getUserLocation();
 
         
         /**GET EVENTS FROM SERVER**/
@@ -136,6 +129,7 @@ public class MainActivity extends ActionBarActivity {
 	        	//get eventTime
 	        	String startTime = getTime (event.getOccurrences().get(0).getStartTime());
 	        	String endTime = getTime (event.getOccurrences().get(0).getEndTime());
+	        	
 	        	
 	        	//get eventAdditionalDetails
 	        	event.getNPOName();
@@ -277,6 +271,14 @@ public class MainActivity extends ActionBarActivity {
 	}
     
 
+	private GeoPoint getUserLocation() {
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+		LocationListener locationListener = new MyLocationListener();
+		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
+		return null;
+	}
+
+
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
@@ -309,7 +311,8 @@ public class MainActivity extends ActionBarActivity {
 		c.setTime(dateFromEvent);
 		int eventHour = c.get(Calendar.HOUR_OF_DAY);
 		int eventMin = c.get(Calendar.MINUTE);
-		return eventHour + ":" + eventMin;
+		String eventMinStr = (eventMin==0) ? "00" :  Integer.toString(eventMin);
+		return eventHour + ":" + eventMinStr;
 	}
 
 
@@ -414,13 +417,10 @@ public class MainActivity extends ActionBarActivity {
 		c.set(Calendar.HOUR_OF_DAY,8);
 		
 		myDate = c.getTime();
-		/*Debugging*/
 
 		String dateToSend = Long.toString(myDate.getTime());
-
 		client.AddParam("userDate", dateToSend);
 		
-		//client.AddParam("userDate", (new Date()).toString());
 		try{
 			client.Execute(1); //1 is HTTP GET
 		}
@@ -437,11 +437,9 @@ public class MainActivity extends ActionBarActivity {
 			
 			//Parse the response from server
 			//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-			List<Event> events = new JSONDeserializer<List<Event>>().use(Date.class, new DateParser()).deserialize(JSONResponse);
-			
-			
-			String startTime = getTime(events.get(0).getOccurrences().get(0).getStartTime());
-			String endTime = getTime(events.get(0).getOccurrences().get(0).getEndTime());
+			List<Event> events = new JSONDeserializer<List<Event>>()
+					.use(Date.class, new DateParser()).deserialize(JSONResponse);
+						
 			return events;
 		}
 		

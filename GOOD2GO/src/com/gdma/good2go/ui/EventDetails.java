@@ -88,10 +88,10 @@ public class EventDetails extends ActionBarTabActivity {
 	    		(EventsDbAdapter.KEY_EVENT_DURATION));	    
 	    mEventImage = event.getInt(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_IMAGE));
-	    mEventWhen = event.getInt(event.getColumnIndexOrThrow
+	    mEventWhen = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_START_TIME)) 
 	    		+ "-" 
-	    		+ event.getInt(event.getColumnIndexOrThrow
+	    		+ event.getString(event.getColumnIndexOrThrow
 	    				(EventsDbAdapter.KEY_EVENT_END_TIME));
 	    
 	    	    
