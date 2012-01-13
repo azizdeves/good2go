@@ -42,7 +42,8 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	private  LocationManager mLocationManager;
 	private  MapView mMap;  
 	private  MapController mMapController;
-	private  GeoPoint mUserGeoLocation = new GeoPoint((int)(32.086792*1E6),(int)(34.789581*1E6));
+	
+	private  GeoPoint mUserGeoLocation = new GeoPoint((int)(32.067228*1E6),(int)(34.777650*1E6));
 	private  UserItemizedOverlay mUserLocationOverlay;
 	
     @Override
@@ -128,7 +129,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 		
         Drawable drawable = this.getResources().getDrawable(R.drawable.ic_maps_current_position);
         
-        mUserLocationOverlay = new UserItemizedOverlay(drawable,mMap.getContext());
+        mUserLocationOverlay = new UserItemizedOverlay(drawable);
         OverlayItem overlayitem = new OverlayItem(mUserGeoLocation, "This is you being awesome.", "");
         mUserLocationOverlay.addOverlay(overlayitem);
          
