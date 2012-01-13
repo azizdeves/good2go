@@ -12,6 +12,7 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TabHost;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarTabActivity;
@@ -141,7 +142,7 @@ public class EventDetails extends ActionBarTabActivity {
 	    });
 	    }
 	    else{
-	    	//buttonCountMeIn.setBackgroundColor(1);//TODO SET TO GRAY(OR ANY OTHER COLOR)  
+	    	//buttonCountMeIn.setBackgroundColor(1);//TODO SET TO GRAY(OR ANY OTHER COLOR THAT WILL INDICATE THAT THE BUTTON IS NOT AVAILABLE)  
 	    }
 	}
 	
