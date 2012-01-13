@@ -64,10 +64,13 @@ public class Confirmation extends ActionBarActivity{
 			Button buttonDone = (Button) findViewById(R.id.DoneConfirmationViewButton);
 			buttonDone.setOnClickListener(new View.OnClickListener() {
 	            public void onClick(View v) {
-	        		Intent i = new Intent(v.getContext(), EventDetails.class);
+	            	Intent i = new Intent();
 	                i.putExtra("sender", "confirmation");
 	                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
-		            startActivity(i);
+	                setResult(RESULT_OK, i);
+	    			finish();
+	             
+		            //startActivity(i);
 	            }
 	        });
 				    	

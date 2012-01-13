@@ -13,6 +13,7 @@ import com.gdma.good2go.facebook.DialogError;
 import com.gdma.good2go.facebook.Facebook;
 import com.gdma.good2go.facebook.FacebookError;
 import com.gdma.good2go.facebook.Facebook.DialogListener;
+import com.gdma.good2go.utils.EventsDbAdapter;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -32,7 +33,8 @@ import android.widget.Toast;
 
 public class CountMeIn extends ActionBarActivity {
 
-    private String mEventName;
+    protected static final int GET_CONFIRMATION = 30;
+	private String mEventName;
     private String mEventDesc;
     private String mFbStatus;
     private String mFacebookToken;
@@ -131,7 +133,7 @@ public class CountMeIn extends ActionBarActivity {
 	            
 	            Intent newIntent = new Intent(view.getContext(), Confirmation.class);
 	            newIntent.putExtras(extraInfo);
-	            startActivityForResult(newIntent, 1);
+	            startActivityForResult(newIntent, GET_CONFIRMATION);
 	        }
 	    });
 
@@ -184,6 +186,21 @@ public class CountMeIn extends ActionBarActivity {
     	super.onActivityResult(requestCode, resultCode, data);	
 
     	facebook.authorizeCallback(requestCode, resultCode, data);
+    	
+    	if(requestCode==GET_CONFIRMATION){
+    		String sender= data.getStringExtra("sender");
+    		String key_eventId=data.getStringExtra(EventsDbAdapter.KEY_EVENTID);
+    		if(sender.compareTo("confirmation")==0){
+    			Intent i = new Intent();
+                i.putExtra("sender", "confirmation");
+                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
+                setResult(RESULT_OK, i);
+    			finish();
+             }
+    
+    	}
+    	
+    	
     }
     
     private void remote_registerToOccurrence(String username, String occurrenceKey) {
