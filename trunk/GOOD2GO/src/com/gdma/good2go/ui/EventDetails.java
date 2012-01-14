@@ -1,6 +1,7 @@
 package com.gdma.good2go.ui;
 
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.Bundle;
@@ -16,6 +17,9 @@ import android.widget.Toast;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarTabActivity;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
+import com.gdma.good2go.utils.AppPreferences;
+import com.gdma.good2go.utils.EventDetailsUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
 public class EventDetails extends ActionBarTabActivity {
@@ -29,14 +33,19 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventDistance;
     private String mEventCity;
     private String mEventSreet;
-    private String mEventStreetNumber;
     private String mEventWhen;
     private String mEventDuration;
     private int mEventImage;
     private String mSender;    
-    
-        
-	private EventsDbAdapter mDbHelper;
+    private EventsDbAdapter mDbHelper;
+    private AppPreferences mUsersPrefs;
+    private Context mContext;
+    private String mUsername;
+    private String mUserAge;
+    private String mCity;
+    private String mPhone;
+    private String mEmail;
+    private String mSex;
     
     /**@TODO - add all the fields here in case this activity dies, so it can resume
   
@@ -119,52 +128,50 @@ public class EventDetails extends ActionBarTabActivity {
 	    		("Who").setContent(R.id.textview3));
 	    
 	    mTabHost.setCurrentTab(0);
-	    
 
-	    
-	    initTabsAppearance(mTabHost);
+	    EventDetailsUtil.initTabsAppearance(mTabHost);
 	    
 
 	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
 	    if (mSender.compareTo("confirmation")!=0){	   
 	    	buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View view) {
-	        	
-	    		Bundle extraInfo = new Bundle();
-	            extraInfo.putString("name", mEventName);
-	            extraInfo.putString("desc", mEventDesc);
-	            extraInfo.putString("event_id", Long.toString(mRowId));
-	            
-	            Intent newIntent = new Intent(view.getContext(), 
-	                            CountMeIn.class);
-	            newIntent.putExtras(extraInfo);
-	            startActivityForResult(newIntent, 1);
-	        }
-	    });
+		        public void onClick(View view) {
+		        	mContext = view.getContext();
+		        	mUsersPrefs = new AppPreferences(view.getContext());
+		        	if (!mUsersPrefs.isUsernameExists()){
+		        	  Intent newIntent = new Intent(view.getContext(), PersonalDetailsTab.class);
+		        	  startActivityForResult(newIntent, ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS);
+		        	}
+		        	else{
+		        		getCountMeInTab(view.getContext());
+		        	}
+		        }
+	    	});
 	    }
 
 	}
 	
-	
-	public static void initTabsAppearance(TabHost tabhost) 
-	{
-	    for(int i=0;i<tabhost.getTabWidget().getChildCount();i++)
-	    {
-	    	tabhost.getTabWidget().getChildAt(i).setBackgroundResource(R.drawable.event_details_tab_bg);
-	        tabhost.getTabWidget().getChildAt(i).getLayoutParams().height = 50; 
-	    }
-	}
-	
     @Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		// TODO Auto-generated method stub
 		super.onActivityResult(requestCode, resultCode, data);
 		
 		if (resultCode==Activity.RESULT_OK)
 		{
-			final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
-			buttonCountMeIn.setText("You're in!");
-			buttonCountMeIn.setClickable(false);
+			if(requestCode==ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS){
+				mUsername=data.getStringExtra("age")!=null ? data.getStringExtra("name") : "";
+				mUserAge=data.getStringExtra("age")!=null ? data.getStringExtra("age") : "";
+            	mCity= data.getStringExtra("age")!=null ? data.getStringExtra("city") : "";
+            	mSex= data.getStringExtra("age")!=null ? data.getStringExtra("city") : "";
+            	mPhone=data.getStringExtra("phone")!=null ? data.getStringExtra("phone") : "";
+            	mEmail= data.getStringExtra("email")!=null ? data.getStringExtra("email") : "";
+            //	mUsersPrefs.saveUserName();//TODO CHANGE THE "NAME" FIELD TO SOME FLAG WHICH WILL TELL IF WE HAVE THOSE DETAILS OR NOT
+            	getCountMeInTab(mContext);
+			}
+			if(requestCode==ActivitysCodeUtil.GET_COUNT_ME_IN_TAB){
+				final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
+				buttonCountMeIn.setText("You're in!");
+				buttonCountMeIn.setClickable(false);			
+			}
 		}
 	}
 
@@ -197,5 +204,23 @@ public class EventDetails extends ActionBarTabActivity {
         
         return super.onOptionsItemSelected(item);
     }
+    
+
+	private void getCountMeInTab( Context c){
+		Bundle extraInfo = new Bundle();
+		extraInfo.putString("userName", mUsername);
+		extraInfo.putString("userAge", mUserAge);
+		extraInfo.putString("userCity", mCity);
+		extraInfo.putString("userPhone", mPhone);
+		extraInfo.putString("userEmail", mEmail);
+		extraInfo.putString("userSex", mSex);
+		
+        extraInfo.putString("eventname", mEventName);
+        extraInfo.putString("desc", mEventDesc);
+        extraInfo.putString("event_id", Long.toString(mRowId));
+        Intent newIntent = new Intent(c, CountMeIn.class);
+        newIntent.putExtras(extraInfo);
+        startActivityForResult(newIntent, ActivitysCodeUtil.GET_COUNT_ME_IN_TAB);
+	}
     
 }

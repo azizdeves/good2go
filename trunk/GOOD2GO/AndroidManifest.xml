@@ -67,7 +67,12 @@
             android:label="@string/confirmation"
             android:name=".ui.Confirmation">
         </activity>    
-                    
+        
+    	<activity
+            android:label="@string/personaldetails"
+            android:name=".ui.PersonalDetailsTab">
+        </activity>    
+                 
         <activity
             android:label="@string/meview_name"
             android:name=".ui.MeTab" >

@@ -33,7 +33,7 @@ public class Confirmation extends ActionBarActivity{
 			TextView badgeDetails1 = (TextView) findViewById(R.id.badgesDetails1_confirmationView);
 			TextView badgeDetails2= (TextView) findViewById(R.id.badgesDetails2_confirmationView);
 			Bundle extras = getIntent().getExtras();
-		    mEventName=(extras!=null)?extras.getString("name"):null;
+		    mEventName=(extras!=null)?extras.getString("eventname"):null;
 		    mEventDesc=(extras!=null)?extras.getString("desc"):null;
 		    String EvenIdString=(extras!=null)?extras.getString("event_id"):null;
 		    mEventId = Long.valueOf(EvenIdString);

@@ -32,7 +32,7 @@
     <string name="menu_go">GO</string>
     <string name="menu_done">DONE</string>
     
-    
+  
         
         
         
@@ -49,6 +49,11 @@
  	<string name="eventdetails_tabs">Event Details</string>
  	<string name="countmein">Count Me In</string>
 	<string name="confirmation">Confirmation</string>
+	<string name="personaldetails">Personal Details</string>
+	<string-array name="sex_array">
+       <item>Female</item>
+       <item>Male</item>
+    </string-array>  
 	<string name="welcome">Welcome to GOOD2GO!</string>
 	<string name="wlecome_choose_act">Please Choose Your Account</string>
 	<string name="welcome_YOB">Year of brith</string>
