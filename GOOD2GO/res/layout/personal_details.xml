@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+	android:layout_marginLeft="14.5sp"    
+    android:orientation="vertical" >
+
+
+    	<TextView
+        android:id="@+id/name_personalDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Name"/>
+ 	
+    	<EditText
+        android:id="@+id/nameDetails_personalDetailsView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_secondary_color"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_toRightOf="@id/name_personalDetailsView"
+  		/>
+
+     	<TextView
+        android:id="@+id/age_personalDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/nameDetails_personalDetailsView"
+
+        android:text="Age"/>
+ 	
+    	<EditText
+        android:id="@+id/ageDetails_personalDetailsView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_secondary_color"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_toRightOf="@id/age_personalDetailsView"
+         android:layout_below="@id/nameDetails_personalDetailsView"
+  		/>   	
+  
+    	<TextView
+        android:id="@+id/sex_personalDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/ageDetails_personalDetailsView"
+        android:text="Sex"/>
+ 	
+    	<Spinner
+        android:id="@+id/sexDetails_personalDetailsView"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:entries="@array/sex_array"
+        android:layout_toRightOf="@id/sex_personalDetailsView"
+        android:layout_below="@id/ageDetails_personalDetailsView"
+        />
+    
+    	<TextView
+        android:id="@+id/city_personalDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/sexDetails_personalDetailsView"
+        android:text="City"/>
+ 	
+    	<EditText
+        android:id="@+id/cityDetails_personalDetailsView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_secondary_color"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_below="@id/sexDetails_personalDetailsView"
+        android:layout_toRightOf="@id/city_personalDetailsView"
+  		/> 	
+  		
+    	<TextView
+        android:id="@+id/phone_personalDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/cityDetails_personalDetailsView"
+        android:text="Phone"/>
+ 	
+    	<EditText
+        android:id="@+id/phoneDetails_personalDetailsView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_secondary_color"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_below="@id/cityDetails_personalDetailsView"
+        android:layout_toRightOf="@id/phone_personalDetailsView"
+  		/> 	
+  		
+    	<TextView
+        android:id="@+id/email_personalDetailsView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/phoneDetails_personalDetailsView"
+        android:text="email"/>
+ 	
+    	<EditText
+        android:id="@+id/emailDetails_personalDetailsView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:textColor="@color/app_secondary_color"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"  
+        android:layout_marginLeft="10dip"
+        android:layout_marginRight="10dip"
+        android:layout_below="@id/phoneDetails_personalDetailsView"
+        android:layout_toRightOf="@id/email_personalDetailsView"
+  		/> 	
+  			
+    	<Button
+        android:id="@+id/DonePrivateDetailsButton" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentBottom="true" 
+    	android:background="@null"/>
+			
+</RelativeLayout>

@@ -13,6 +13,7 @@ import com.gdma.good2go.facebook.DialogError;
 import com.gdma.good2go.facebook.Facebook;
 import com.gdma.good2go.facebook.FacebookError;
 import com.gdma.good2go.facebook.Facebook.DialogListener;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
 import android.app.Activity;
@@ -33,7 +34,7 @@ import android.widget.Toast;
 
 public class CountMeIn extends ActionBarActivity {
 
-    protected static final int GET_CONFIRMATION = 30;
+
 	private String mEventName;
     private String mEventDesc;
     private String mFbStatus;
@@ -44,7 +45,12 @@ public class CountMeIn extends ActionBarActivity {
     private int mAuthAttempts = 0;
     ProgressDialog dialog;
     private String graph_or_fql;
-    
+    private String mUsername;
+    private String mAge;
+    private String mCity;
+    private String mPhone;
+    private String mEmail;
+    private String mSex;
     
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -54,10 +60,22 @@ public class CountMeIn extends ActionBarActivity {
 		
 	    /**GET DATA PASSED FROM COUNT-ME-IN-BUTTON in EVENT DETAILS*/
 	    Bundle extras = getIntent().getExtras();
-	    mEventName=(extras!=null)?extras.getString("name"):null;
-	    mEventDesc=(extras!=null)?extras.getString("desc"):null;
-	    String EvenIdString=(extras!=null)?extras.getString("event_id"):null;
-	    mEventId = Long.valueOf(EvenIdString);
+	    if(extras!=null){
+		    mEventName=extras.getString("eventname");
+		    mEventDesc=extras.getString("desc");
+		    String EvenIdString=extras.getString("event_id");
+		    mEventId = Long.valueOf(EvenIdString);
+
+		    mUsername=extras.getString("userName");
+		    mAge=extras.getString("userAge");
+		    mCity=extras.getString("userCity");
+		    mPhone=extras.getString("userPhone");
+		    mEmail=extras.getString("userEmail");
+		    mSex=extras.getString("userSex");
+		}
+    
+	    
+	    
 	    
 	    /**POPULATE VIEWS FROM EXTRAS*/
 	    mFbStatus="This is awesome! I'm going to " + mEventDesc.toLowerCase() + ".";
@@ -125,15 +143,16 @@ public class CountMeIn extends ActionBarActivity {
 	    		//setResult(Activity.RESULT_OK);
 	    		//finish();
 	        	
+	        	remote_registerNewUser(mUsername, mAge, mSex, mCity, mPhone, mEmail);
 	        	Bundle extraInfo = new Bundle();
-	            extraInfo.putString("name", mEventName);
+	            extraInfo.putString("eventname", mEventName);
 	            extraInfo.putString("desc", mEventDesc);
 	            extraInfo.putString("event_id", mEventId.toString());
 	            extraInfo.putInt("points", 100);
 	            
 	            Intent newIntent = new Intent(view.getContext(), Confirmation.class);
 	            newIntent.putExtras(extraInfo);
-	            startActivityForResult(newIntent, GET_CONFIRMATION);
+	            startActivityForResult(newIntent, ActivitysCodeUtil.GET_CONFIRMATION);
 	        }
 	    });
 
@@ -187,7 +206,7 @@ public class CountMeIn extends ActionBarActivity {
 
     	facebook.authorizeCallback(requestCode, resultCode, data);
     	
-    	if(requestCode==GET_CONFIRMATION){
+    	if(requestCode==ActivitysCodeUtil.GET_CONFIRMATION){
     		String sender= data.getStringExtra("sender");
     		String key_eventId=data.getStringExtra(EventsDbAdapter.KEY_EVENTID);
     		if(sender.compareTo("confirmation")==0){
@@ -294,12 +313,26 @@ public class CountMeIn extends ActionBarActivity {
     private void showToast(String message){
     	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
-    
-    
-    
-    
-    
 
+    
+	private int remote_registerNewUser (String userName, String age, String sex, String city, String phone, String email){
+		
+		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		client.AddParam("action", "??????");
+		client.AddParam("userName", userName);
+		client.AddParam("age", age);
+		client.AddParam("sex", sex);
+		client.AddParam("city", city);
+		client.AddParam("phone", phone);
+		client.AddParam("email", email);
+		try{
+			client.Execute(1); 
+			return 1;
+		}
+		catch (Exception e){
+			return 0;
+		}
+	}
 
     
 }
