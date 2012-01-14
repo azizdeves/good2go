@@ -127,8 +127,9 @@ public class EventDetails extends ActionBarTabActivity {
 
 	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
 	    if (mSender.compareTo("confirmation")!=0){	   
-	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
+	    	buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
+	        	
 	    		Bundle extraInfo = new Bundle();
 	            extraInfo.putString("name", mEventName);
 	            extraInfo.putString("desc", mEventDesc);
@@ -141,9 +142,7 @@ public class EventDetails extends ActionBarTabActivity {
 	        }
 	    });
 	    }
-	    else{
-	    	//buttonCountMeIn.setBackgroundColor(1);//TODO SET TO GRAY(OR ANY OTHER COLOR THAT WILL INDICATE THAT THE BUTTON IS NOT AVAILABLE)  
-	    }
+
 	}
 	
 	
