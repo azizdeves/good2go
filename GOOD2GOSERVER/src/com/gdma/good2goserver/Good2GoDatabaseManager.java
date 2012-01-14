@@ -7,6 +7,7 @@ import com.gdma.good2goserver.Karma.ActionType;
 import com.google.appengine.api.datastore.Key;
 
 import java.text.DateFormat;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Calendar;
 import java.util.Collections;
@@ -36,7 +37,7 @@ public class Good2GoDatabaseManager {
 		}
 	}
 	
-	public boolean checkEventKeyExists(Key eventKey){
+	public boolean checkEventKeyExists(String eventKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		try{
@@ -49,6 +50,40 @@ public class Good2GoDatabaseManager {
 		finally{
 			pm.close();
 		}
+	}
+	
+	public Event getEvent(String eventKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Event result = null;
+		
+		try{
+			result = pm.getObjectById(Event.class, eventKey);
+		}
+		catch(Exception e){
+			return null;
+		}
+		finally{
+			pm.close();
+		}
+		
+		return result;
+	}
+	
+	public Occurrence getOccurrence(String occurrenceKey){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		Occurrence result = null;
+		
+		try{
+			result = pm.getObjectById(Occurrence.class, occurrenceKey);
+		}
+		catch(Exception e){
+			return null;
+		}
+		finally{
+			pm.close();
+		}
+		
+		return result;
 	}
 	
 	public void addUser(User newUser) throws IOException{
@@ -67,6 +102,38 @@ public class Good2GoDatabaseManager {
 			
 			txn.commit();
 			pm.makePersistent(karma);
+		}
+		finally {
+			if (txn.isActive()) {
+				txn.rollback();
+			}
+			pm.close();
+		}
+	}
+	
+	public void editUser(User newUser) throws IOException{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		Transaction txn = pm.currentTransaction();
+		User user=null;
+		
+		try {
+			txn.begin();
+			
+			if (!checkUserNameExists(newUser.getUserName()))
+				throw new IOException("Username " + newUser.getUserName() + " doesn't exist in database.");
+			
+			user = pm.getObjectById(User.class, newUser.getUserName());
+			if (newUser.getFirstName()!=null)
+				user.setFirstName(newUser.getFirstName());
+			if (newUser.getLastName()!=null)
+				user.setLastName(newUser.getLastName());
+			if (newUser.getBirthYear()!=0)
+				user.setBirthYear(newUser.getBirthYear());
+			if (newUser.getEmail()!=null)
+				user.setEmail(newUser.getEmail());
+			
+			txn.commit();
 		}
 		finally {
 			if (txn.isActive()) {
@@ -324,10 +391,19 @@ public class Good2GoDatabaseManager {
 		return points;
 	}
 	
-	public void addEvent(Event newEvent) throws IOException{
-		if (newEvent.getEventKey()!=null)
-			throw new IOException("Event key must be null prior to database insertion.");
+	//Dumb batch insert for events.
+	public void addEvents(Collection<Event> events){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
+		try {
+			pm.makePersistentAll(events);		
+		}
+		finally {
+			pm.close();
+		}
+	}
+	
+	public void addEvent(Event newEvent) throws IOException{	
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		try{
@@ -343,10 +419,78 @@ public class Good2GoDatabaseManager {
 		}
 	}
 	
-	public void addOccurrence(Occurrence newOccurrence) throws IOException{
-		if (newOccurrence.getOccurrenceKey()!=null)
-			throw new IOException("Occurrence key must be null prior to database insertion.");
+	public void editEvent(Event newEvent) throws IOException{
+		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
+		try{
+			Event e = pm.getObjectById(Event.class, newEvent.getEventKey());
+			
+			if (e==null)
+				throw new IOException("This event is not registered in the database.");
+			
+			if (!newEvent.getContent().equals(new String("")))
+				e.setContent(newEvent.getContent());
+			
+			if (!newEvent.getDescription().equals(new String("")))
+				e.setDescription(newEvent.getDescription());
+			
+			if (newEvent.getEventAddress() != null)
+				e.setEventAddress(newEvent.getEventAddress());
+			
+			if (!newEvent.getEventName().equals(new String("")))
+				e.setEventName(newEvent.getEventName());
+			
+			if (newEvent.getHowMany() != 0)
+				e.setHowMany(newEvent.getHowMany());
+			
+			if (!newEvent.getInfo().equals(new String("")))
+				e.setInfo(newEvent.getInfo());
+			
+			if (newEvent.getMinDuration() != 0)
+				e.setMinDuration(newEvent.getMinDuration());
+			
+			if (!newEvent.getNPOName().equals(new String("")))
+				e.setNPOName(newEvent.getNPOName());
+			
+			if (newEvent.getNumRaters() != 0)
+				e.setNumRaters(newEvent.getNumRaters());
+			
+			if (!newEvent.getOccurrenceKeys().isEmpty())
+				e.setOccurrenceKeys(newEvent.getOccurrenceKeys());
+			
+			if (!newEvent.getPrerequisites().equals(new String("")))
+				e.setPrerequisites(newEvent.getPrerequisites());
+			
+			if (!newEvent.getSuitableFor().isEmpty())
+				e.setSuitableFor(newEvent.getSuitableFor());
+			
+			if (newEvent.getSumRatings() != 0)
+				e.setSumRatings(newEvent.getSumRatings());
+
+			if (!newEvent.getVolunteeringWith().isEmpty())
+				e.setVolunteeringWith(newEvent.getVolunteeringWith());
+			
+			if (!newEvent.getWorkType().isEmpty())
+				e.setWorkType(newEvent.getWorkType());
+		}
+		finally{
+			pm.close();
+		}
+	}
+	
+	//Dumb batch insert for occurrences.
+	public void addOccurrences(Collection<Occurrence> occurrences){
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try {
+			pm.makePersistentAll(occurrences);		
+		}
+		finally {
+			pm.close();
+		}
+	}
+	
+	public void addOccurrence(Occurrence newOccurrence){	
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		String eventKey = newOccurrence.getContainingEventKey();
@@ -358,6 +502,32 @@ public class Good2GoDatabaseManager {
 			pm.makePersistent(newOccurrence);
 			
 			e.addOccurrenceKey(newOccurrence.getOccurrenceKey());
+		}
+		finally {
+			pm.close();
+		}
+	}
+	
+	public void editOccurrence(Occurrence newOccurrence){	
+		PersistenceManager pm = PMF.get().getPersistenceManager();
+		
+		try {
+			Occurrence o = pm.getObjectById(Occurrence.class, newOccurrence.getOccurrenceKey());
+			
+			if (!newOccurrence.getContainingEventKey().equals(new String("")))
+				o.setContainingEventKey(newOccurrence.getContainingEventKey());
+			
+			if (newOccurrence.getEndTime() != null)
+				o.setEndTime(newOccurrence.getEndTime());
+			
+			if (newOccurrence.getOccurrenceDate() != null)
+				o.setOccurrenceDate(newOccurrence.getOccurrenceDate());
+			
+			if (!newOccurrence.getRegisteredUserNames().isEmpty())
+				o.setRegisteredUserNames(newOccurrence.getRegisteredUserNames());
+			
+			if (newOccurrence.getStartTime() != null)
+				o.setStartTime(newOccurrence.getStartTime());
 		}
 		finally {
 			pm.close();

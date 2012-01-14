@@ -4,6 +4,8 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.http.*;
 
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
@@ -14,7 +16,9 @@ import java.util.HashSet;
 
 import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
+import flexjson.ObjectBinder;
 import flexjson.transformer.DateTransformer;
+import flexjson.ObjectFactory;
 
 import com.gdma.good2goserver.Occurrence;
 import com.google.gson.Gson;
@@ -22,9 +26,326 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
+import java.lang.reflect.Type;
+import java.net.*;
+import java.io.*;
+
 @SuppressWarnings("serial")
 public class Good2GoServerServlet extends HttpServlet {
+	
+/* For debugging
+ * 
+ * 
+ * 	private class DateParser implements ObjectFactory{
+
+		@Override
+		public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
+			if (value instanceof String){
+				String v = (String) value;
+				v = v.replace('.', ':');
+				
+				String[] parts = v.split(":");
+				
+				Calendar c = Calendar.getInstance();
+				c.set(Calendar.YEAR, Integer.parseInt(parts[0]));
+				c.set(Calendar.MONTH, Integer.parseInt(parts[1]) - 1);
+				c.set(Calendar.DATE, Integer.parseInt(parts[2]));
+				c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(parts[3]));
+				c.set(Calendar.MINUTE, Integer.parseInt(parts[5]));
+				c.set(Calendar.SECOND, Integer.parseInt(parts[6]));
+				c.set(Calendar.MILLISECOND, Integer.parseInt(parts[7]));
+				
+				Date ret = c.getTime();
+				return ret;
+			}
+			return null;
+		}
+		
+	}
+	
+	private String getTime(Date dateFromEvent) {
+ 		Calendar c = Calendar.getInstance();
+ 		
+		c.setTime(dateFromEvent);
+		int eventHour = c.get(Calendar.HOUR_OF_DAY);
+		int eventMin = c.get(Calendar.MINUTE);
+		return eventHour + ":" + eventMin;
+	}
+	
 	private static final Logger log = Logger.getLogger(Good2GoServerServlet.class.getName());
+	
+ 	*/
+	
+	private void htUpdateData(){
+		try{
+			Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
+			
+	        URL oracle = new URL("http://www.hevratova.org.il/share/");
+	        URLConnection yc = oracle.openConnection();
+	        BufferedReader in = new BufferedReader(
+	                                new InputStreamReader(
+	                                yc.getInputStream()));
+	        
+	        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
+	        NPOTranslate translate = new HTTranslate();
+	        
+	        List<Event> newEvents = new LinkedList<Event>();
+	        List<Occurrence> newOccurrences = new LinkedList<Occurrence>();
+	        boolean isNewOccurrence = false;
+	        boolean isNewEvent = false;
+	        
+	        String eventKey = "";
+	        Event e = null;
+	        Occurrence o = null;
+	        String occurrenceKey = null;
+	        Event.Address address = null;
+	        
+	        boolean isSameEvent = false;
+	        String lastEventKey = "";
+
+	        String line;
+	        line = in.readLine();
+	        
+	        if (line != null) while ((line = in.readLine()) != null){
+	        	
+	        	lastEventKey = eventKey;
+	        	int len = line.length();
+	        	int start = 0;
+	        	int end = -1;
+	        	
+	        	for (int i=0;i<=33;i++){
+	        		end++;
+	        		start = end;
+	        		while (end<len && line.charAt(end)!='\t')
+	        			end++;
+	        		
+	        		String part = line.substring(start, end);
+	        		
+	        		if (part.length()>500)
+	        			part = part.substring(0, 497) + "...";
+	        		
+	        		switch(i){
+	        			case 0:
+	        				occurrenceKey = "HT" + part;
+	        				o = dbm.getOccurrence(occurrenceKey);
+	        				
+	        				if (o==null){
+	        					isNewOccurrence = true;
+	        					o = new Occurrence();
+	        					o.setOccurrenceKey(occurrenceKey);
+	        				}
+	        				else
+	        					isNewOccurrence = false;
+	        				
+	        				break;
+	        				
+	        			case 1:
+	        				eventKey = "HT" + part.substring(1, part.length()-1);
+	        				
+	        				if (lastEventKey.equals(eventKey)){
+	        					isSameEvent = true;
+	        				}
+	        				
+	        				else{
+		        				isSameEvent = false;
+		        				
+		        				if (e != null){
+		        					if (isNewEvent)
+		        						newEvents.add(e);
+		        					else
+		        						dbm.editEvent(e);
+		        				}
+		        					
+	        					e = dbm.getEvent(eventKey);
+		        				if (e==null){
+		        					isNewEvent = true;
+		        					e = new Event();
+		        					e.setEventKey(eventKey);
+		        				}
+		        				else{
+		        					isNewEvent = false;
+		        				}
+		        				
+	        					address = e.getEventAddress();
+	        					if (address == null)
+	        						address = new Event.Address();
+	        				}
+	        				
+	        				if (!e.getOccurrenceKeys().contains(occurrenceKey)){
+	        					e.addOccurrenceKey(occurrenceKey);
+	        				}
+	        				o.setContainingEventKey(eventKey);
+	        				
+	        				break;
+	        				
+	        			case 3:
+	        				if (!isSameEvent)
+	        					e.setNPOName(part);
+	        				break;
+	        				
+	        			case 5:
+	        				if (!isSameEvent)
+	        					e.setEventName(part);
+	        				break;
+	        				
+	        			case 6:
+	        				if (!isSameEvent)
+	        					e.setInfo(part);
+	        				break;
+	        				
+	        			case 7:
+	        				if (!isSameEvent)
+	        					e.setDescription(part);
+	        				break;
+	        			
+	        			case 9:
+	        				if (!isSameEvent)
+	        					e.setContent(part);
+	        				break;
+	        			
+	        			case 10:
+	        				
+	        				try{
+	        					Calendar c = Calendar.getInstance();
+	        					Date occurrenceDate = df.parse(part);
+	        					Date startTime = occurrenceDate;
+	        					
+	        					c.setTime(occurrenceDate);
+	        					c.set(Calendar.HOUR_OF_DAY, 0);
+	        					c.set(Calendar.MINUTE, 0);
+	        					c.set(Calendar.SECOND, 0);
+	        					c.set(Calendar.MILLISECOND, 0);
+	        					occurrenceDate = c.getTime();
+	        					
+	        					c.setTime(startTime);
+	        					c.set(Calendar.YEAR, 1970);
+	        					c.set(Calendar.MONTH, Calendar.JANUARY);
+	        					c.set(Calendar.DATE, 1);
+	        					startTime = c.getTime();
+	        					
+	        					o.setOccurrenceDate(occurrenceDate);
+	        					o.setStartTime(startTime);
+	        				}
+	        				catch(Exception ex){
+	        				}
+	        				break;
+	        			
+	        			case 11:
+	        				if (part.equals(new String("לא")))
+	        					e.setArriveAnyTime(false);
+	        				else
+	        					e.setArriveAnyTime(true);
+	        				break;
+	        				
+	        			case 12:
+	        				try{
+	        					Calendar c = Calendar.getInstance();
+	        					Date endTime = df.parse(part);
+
+	        					c.setTime(endTime);
+	        					c.set(Calendar.YEAR, 1970);
+	        					c.set(Calendar.MONTH, Calendar.JANUARY);
+	        					c.set(Calendar.DATE, 1);
+	        					endTime = c.getTime();
+	        					
+	        					o.setEndTime(endTime);
+	        				}
+	        				catch(Exception ex){
+	        				}
+	        				break;
+	        				
+	        			case 19:
+	        				if (!isSameEvent)
+	        					address.setCity(part);
+	        				break;
+	        			
+	        			case 20:
+	        				if (!isSameEvent)
+	        					address.setStreet(part);
+	        				break;
+	        				
+	        			case 21:
+	        				if (!isSameEvent){
+	        					try{
+	        						address.setNumber(Short.parseShort(part));
+	        					}
+	        					catch (Exception ex){
+	        					}
+	        					e.setEventAddress(address);
+	        				}
+	        				break;
+	        			
+	        			case 24:
+	        				if (!isSameEvent){
+	        					e.setVolunteeringWith(translate.getVolunteeringWith(part));
+	        					e.setWorkType(translate.getWorkType(part));
+	        				}
+	        				break;
+	        				
+	        			case 25:
+	        				if (!isSameEvent)
+	        					e.setPrerequisites(part);
+	        				break;
+	        			
+	        			case 26:
+	        				if (!isSameEvent && !part.equals(new String(""))){
+	        					String pre = e.getPrerequisites();
+	        					if (!pre.equals(""))
+	        						e.setPrerequisites(pre + ", " + part);
+	        					else
+	        						e.setPrerequisites(part);
+	        				}
+	        				break;
+	        				
+	        			case 28:
+	        				if (!isSameEvent){
+	        					try{
+	        						if (Integer.parseInt(part)<16)
+	        							e.addSuitableFor(Event.SuitableFor.KIDS);
+	        					}
+	        					catch (Exception ex){
+	        					}
+	        				}
+	        				break;
+	        			
+	        			case 32:
+	        				if (!isSameEvent){
+	        					if (part.equals(new String("1")))
+	        						e.addSuitableFor(Event.SuitableFor.GROUPS);
+	        					e.addSuitableFor(Event.SuitableFor.INDIVIDUALS);
+	        				}
+	        				break;
+	        			
+	        			case 33:
+	        				try{
+	        					e.setHowMany(Short.parseShort(part));
+	        				}
+	        				catch (Exception ex){
+	        				}
+	        				break;
+	        		}
+	        		
+	        	}
+	        	
+	        	if (isNewOccurrence)
+	        		newOccurrences.add(o);
+	        	else
+	        		dbm.editOccurrence(o);
+	        	
+	        }
+	        in.close();
+	        
+	        dbm.addOccurrences(newOccurrences);
+	        dbm.addEvents(newEvents);
+		}
+		catch(IOException e){
+			
+		}
+	}
+	
+	public void parseExcel(){
+		
+	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
 			throws IOException {	
@@ -59,10 +380,15 @@ public class Good2GoServerServlet extends HttpServlet {
 		}
 		*/
 		
-		PrintWriter pw = resp.getWriter();
+		PrintWriter pw = new PrintWriter(new OutputStreamWriter(resp.getOutputStream(), "UTF8"), true);
 		
 		String action = req.getParameter(new String("action"));
 			
+		
+		/*
+		 * Old addEvents
+		 * 
+		 
 		if (action.compareToIgnoreCase("addEvents")==0){
 			
 			Set<Event.VolunteeringWith> vw = new HashSet<Event.VolunteeringWith>();
@@ -89,7 +415,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setNumber((short) 100);
 			a.setGood2GoPoint(new Good2GoPoint(32069156, 34774003));
 			
-			e = new Event("Fun Horseback Riding", "Help handicapped teenagers and enjoy a horseack ride",
+			e = new Event("Fun Horseback Riding","","", "Help handicapped teenagers and enjoy a horseack ride",
 						  "Assist handicapped teenagers in therapeutic horse-back riding, lead their horse and help them follow instructors commands.",
 						  600, false, a, "FilthyRichForPoorPersons", vw, sf, wt, true);
 			
@@ -135,7 +461,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setNumber((short) 1);
 			a.setGood2GoPoint(new Good2GoPoint(32069211, 34763403));
 			
-			e = new Event("Dogs are our best friends", "Have a walk with a city chelter dog","Make a furry cute friend for life!",
+			e = new Event("Dogs are our best friends","","", "Have a walk with a city chelter dog","Make a furry cute friend for life!",
 						  130, false, a, "CityShelter", vw, sf, wt, true);
 			
 			o = new Occurrence();
@@ -178,7 +504,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setNumber((short) 20);
 			a.setGood2GoPoint(new Good2GoPoint(32086865,34789581));
 			
-			e = new Event("Surf the internet", "Show the wonders of Google and Wikipedia to children","Share what you know by teaching internet to kids!",
+			e = new Event("Surf the internet","","", "Show the wonders of Google and Wikipedia to children","Share what you know by teaching internet to kids!",
 						  205, false, a, "Google Inc.", vw, sf, wt, true);
 			
 			o = new Occurrence();
@@ -221,7 +547,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setNumber((short) 30);
 			a.setGood2GoPoint(new Good2GoPoint(32074938,34775591));
 			
-			e = new Event("Read your favourite book", "Make someone happy and provide company to the elderly","Read anything you like to the elderly",
+			e = new Event("Read your favourite book","","", "Make someone happy and provide company to the elderly","Read anything you like to the elderly",
 						  60, false, a, "Mishan", vw, sf, wt, true);
 			
 			o = new Occurrence();
@@ -268,7 +594,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setNumber((short) 20);
 			a.setGood2GoPoint(new Good2GoPoint(32055555,34769572));
 			
-			e = new Event("Shake what your mamma gave ya", "Get jiggy with it!","Konichiwa bithez !!!!",
+			e = new Event("Shake what your mamma gave ya","","", "Get jiggy with it!","Konichiwa bithez !!!!",
 						  119, false, a, "Pussycat", vw, sf, wt, true);
 			
 			o = new Occurrence();
@@ -313,7 +639,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setNumber((short) 1);
 			a.setGood2GoPoint(new Good2GoPoint(32063374,34773080));
 			
-			e = new Event("Give a hot meal to the needy", "Help pack and distribute hot meals to those in need","They are very hungry. Help them.",
+			e = new Event("Give a hot meal to the needy","","", "Help pack and distribute hot meals to those in need","They are very hungry. Help them.",
 						  360, false, a, "Jaffa for Jaffa", vw, sf, wt, true);
 			
 			o = new Occurrence();
@@ -344,7 +670,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		
 		
 		
-		else if (action.compareToIgnoreCase("getUserHistory")==0){
+		if (action.compareToIgnoreCase("getUserHistory")==0){
 			String userName = req.getParameter(new String("userName"));
 			Date userDate = null;
 			String userDateString = req.getParameter(new String("userDate"));
@@ -478,9 +804,19 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 				}
 				
-				resp.setContentType("text/plain");
+				resp.setContentType("text/html; charset=UTF-8");
 				
 				pw.print(js);
+				
+				/*For debugging
+				 * 
+				 * 
+				 * List<Event> e = new JSONDeserializer<List<Event>>().use(Date.class,new DateParser()).deserialize(js);
+				
+				String startTime = getTime(e.get(0).getOccurrences().get(0).getStartTime());
+				String endTime = getTime(e.get(0).getOccurrences().get(0).getEndTime());
+				
+				int i = 0;*/
 			}
 			
 			else
@@ -539,6 +875,26 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 		}
 		
+		else if (action.compareToIgnoreCase("editUser")==0){
+			String userName = req.getParameter(new String("userName"));
+			String firstName = req.getParameter(new String("firstName"));
+			String lastName = req.getParameter(new String("lastName"));
+			String email = req.getParameter(new String("email"));
+			String birthString = req.getParameter(new String("birthYear")); 
+			int birthYear=0;
+			
+			if (userName!=null){
+				if (birthString!=null)
+					birthYear = Integer.parseInt(birthString);
+				User user = new User(userName, firstName, lastName, email, birthYear, new Date());
+				dbm.editUser(user);
+			}
+			else{
+				pw.print("Unspecified username");
+			}
+			
+		}
+		
 		else if (action.compareToIgnoreCase("addKarma")==0){
 			String userName = req.getParameter(new String("userName"));
 			String type = req.getParameter(new String("type"));
@@ -564,7 +920,7 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);
 				
-				/*for debuging*/
+				/*for debugging*/
 				User u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(js); 
 				
 				resp.setContentType("text/plain");
@@ -626,7 +982,9 @@ public class Good2GoServerServlet extends HttpServlet {
 				pw.print("Missing Parameters");
 		}
 		
-		
+		else if (action.compareToIgnoreCase("updateData")==0){
+			htUpdateData();
+		}
 	}
 }
 
