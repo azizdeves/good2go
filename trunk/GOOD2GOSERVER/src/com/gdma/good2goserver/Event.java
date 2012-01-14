@@ -10,15 +10,16 @@ import javax.jdo.annotations.Embedded;
 import javax.jdo.annotations.EmbeddedOnly;
 
 //import com.google.appengine.api.datastore.GeoPt;
+import java.util.HashSet;
 import java.util.List;
 import java.util.LinkedList;
 import java.util.Set;
 
 @PersistenceCapable
-public class Event {
+public class Event{
 
-	public enum VolunteeringWith {
-		ANIMALS, CHILDREN, ELDERLY, DISABLED, ENVIRONMENT, SPECIAL;
+	public enum VolunteeringWith{
+		ANIMALS, CHILDREN, ELDERLY, DISABLED, ENVIRONMENT, DISADVANTAGED, SPECIAL, OTHER;
 		
 		public static boolean isMember(String s){
 			for (VolunteeringWith vw : VolunteeringWith.values()){
@@ -30,7 +31,7 @@ public class Event {
 		}
 	}
 
-	public enum SuitableFor {
+	public enum SuitableFor{
 		KIDS, INDIVIDUALS, GROUPS;
 		
 		public static boolean isMember(String s){
@@ -43,7 +44,7 @@ public class Event {
 		}
 	}
 
-	public enum  WorkType{
+	public enum WorkType{
 		MENIAL, MENTAL;
 		
 		public static boolean isMember(String s){
@@ -57,8 +58,7 @@ public class Event {
 	}
 
 	@PrimaryKey
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
+	@Persistent
 	private String eventKey;
 
 	@Persistent
@@ -66,7 +66,15 @@ public class Event {
 
 	@Persistent
 	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
+	private String info;
+
+	@Persistent
+	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
 	private String description;
+	
+	@Persistent
+	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
+	private String content;
 
 	@Persistent
 	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
@@ -80,7 +88,7 @@ public class Event {
 	private boolean isArriveAnyTime;
 	
 	@Persistent
-	private int howMany;
+	private short howMany;
 
 	@Persistent
 	@Embedded
@@ -118,34 +126,62 @@ public class Event {
 	private List<Occurrence> occurrences;
 	
 	public Event(){
+		this.eventName = "";
+		this.info = "";
+		this.description = "";
+		this.content = "";
+		this.prerequisites = "";
+		this.minDuration = 0;
+		this.isArriveAnyTime = false;
+		this.howMany = 0;
+		this.NPOName = "";
 		this.numRaters = 0;
 		this.sumRatings = 0;
 		this.occurrenceKeys = new LinkedList<String>();
 		this.occurrences = new LinkedList<Occurrence>();
+		this.eventAddress = null;
+		this.suitableFor = new HashSet<Event.SuitableFor>();
+		this.volunteeringWith = new HashSet<Event.VolunteeringWith>();
+		this.workType = new HashSet<Event.WorkType>();
+		this.trainingRequired = false;
 	}
 	
-	public Event(String eventName, String description, String prerequisites, int minDuration, boolean isArriveAnyTime,
-				 Address eventAddress, String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
+	public Event(String eventName, String info, String description, String content, String prerequisites, int minDuration, boolean isArriveAnyTime,
+				 Address eventAddress,short howMany, String NPOName, Set<VolunteeringWith> volunteeringWith, Set<SuitableFor> suitableFor,
 				 Set<WorkType> workType, boolean trainingRequired){
-		this();
 		
 		this.eventName = eventName;
+		this.info = info;
 		this.description = description;
+		this.content = content;
 		this.prerequisites = prerequisites;
 		this.minDuration = minDuration;
 		this.isArriveAnyTime = isArriveAnyTime;
+		this.howMany = howMany;
 		this.eventAddress = eventAddress;
 		this.NPOName = NPOName;
+		this.numRaters = 0;
+		this.sumRatings = 0;
+		this.occurrenceKeys = new LinkedList<String>();
+		this.occurrences = new LinkedList<Occurrence>();
 		this.volunteeringWith = volunteeringWith;
 		this.suitableFor = suitableFor;
 		this.workType = workType;
 		this.trainingRequired = trainingRequired;
 	}
 	
-	public Event(String eventName, String description, String prerequisites, int minDuration, boolean isArriveAnyTime,
-			 Address eventAddress, String NPOName, boolean trainingRequired){
+	@Override
+	public boolean equals(Object o){
+		if (o instanceof Event)
+			return ((Event) o).getEventKey().equals(this.getEventKey());
 		
-		this(eventName, description, prerequisites, minDuration, isArriveAnyTime, eventAddress, NPOName,
+		return false;
+	}
+	
+	public Event(String eventName, String info, String description, String content, String prerequisites, int minDuration, boolean isArriveAnyTime,
+			 Address eventAddress,short howMany, String NPOName, boolean trainingRequired){
+		
+		this(eventName, info, description, content, prerequisites, minDuration, isArriveAnyTime, eventAddress, howMany, NPOName,
 			 null, null, null, trainingRequired);
 	}
 	
@@ -157,8 +193,16 @@ public class Event {
 		return eventName;
 	}
 
+	public String getInfo() {
+		return info;
+	}
+	
 	public String getDescription() {
 		return description;
+	}
+	
+	public String getContent() {
+		return content;
 	}
 
 	public String getPrerequisites() {
@@ -229,8 +273,16 @@ public class Event {
 		this.eventName = eventName;
 	}
 
+	public void setInfo(String info) {
+		this.info = info;
+	}
+	
 	public void setDescription(String description) {
 		this.description = description;
+	}
+	
+	public void setContent(String content) {
+		this.content = content;
 	}
 
 	public void setPrerequisites(String prerequisites) {
@@ -337,11 +389,11 @@ public class Event {
 		sumRatings+=(long) rating;
 	}
 
-	public int getHowMany() {
+	public short getHowMany() {
 		return howMany;
 	}
 
-	public void setHowMany(int howMany) {
+	public void setHowMany(short howMany) {
 		this.howMany = howMany;
 	}
 
@@ -369,6 +421,10 @@ public class Event {
 		}
 		
 		public Address(){
+			this.city = "";
+			this.street = "";
+			this.number = 0;
+			this.good2GoPoint = null;
 		}
 		
 		public Address(Address a) {

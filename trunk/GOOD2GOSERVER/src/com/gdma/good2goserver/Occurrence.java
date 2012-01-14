@@ -12,9 +12,8 @@ import javax.jdo.annotations.PrimaryKey;
 
 @PersistenceCapable
 public class Occurrence implements Comparable<Occurrence>{
-	@Persistent(valueStrategy = IdGeneratorStrategy.IDENTITY)
+	@Persistent
 	@PrimaryKey
-	@Extension(vendorName="datanucleus", key="gae.encoded-pk", value="true")
     private String occurrenceKey;
 	
 	@Persistent
@@ -35,6 +34,10 @@ public class Occurrence implements Comparable<Occurrence>{
 
 	public Occurrence() {
 		this.occurrenceKey = null;
+		this.containingEventKey = "";
+		this.occurrenceDate = null;
+		this.startTime = null;
+		this.endTime = null;
 		this.registeredUserNames = new LinkedList<String>();
 	}
 	

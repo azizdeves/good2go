@@ -16,7 +16,7 @@ public class NPO {
 	private String description;
 	
 	@Persistent
-	String email;
+	String site;
 	
 	@Persistent
 	String phoneNumber;
@@ -43,8 +43,8 @@ public class NPO {
 		this.contactNumber = contactNumber;
 	}
 
-	public NPO(String nPOName) {
-		NPOName = nPOName;
+	public NPO(String NPOName) {
+		NPOName = NPOName;
 	}
 	
 	public String getNPOName() {
@@ -56,7 +56,7 @@ public class NPO {
 	}
 
 	public String getemail() {
-		return email;
+		return site;
 	}
 
 	public String getPhoneNumber() {
@@ -67,8 +67,8 @@ public class NPO {
 		this.description = description;
 	}
 
-	public void setemail(String email) {
-		this.email = email;
+	public void setEmail(String site) {
+		this.site = site;
 	}
 
 	public void setPhoneNumber(String phoneNumber) {
