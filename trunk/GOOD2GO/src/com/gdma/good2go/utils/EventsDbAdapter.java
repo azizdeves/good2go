@@ -100,7 +100,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 12;
+    private static final int DATABASE_VERSION = 13;
 
     private final Context mCtx;
 
@@ -347,22 +347,15 @@ public class EventsDbAdapter {
      * values passed in
      * 
      * @param eventId id of event to update
-     * @param title value to set note title to
-     * @param body value to set note body to
+     * @param distance value to set distance to
      * @return true if the event was successfully updated, false otherwise
      */
-    public boolean updateEvent(long eventId, String name, String info, String details,
-    		String gplong, String gplat) 
+    public boolean updateEvent(long eventId, String distance) 
     {
-    	/**TODO: add new columns**/
         ContentValues args = new ContentValues();
-        args.put(KEY_EVENTNAME, name);
-        args.put(KEY_EVENT_SHORT_INFO, info);
-        args.put(KEY_EVENT_DETAILS, details);
-        args.put(KEY_EVENT_GP_LONG, gplong);
-        args.put(KEY_EVENT_GP_LAT, gplat);
+        args.put(KEY_EVENT_DISTANCE, distance);
 
-        return mDb.update(DATABASE_TABLE, args, KEY_EVENTID + "=" + eventId, null) > 0;
+        return mDb.update(DATABASE_TABLE, args, KEY_EVENTID + " = " + eventId, null) > 0;
     }
 
 
