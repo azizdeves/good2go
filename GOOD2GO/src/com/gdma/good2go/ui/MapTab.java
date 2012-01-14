@@ -59,22 +59,40 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 		else
 			onCreateHelper();
 		
+		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
+		mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
+				
 		setUserLocation();
     }
+    
    
+    private void initMapFields() {
+        mMap = (MapView)this.findViewById(R.id.mapview);
+        mMap.setBuiltInZoomControls(true);
+        
+        mMapController = mMap.getController();
+        mMapController.setZoom(16);
+        
+        mLocationManager = (LocationManager)this.getSystemService(LOCATION_SERVICE);
+		
+	}
+    
     
     private void setUserLocation() {
-		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
         
-        Location location = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location locationNETWORK = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         
-        if (location != null) 
+        Location locationLastKnown = (locationGPS!=null) ? locationGPS : 
+        	(locationNETWORK!=null) ? locationNETWORK : null;
+        
+        if (locationLastKnown != null) 
         { 
-        	onLocationChanged(location);          
+        	onLocationChanged(locationLastKnown);          
         }
         else
         {
-        	Toast.makeText(mMap.getContext(), "Is your GPS on? We couldn't get accurate location.", Toast.LENGTH_SHORT).show();
+         	Toast.makeText(mMap.getContext(), "Couldn't get accurate location.", Toast.LENGTH_SHORT).show();
         	displayUserLocation(); 
         }		
 	}
@@ -83,6 +101,8 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	@Override
     protected void onResume() {
       super.onResume();
+      
+      mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
       mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
     }
     
@@ -162,16 +182,6 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	}
 
 	
-    private void initMapFields() {
-        mMap = (MapView)this.findViewById(R.id.mapview);
-        mMap.setBuiltInZoomControls(true);
-        
-        mMapController = mMap.getController();
-        mMapController.setZoom(16);
-        
-        mLocationManager = (LocationManager)this.getSystemService(LOCATION_SERVICE);
-		
-	}
  
     
     private EventOverlayItem MakeEventPoint(Cursor eventsCursor) {    
@@ -198,7 +208,6 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 
     
 	public void getFilterScreen(View view){
-		//buttonFilterEvents.setBackgroundDrawable(getResources().getDrawable( R.drawable.ic_filter_white));
     	Intent myIntent = new Intent(view.getContext(),FilterTab.class);
     	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
 	}
@@ -349,6 +358,10 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         
         case R.id.menu_list:
         	newIntent = new Intent(this, ListTab.class);
+        	newIntent.putExtra("sender", "map");
+        	newIntent.putExtra("lat", mUserGeoLocation.getLatitudeE6());
+        	newIntent.putExtra("lon", mUserGeoLocation.getLongitudeE6());
+        	
         	startActivity(newIntent);
         	break;
         	

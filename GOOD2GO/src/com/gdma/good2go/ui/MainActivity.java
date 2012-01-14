@@ -26,7 +26,7 @@ import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.location.LocationListener;
+import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
@@ -39,27 +39,18 @@ import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
-import com.gdma.good2go.communication.*;
+import com.gdma.good2go.communication.DateParser;
+import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.MyLocationListener;
 import com.google.android.maps.GeoPoint;
 
 import flexjson.JSONDeserializer;
-import flexjson.transformer.DateTransformer;
 
 public class MainActivity extends ActionBarActivity {
 	
-	/*******************************************
-	              *******GOOD2GO***
-	 ******************************************/
 	private EventsDbAdapter mDbHelper;
 	private GeoPoint mMyGeoPoint;
 	
-	/*******************************************
-     *******GOOD2GO***
-     *******************************************/
-
-    private boolean mAlternateTitle = false;
 
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -85,21 +76,14 @@ public class MainActivity extends ActionBarActivity {
 
     
 	private void continueActivityStart() {
-		/**GET MY LOCATION**/
-        
-        /**TODO: add actual calculation**/
-        
-        mMyGeoPoint=new GeoPoint((int)(32.055699*1E6),(int)(34.769540*1E6));
-        
-        //mMyGeoPoint = getUserLocation();
-
+		/**GET MY LOCATION**/       
+        mMyGeoPoint = getUserLocation();
         
         /**GET EVENTS FROM SERVER**/
         // TODO on resume check if we have the events if not - repopulate
         
-        List<Event> eventList=remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),mMyGeoPoint.getLongitudeE6());
-        //eventList=new ArrayList<Event>(); //TODO REMOVE!!!
-        
+        List<Event> eventList = remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),
+        		mMyGeoPoint.getLongitudeE6());  
         
         if (eventList!=null)
         {
@@ -273,9 +257,15 @@ public class MainActivity extends ActionBarActivity {
 
 	private GeoPoint getUserLocation() {
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-		LocationListener locationListener = new MyLocationListener();
-		locationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, locationListener);
-		return null;
+        Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location locationNETWORK = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+        
+        double lat = (locationGPS != null) ? locationGPS.getLatitude() : 
+        	(locationNETWORK != null) ? locationNETWORK.getLatitude() : 32.067228;
+        double lon = (locationGPS != null) ? locationGPS.getLongitude() : 
+        	(locationNETWORK != null) ? locationNETWORK.getLongitude() : 32.067228;
+        	
+        return new GeoPoint((int)(lat * 1E6),(int)(lon * 1E6));		
 	}
 
 

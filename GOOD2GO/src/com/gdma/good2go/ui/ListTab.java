@@ -3,6 +3,7 @@ package com.gdma.good2go.ui;
 
 import android.content.Intent;
 import android.database.Cursor;
+import android.location.Location;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -17,6 +18,7 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.FiltersUtil;
+import com.google.android.maps.GeoPoint;
 
 
 //import android.support.v4.app.Fragment;
@@ -30,6 +32,10 @@ public class ListTab extends ActionBarListActivity {
 	private static final int GET_FILTERED_EVENTS = 10;
 	private EventsDbAdapter mDbHelper;
 	Cursor mEventsCursor;
+	
+	private int mLatitude;
+	private int mLongitude;
+	private String mSender;
 	
 	private String[] mColumns;
 	private Button buttonFilterEvents;
@@ -50,10 +56,22 @@ public class ListTab extends ActionBarListActivity {
 		}
 	}
 
-    /** Called when the activity is first created. */
+	
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	super.onCreate(savedInstanceState);
+    	
+	    // get location passed from map
+		Bundle extras = getIntent().getExtras();
+		mSender= (extras!= null) ?
+				extras.getString("sender") : null;
+		if (mSender.compareTo("map")==0)
+		{
+			mLatitude = extras.getInt("lat");
+			mLongitude = extras.getInt("lon");
+		}
+    	
+		// filter
         Bundle bundleResult = FilterTab.getFilterBundle();
 		if (bundleResult!=null)
 			showFilteredEventsOnList(bundleResult);
@@ -61,8 +79,6 @@ public class ListTab extends ActionBarListActivity {
 			onCreateHelper();
 
     }
-
-    
 
     
     @Override
@@ -106,7 +122,8 @@ public class ListTab extends ActionBarListActivity {
 	
 		showPointsInList();
         setContentView(R.layout.list);
-		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
+		
+        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
         buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
         buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -209,8 +226,43 @@ public class ListTab extends ActionBarListActivity {
     	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
 	}
 	
+	private void updateEventsDistance()
+	{
+		int cnt = 0;
+		
+        if (mEventsCursor.moveToFirst()) 
+        {
+        	do{
+            	Long eventId = mEventsCursor.getLong
+            			(mEventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENTID));
+            	String oldDistance=(mEventsCursor.getString
+            			(mEventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_DISTANCE)));
+            	int lat=(mEventsCursor.getInt
+            			(mEventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_GP_LAT)));
+            	int lon=(mEventsCursor.getInt
+            			(mEventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_GP_LONG)));
+            	
+            	float results[]=new float[3];
+    			Location.distanceBetween(mLatitude / 1E6, mLongitude/ 1E6, lat / 1E6, lon / 1E6, results);
+            	String newDistance=String.format("%.1f", (float)(results[0]/1E3))+" km";	
+            	
+            	if (oldDistance.compareTo(newDistance)==0) 
+            		break;
+            	
+            	mDbHelper.updateEvent(eventId, newDistance);
+        		
+            	cnt++;//BUG IN CURSOR
+        		}
+        	while(mEventsCursor.moveToNext()&&cnt!=6/*BUG IN CURSOR*/);
+        	/**TODO fix the bug*/
+        }
+        
+        mEventsCursor.requery();
+	}
     
     private void showPointsInList(){
+    	updateEventsDistance();
+    	
         mColumns = new String[] {EventsDbAdapter.KEY_EVENTNAME, 
         		EventsDbAdapter.KEY_EVENT_SHORT_INFO,
         		EventsDbAdapter.KEY_EVENT_DISTANCE,
