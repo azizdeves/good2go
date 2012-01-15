@@ -75,8 +75,7 @@
         <item name="android:textColor">@color/accent_1</item>
         <item name="android:background">@null</item>
     </style>
-    
-        
+          
     <style name="FilterButton">
         <item name="android:layout_gravity">center_vertical</item>
         <item name="android:layout_width">wrap_content</item>
@@ -89,8 +88,7 @@
 <!--         <item name="android:textStyle">bold</item> -->
         <item name="android:textColor">@color/app_text_secondary</item>
         <item name="android:background">@null</item>
-    </style>
-    
+    </style>   
         
 	<style name="SeekBar">
         <item name="android:paddingLeft">7dip</item>
@@ -107,8 +105,7 @@
     <style name="HistoryListText">
         <item name="android:textColor">@color/app_text_main</item>
     </style>
-        
-        
+              
     <style name="TextHeader">
         <item name="android:textStyle">bold</item>
         <item name="android:textColor">@color/app_text_main</item>
@@ -119,8 +116,7 @@
         <item name="android:textColor">@color/app_text_main</item>
         <item name="android:layout_marginLeft">5dip</item>
     </style>
-    
-  
+     
     <style name="TextRegular">
         <item name="android:textColor">@color/app_text_main</item>
         <item name="android:layout_height">wrap_content</item>
@@ -133,12 +129,9 @@
    <style name="TextWhite">
         <item name="android:textColor">@color/app_text_white</item>
         <item name="android:textStyle">bold</item>
-        <item name="android:textSize">@dimen/text_size_small</item>
-        
+        <item name="android:textSize">@dimen/text_size_small</item>       
     </style>    
        
-    
-
     <style name="ButtonCountMeIn" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">#FFFFFFFF</item>
@@ -146,16 +139,10 @@
         <item name="android:textStyle">bold</item>
         <item name="android:background">@drawable/btn_count_me_in_details</item>
         <item name="android:focusable">true</item>
-        <item name="android:clickable">true</item>
-        
-        <item name="android:layout_width">fill_parent</item>
-
-        
-            
+        <item name="android:clickable">true</item>        
+        <item name="android:layout_width">fill_parent</item>           
     </style>
-      
-        
-        
+             
      <style name="ButtonDummy" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
         <item name="android:textColor">#FFFFFFFF</item>
@@ -164,7 +151,16 @@
         <item name="android:clickable">false</item>
         <item name="android:layout_width">110dip</item>
         <item name="android:layout_height">40dip</item>
-                
-
+    </style>
+    
+    <style name="SplashScreen">
+        <item name="android:padding">0dp</item>
+        <item name="android:windowBackground">@android:color/white</item>
+        <item name="android:windowFrame">@null</item>
+    </style>
+    
+    <style name="BackTheme" parent="android:Theme">
+        <item name="android:windowBackground">@drawable/splash_peek</item>
+        <item name="android:windowNoTitle">true</item>
     </style>
 </resources>

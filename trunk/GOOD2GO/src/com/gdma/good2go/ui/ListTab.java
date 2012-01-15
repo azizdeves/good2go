@@ -28,7 +28,7 @@ import com.google.android.maps.GeoPoint;
 //import android.support.v4.app.ListFragment;;
 
 public class ListTab extends ActionBarListActivity {
-	
+	private static final String TAG = "List";
 	private static final int GET_FILTERED_EVENTS = 10;
 	private EventsDbAdapter mDbHelper;
 	Cursor mEventsCursor;
@@ -152,15 +152,14 @@ public class ListTab extends ActionBarListActivity {
     	Intent newIntent = null;
         switch (item.getItemId()) {
         
-        case R.id.menu_map:              
-            
+        case R.id.menu_map:                          
         	newIntent = new Intent(this, MapTab.class);
         	startActivity(newIntent);
         	break;
         
-        case android.R.id.home:
-        	
+        case android.R.id.home:        	
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
         	break;

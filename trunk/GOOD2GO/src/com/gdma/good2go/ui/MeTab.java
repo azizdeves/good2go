@@ -39,7 +39,7 @@ import flexjson.JSONDeserializer;
 import flexjson.transformer.DateTransformer;
 
 public class MeTab extends ActionBarListActivity {
-    
+	private static final String TAG = "Me";
     drawable myPic;
     long points;
     String badge;
@@ -376,6 +376,7 @@ public class MeTab extends ActionBarListActivity {
             
         case android.R.id.home:
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
         	break;

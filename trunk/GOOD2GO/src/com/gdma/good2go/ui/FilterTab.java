@@ -20,6 +20,7 @@ import android.widget.SeekBar;
 
 
 public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
+	private static final String TAG = "Filter";
 	  SeekBar durationSeekBar;
 	  SeekBar radiusSeekBar;
 
@@ -257,6 +258,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
         
         case android.R.id.home:	
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
         	break;
