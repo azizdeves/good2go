@@ -33,7 +33,7 @@ import com.google.android.maps.OverlayItem;
 
 
 public class MapTab extends ActionBarMapActivity implements LocationListener {
-	
+	private static final String TAG = "Map";
 	
 	private static final int GET_FILTERED_EVENTS = 10;
 	private EventsDbAdapter mDbHelper;
@@ -42,9 +42,11 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	private  LocationManager mLocationManager;
 	private  MapView mMap;  
 	private  MapController mMapController;
+	private static final int TWO_MINUTES = 1000 * 60 * 2;
 	
 	private  GeoPoint mUserGeoLocation = new GeoPoint((int)(32.067228*1E6),(int)(34.777650*1E6));
 	private  UserItemizedOverlay mUserLocationOverlay;
+	private Location mUserLocation;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -83,12 +85,12 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         Location locationGPS = mLocationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
         Location locationNETWORK = mLocationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         
-        Location locationLastKnown = (locationGPS!=null) ? locationGPS : 
+        mUserLocation = (locationGPS!=null) ? locationGPS : 
         	(locationNETWORK!=null) ? locationNETWORK : null;
         
-        if (locationLastKnown != null) 
+        if (mUserLocation != null) 
         { 
-        	onLocationChanged(locationLastKnown);          
+        	onLocationChanged(mUserLocation);          
         }
         else
         {
@@ -97,6 +99,60 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         }		
 	}
 
+    
+
+    /** Determines whether one Location reading is better than the current Location fix
+      * @param location  The new Location that you want to evaluate
+      * @param currentBestLocation  The current Location fix, to which you want to compare the new one
+      */
+    protected boolean isBetterLocation(Location location, Location currentBestLocation) {
+        if (currentBestLocation == null) {
+             return true;
+        }
+
+        // Check whether the new location fix is newer or older
+        long timeDelta = location.getTime() - currentBestLocation.getTime();
+        boolean isSignificantlyNewer = timeDelta > TWO_MINUTES;
+        boolean isSignificantlyOlder = timeDelta < -TWO_MINUTES;
+        boolean isNewer = timeDelta > 0;
+
+        // If it's been more than two minutes since the current location, use the new location
+        // because the user has likely moved
+        if (isSignificantlyNewer) {
+            return true;
+        // If the new location is more than two minutes older, it must be worse
+        } else if (isSignificantlyOlder) {
+            return false;
+        }
+
+        // Check whether the new location fix is more or less accurate
+        int accuracyDelta = (int) (location.getAccuracy() - currentBestLocation.getAccuracy());
+        boolean isLessAccurate = accuracyDelta > 0;
+        boolean isMoreAccurate = accuracyDelta < 0;
+        boolean isSignificantlyLessAccurate = accuracyDelta > 200;
+
+        // Check if the old and new location are from the same provider
+        boolean isFromSameProvider = isSameProvider(location.getProvider(),
+                currentBestLocation.getProvider());
+
+        // Determine location quality using a combination of timeliness and accuracy
+        if (isMoreAccurate) {
+            return true;
+        } else if (isNewer && !isLessAccurate) {
+            return true;
+        } else if (isNewer && !isSignificantlyLessAccurate && isFromSameProvider) {
+            return true;
+        }
+        return false;
+    }
+
+    /** Checks whether two providers are the same */
+    private boolean isSameProvider(String provider1, String provider2) {
+        if (provider1 == null) {
+          return provider2 == null;
+        }
+        return provider1.equals(provider2);
+    }
 
 	@Override
     protected void onResume() {
@@ -135,11 +191,18 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
     @Override
 	public void onLocationChanged(Location location) {
     	
-    	int lat = (int)(location.getLatitude() * 1E6);
-    	int lon = (int)(location.getLongitude() * 1E6);
-    	mUserGeoLocation = new GeoPoint(lat, lon);
-
-    	displayUserLocation();   
+    	if (isBetterLocation(location, mUserLocation) ||
+    			(location.getLatitude()==mUserLocation.getLatitude() &&
+    			location.getLongitude()==mUserLocation.getLongitude()))
+    	{
+    		mUserLocation=location;
+    		int lat = (int)(mUserLocation.getLatitude() * 1E6);
+    		int lon = (int)(mUserLocation.getLongitude() * 1E6);
+    		
+    		mUserGeoLocation = new GeoPoint(lat, lon);
+    		
+    		displayUserLocation();
+    	}
 	  }
 
     
@@ -367,6 +430,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         	
         case android.R.id.home:	
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         	startActivity(newIntent);	
         	break;

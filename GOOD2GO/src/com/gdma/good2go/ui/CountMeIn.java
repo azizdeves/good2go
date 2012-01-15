@@ -33,7 +33,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 public class CountMeIn extends ActionBarActivity {
-
+	private static final String TAG = "CountMeIn";
 
 	private String mEventName;
     private String mEventDesc;
@@ -262,6 +262,7 @@ public class CountMeIn extends ActionBarActivity {
         
         case android.R.id.home:	
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
         	break;

@@ -23,7 +23,7 @@ import com.gdma.good2go.utils.EventDetailsUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
 public class EventDetails extends ActionBarTabActivity {
-	
+	private static final String TAG = "EventDetails";
     TabHost mTabHost;
     
     private Long mRowId;
@@ -197,6 +197,7 @@ public class EventDetails extends ActionBarTabActivity {
         
         case android.R.id.home:	
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
         	break;

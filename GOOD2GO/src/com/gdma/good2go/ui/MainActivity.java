@@ -23,16 +23,19 @@ import java.util.List;
 import java.util.Set;
 
 import android.app.Activity;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.Window;
 import android.widget.Toast;
 
 import com.gdma.good2go.Event;
@@ -50,14 +53,15 @@ public class MainActivity extends ActionBarActivity {
 	
 	private EventsDbAdapter mDbHelper;
 	private GeoPoint mMyGeoPoint;
+	private Calendar mLastServerUpdate;
+	private boolean mNoEventsFromToday = false;
+	private String mSender;
 	
-
+    @Override
     public void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.main);       
-        
-        getActionBarHelper().setRefreshActionItemState(true);           
-        
+    	setTheme(R.style.AppTheme);    	
+        super.onCreate(savedInstanceState); 
+                              
     	/********************************************Remove this to work with Android Accounts**********************/
     	//saveLocalUsername("Bypass Account");
         /***********************************************************************************************************/             
@@ -70,21 +74,233 @@ public class MainActivity extends ActionBarActivity {
         	startActivityForResult(newIntent,7);            	
         }
         else{
+    	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
+    		Bundle extras = getIntent().getExtras();
+    		mSender= extras!= null?
+    				mSender = extras.getString("sender"):null;
+    				
         	continueActivityStart();
         }
     }
 
     
-	private void continueActivityStart() {
-		/**GET MY LOCATION**/       
-        mMyGeoPoint = getUserLocation();
+    @Override
+    protected void onResume() {
+        super.onResume();
         
-        /**GET EVENTS FROM SERVER**/
-        // TODO on resume check if we have the events if not - repopulate
+    	if (mNoEventsFromToday==true)
+    	{
+            /*new GetEventsFromDatastoreTask().execute(
+            		mMyGeoPoint.getLatitudeE6(), 
+            		mMyGeoPoint.getLongitudeE6());*/  
+    	}
+    }
+    
+    
+	private String getLocalUsername(){
+		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
+		return settings.getString("userNameVal", null);
+	}
+
+	
+    private void continueActivityStart() {   	
+    	if (mSender==null)
+		{
+	    	/**GET MY LOCATION**/       
+	        mMyGeoPoint = getUserLocation();
+	     	        
+	        mDbHelper = new EventsDbAdapter(this);
+	        
+	        /**GET EVENTS FROM SERVER ASYNC**/	               
+	        new GetEventsFromDatastoreTask().execute(
+	        		mMyGeoPoint.getLatitudeE6(), 
+	        		mMyGeoPoint.getLongitudeE6());
+		}
+		else
+		{
+			setDashboardView();
+		}
+	}
+	
+	
+	private GeoPoint getUserLocation() {
+		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+        Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+        Location locationNETWORK = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
         
-        List<Event> eventList = remote_getEventsFromServer(mMyGeoPoint.getLatitudeE6(),
-        		mMyGeoPoint.getLongitudeE6());  
+        double lat = (locationGPS != null) ? locationGPS.getLatitude() : 
+        	(locationNETWORK != null) ? locationNETWORK.getLatitude() : 32.067228;
+        double lon = (locationGPS != null) ? locationGPS.getLongitude() : 
+        	(locationNETWORK != null) ? locationNETWORK.getLongitude() : 32.067228;
+        	
+        return new GeoPoint((int)(lat * 1E6),(int)(lon * 1E6));		
+	}
+
+	
+	private void setDashboardView() {
+		
+        //setTheme(R.style.AppTheme);
+		setContentView(R.layout.main);  
+		
+        //NEARBY
+        findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	if (mNoEventsFromToday==true)
+            	{
+            		showToast("No server communication. Please try again later.");
+            	}
+            	else
+            	{
+		            Intent newIntent = new Intent(view.getContext(), MapTab.class);
+		            startActivity(newIntent);
+            	}
+            }
+        });
+                
+        //SEARCH
+        findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	if (mNoEventsFromToday==true)
+            	{
+            		showToast("No server communication. Please try again later.");
+            	}
+            	else
+            	{
+		            Intent newIntent = new Intent(view.getContext(), FilterTab.class);
+		            Bundle caller = new Bundle();
+		            caller.putString("caller", "MainTab");
+		            newIntent.putExtras(caller);
+		            startActivity(newIntent);
+            	}
+            }
+        });
+               
+        //ME 
+        findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	if (mNoEventsFromToday==true)
+            	{
+            		showToast("No server communication. Please try again later.");
+            	}
+            	else
+            	{
+		            Intent newIntent = new Intent(view.getContext(), MeTab.class);
+		            startActivity(newIntent);
+            	}
+            }
+        });
         
+        //ABOUT
+        findViewById(R.id.aboutbtn).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+            	setTitle("About");
+            	/**TODO call About Activity */
+            	Toast.makeText(view.getContext(), "Tapped About", Toast.LENGTH_SHORT).show();
+            }
+        });		
+	}
+	
+	
+    private void showToast(String message){
+    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
+    }
+    
+    
+	private void saveLocalUsername(String userName){
+		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
+		SharedPreferences.Editor editor = settings.edit();
+		editor.putString("userNameVal", userName);
+		editor.commit();
+	}
+
+	
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		
+		if (resultCode==Activity.RESULT_OK)
+		{
+			continueActivityStart();
+		}
+	}	
+	
+	
+	/**THREADS*/		
+    private class GetEventsFromDatastoreTask extends AsyncTask<Integer, Void, List<Event>> {
+    	Dialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new Dialog(MainActivity.this, R.style.SplashScreen);   		
+    		dialog.requestWindowFeature(Window.FEATURE_NO_TITLE);    		
+    		dialog.setContentView(R.layout.splash);
+	    	dialog.setCancelable(false);
+	    	dialog.show();
+	    }
+
+    	protected void onPostExecute(List<Event> eventList) {
+    		dialog.dismiss();
+    		writeEventsToLocalDB(eventList);
+    		setDashboardView();
+    	}
+			
+		@Override
+		protected List<Event> doInBackground(Integer... coordinates) {
+			return getEventsFromServer(coordinates[0],coordinates[1]);
+		}
+	}
+	
+    
+	private List<Event> getEventsFromServer(int lat, int lon) {
+		String JSONResponse = null; // this will hold the response from server
+		
+		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		client.AddParam("action", "getEvents");
+		client.AddParam("lon", String.valueOf(lon));
+		client.AddParam("lat", String.valueOf(lat));
+		
+		/**TODO send actual date**/
+		Calendar c = Calendar.getInstance();
+		c.set(2011,Calendar.DECEMBER,31,0,0,0);
+		c.set(Calendar.HOUR_OF_DAY,8);
+		Date myDate = new Date();
+		myDate = c.getTime();
+		String dateToSend = Long.toString(myDate.getTime());
+		
+		client.AddParam("userDate", dateToSend);
+		
+		try
+		{
+			client.Execute(1); //1 is HTTP GET
+			
+			JSONResponse = client.getResponse();
+			if (JSONResponse!=null)
+			{
+				JSONResponse = JSONResponse.trim();
+				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+				
+				//Parse the response from server
+				//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+				List<Event> events = new JSONDeserializer<List<Event>>()
+							.use(Date.class, new DateParser()).deserialize(JSONResponse);
+				
+				mLastServerUpdate = Calendar.getInstance();
+				mNoEventsFromToday = false;
+				return events;
+			}
+		}
+		catch (Exception e)
+		{
+		}
+		return null;
+	}
+    
+	
+    private void writeEventsToLocalDB(List<Event> eventList) {
         if (eventList!=null)
         {
 	        /**POPULATE DB**/
@@ -92,8 +308,6 @@ public class MainActivity extends ActionBarActivity {
 	        /**TODO: drop what we have if it's a new day
 	         * or if there's been a change since last read
 	         */
-	        
-	        mDbHelper = new EventsDbAdapter(this);
 	        mDbHelper.open();
 	        for(Event event : eventList)
 	        {
@@ -108,20 +322,17 @@ public class MainActivity extends ActionBarActivity {
 	        			+" km";
 	        	
 	        	//calculate duration
-	        	String duration = getDuration (event.getMinDuration());
+	        	String duration = getDuration(event.getMinDuration());
 	        	        		        	
 	        	//get eventTime
-	        	String startTime = getTime (event.getOccurrences().get(0).getStartTime());
-	        	String endTime = getTime (event.getOccurrences().get(0).getEndTime());
-	        	
+	        	String startTime = getTime(event.getOccurrences().get(0).getStartTime());
+	        	String endTime = getTime(event.getOccurrences().get(0).getEndTime());
 	        	
 	        	//get eventAdditionalDetails
 	        	event.getNPOName();
 	        	event.getSuitableFor();
 	        	event.getWorkType();
-	        	
-	        	       	       	
-	        	
+	        	   	        	
 	        	//assign event types
 	        	Set<VolunteeringWith> listType = event.getVolunteeringWith();
 	        	String animals="0", children="0", disabled="0", elderly="0", environment="0", special="0" ;
@@ -147,7 +358,6 @@ public class MainActivity extends ActionBarActivity {
 	        	String eventImage = chooseImage (animals, children, disabled, elderly, environment, special);	
 	        	
 	        	//populate db
-	        	
 	        	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
 	        			event.getDescription(),
 	        			event.getPrerequisites(),
@@ -158,129 +368,27 @@ public class MainActivity extends ActionBarActivity {
 	        			animals, children,disabled,
 	        			elderly,environment,special,eventImage, startTime, endTime);
 	        }
-	    
-	        
-	        /*******************************************
-	         ***************DEBUG AREA******************
-	         *******************************************/
-	        
-	//        mDbHelper.createEvent("eventForDebugging", "eventForDebugging", "Reading books for children", "Reading books for disabled children", Double.toString(mMyLocation.getAltitude()), Double.toString(mMyLocation.getLongitude()),
-	//        		"5", "2", "Tel Aviv", "Shenkin", "3", "1", "0",  "0",  "0",  "0",  "0");
-	        
-	        
-	        
-	//        String JSONResponse = null; // this will hold the response from server
-	//		
-	//		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-	//		client.AddParam("action", "addUser");
-	//		client.AddParam("userName", "596351");
-	//		client.AddParam("firstName", "Dina");
-	//		client.AddParam("lastName", "Barzilay");
-	//		client.AddParam("email", "DinaBarzilay@good2go.com");
-	//		client.AddParam("birthYear", "1940");
-	//		try{
-	//			client.Execute(1); //1 is HTTP GET
-	//		}
-	//		catch (Exception e){
-	//			Toast debugging=Toast.makeText(this, "Error: could not connect to the server", Toast.LENGTH_LONG);
-	//			debugging.show();
-	//		}
-	        /*******************************************
-	         ************END OF DEBUG AREA**************
-	         *******************************************/
-			
-	    	/*******************************************
-	         *******GOOD2GO***
-	         *******************************************/
+	     }
+        else 
+        {
+        	if (mLastServerUpdate == null ||
+        			daysBetween(mLastServerUpdate, Calendar.getInstance()) > 0)
+        	{
+        		mNoEventsFromToday = true;
+        		showToast ("Couldn't connect to the server");
+        	}
         }
-        getActionBarHelper().setRefreshActionItemState(true);
-        
+     }
 
-       
-        //NEARBY
-        findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-	            Intent newIntent = new Intent(view.getContext(), MapTab.class);
-	            startActivity(newIntent);
-            }
-        });
-        
-        
-        //SEARCH
-        findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-	            Intent newIntent = new Intent(view.getContext(), FilterTab.class);
-	            Bundle caller = new Bundle();
-	            caller.putString("caller", "MainTab");
-	            newIntent.putExtras(caller);
-	            startActivity(newIntent);
-            }
-        });
-        
-        
-        //ME 
-        findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-	            Intent newIntent = new Intent(view.getContext(), MeTab.class);
-	            startActivity(newIntent);
-            }
-        });
-        
-        //ABOUT
-        findViewById(R.id.aboutbtn).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-            	setTitle("About");
-            	/**TODO call About Activity */
-            	Toast.makeText(view.getContext(), "Tapped About", Toast.LENGTH_SHORT).show();
-            }
-        });
-        
-//        findViewById(R.id.toggle_title).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//            	
-//
-//                if (mAlternateTitle) {
-//                    setTitle(R.string.app_name);
-//                } else {
-//                    setTitle(R.string.alternate_title);
-//                }
-//                mAlternateTitle = !mAlternateTitle;
-//            }
-//        });
-	}
-    
-
-	private GeoPoint getUserLocation() {
-		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
-        Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-        Location locationNETWORK = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-        
-        double lat = (locationGPS != null) ? locationGPS.getLatitude() : 
-        	(locationNETWORK != null) ? locationNETWORK.getLatitude() : 32.067228;
-        double lon = (locationGPS != null) ? locationGPS.getLongitude() : 
-        	(locationNETWORK != null) ? locationNETWORK.getLongitude() : 32.067228;
-        	
-        return new GeoPoint((int)(lat * 1E6),(int)(lon * 1E6));		
-	}
-
-
-	@Override
-	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-		super.onActivityResult(requestCode, resultCode, data);
-		
-		if (resultCode==Activity.RESULT_OK)
-		{
-			continueActivityStart();
-		}
-	}
-
-	
-	
+    private static long daysBetween(Calendar startDate, Calendar endDate) {
+    	  Calendar date = (Calendar) startDate.clone();
+    	  long daysBetween = 0;
+    	  while (date.before(endDate)) {
+    	      date.add(Calendar.DAY_OF_MONTH, 1);
+    	      daysBetween++;
+    	  }
+    	  return daysBetween;
+    	}
     
     private String getDuration(int totalDurationInMins) 
     {
@@ -294,7 +402,6 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 
-
 	private String getTime(Date dateFromEvent) {
  		Calendar c = Calendar.getInstance();
  		
@@ -304,7 +411,6 @@ public class MainActivity extends ActionBarActivity {
 		String eventMinStr = (eventMin==0) ? "00" :  Integer.toString(eventMin);
 		return eventHour + ":" + eventMinStr;
 	}
-
 
 
 	private String chooseImage(String animals, String children, String disabled, 
@@ -332,9 +438,9 @@ public class MainActivity extends ActionBarActivity {
     	      	  
 		return Integer.toString(imageId);
 	}
-
-
-
+	
+	
+	/** FOR ACTION BAR MENUS **/
 	//TODO create settings menu for the main screen
 
     @Override
@@ -347,108 +453,14 @@ public class MainActivity extends ActionBarActivity {
         return super.onCreateOptionsMenu(menu);
     }
 
+    
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         switch (item.getItemId()) {
             case android.R.id.home:
                 Toast.makeText(this, "Yes. You're awesome.", Toast.LENGTH_SHORT).show();
                 break;
-
-//            case R.id.menu_refresh:
-//                Toast.makeText(this, "Fake refreshing...", Toast.LENGTH_SHORT).show();
-//                getActionBarHelper().setRefreshActionItemState(true);
-//                getWindow().getDecorView().postDelayed(
-//                        new Runnable() 
-//                        {
-//                            @Override
-//                            public void run() 
-//                            {
-//                                getActionBarHelper().setRefreshActionItemState(false);
-//                            }
-//                         },1000);
-//                break;
-//
-//            case R.id.menu_search:
-//                Toast.makeText(this, "Tapped search", Toast.LENGTH_SHORT).show();
-//               
-//                /**TESTTESTSTES*/
-//         
-//	            Intent newIntent = new Intent(this, ListTab.class);
-//	            startActivity(newIntent);
-//	            
-//                /**TESTTESTSTES*/
-//                break;
-//
-//            case R.id.menu_share:
-//                Toast.makeText(this, "Tapped share", Toast.LENGTH_SHORT).show();
-//                break;
         }
         return super.onOptionsItemSelected(item);
     }
-    
-    
-	private List<Event> remote_getEventsFromServer(int lat, int lon) {
-		//TODO is this supposed to be async task?
-
-		
-		String JSONResponse = null; // this will hold the response from server
-		
-		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "getEvents");
-		client.AddParam("lon", String.valueOf(lon));
-		client.AddParam("lat", String.valueOf(lat));
-		
-		Date myDate = new Date();
-		
-		/*Debugging*/
-		/**TODO send actual date**/
-		Calendar c = Calendar.getInstance();
-		c.set(2011,Calendar.DECEMBER,31,0,0,0);
-		c.set(Calendar.HOUR_OF_DAY,8);
-		
-		myDate = c.getTime();
-
-		String dateToSend = Long.toString(myDate.getTime());
-		client.AddParam("userDate", dateToSend);
-		
-		try{
-			client.Execute(1); //1 is HTTP GET
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this, "Error: could not connect to the server", Toast.LENGTH_LONG);
-			debugging.show();
-		}
-		
-		JSONResponse = client.getResponse();
-		if (JSONResponse!=null)
-		{
-			JSONResponse = JSONResponse.trim();
-			JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-			
-			//Parse the response from server
-			//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-			List<Event> events = new JSONDeserializer<List<Event>>()
-					.use(Date.class, new DateParser()).deserialize(JSONResponse);
-						
-			return events;
-		}
-		
-		return null;
-	}
-	
-	private String getLocalUsername(){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		return settings.getString("userNameVal", null);
-	}
-	
-    private void showToast(String message){
-    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-    }
-    
-	private void saveLocalUsername(String userName){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("userNameVal", userName);
-		editor.commit();
-	}
 }
