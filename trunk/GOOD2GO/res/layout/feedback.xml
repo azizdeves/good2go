@@ -1,9 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+	android:layout_marginLeft="20sp"    
     android:orientation="vertical" >
 
-    
+    	<TextView
+        android:id="@+id/pointsTitle_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="40dip"
+        android:text="You deserve some points"/>
 
-</LinearLayout>
+    	<TextView
+        android:id="@+id/pointsDetails_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/pointsTitle_FeedbackView"
+		android:layout_centerHorizontal="true"
+		android:layout_marginTop="10dp"
+        android:text="+100"/> 
+    	
+		<View
+		 android:id="@+id/separateLine1_FeedbackView"
+		 android:layout_width="match_parent"
+		 android:layout_height="1dp"
+		 android:layout_below="@id/pointsDetails_FeedbackView"
+		 android:layout_marginTop="20dp"
+		 android:background="@android:color/black" />
+		
+    	<TextView
+        android:id="@+id/eventDetails_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/separateLine1_FeedbackView"
+        android:layout_marginTop="10dp"
+        android:text="bla"/> 		
+
+    	<View
+		 android:id="@+id/separateLine2_FeedbackView"
+		 android:layout_width="match_parent"
+		 android:layout_height="1dp"
+		 android:layout_below="@id/eventDetails_FeedbackView"
+		 android:layout_marginTop="20dp"
+		 android:background="@android:color/black" />	
+		 
+    	<TextView
+        android:id="@+id/askForFeedback_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/separateLine2_FeedbackView"
+        android:layout_marginTop="10dp"
+        android:text="These points will be all yours after answering a siple question: "/>     	
+   
+    	<TextView
+        android:id="@+id/howWasIt_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/askForFeedback_FeedbackView"
+        android:textStyle="bold"
+        android:text="How was it? "/>     	
+        
+    	
+		<RatingBar
+        android:id="@+id/ratingBar_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:layout_below="@id/howWasIt_FeedbackView"
+        android:numStars="5"
+        android:stepSize="0.1"
+        android:isIndicator="true" />
+		
+    			
+</RelativeLayout>
