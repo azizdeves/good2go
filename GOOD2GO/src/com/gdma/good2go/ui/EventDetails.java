@@ -158,13 +158,13 @@ public class EventDetails extends ActionBarTabActivity {
 		if (resultCode==Activity.RESULT_OK)
 		{
 			if(requestCode==ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS){
-				mUsername=data.getStringExtra("age")!=null ? data.getStringExtra("name") : "";
+				mUsername=data.getStringExtra("name")!=null ? data.getStringExtra("name") : "";
 				mUserAge=data.getStringExtra("age")!=null ? data.getStringExtra("age") : "";
-            	mCity= data.getStringExtra("age")!=null ? data.getStringExtra("city") : "";
-            	mSex= data.getStringExtra("age")!=null ? data.getStringExtra("city") : "";
+            	mCity= data.getStringExtra("city")!=null ? data.getStringExtra("city") : "";
+            	mSex= data.getStringExtra("sex")!=null ? data.getStringExtra("sex") : "";
             	mPhone=data.getStringExtra("phone")!=null ? data.getStringExtra("phone") : "";
             	mEmail= data.getStringExtra("email")!=null ? data.getStringExtra("email") : "";
-            //	mUsersPrefs.saveUserName();//TODO CHANGE THE "NAME" FIELD TO SOME FLAG WHICH WILL TELL IF WE HAVE THOSE DETAILS OR NOT
+            	mUsersPrefs.saveUserName(mUsername);
             	getCountMeInTab(mContext);
 			}
 			if(requestCode==ActivitysCodeUtil.GET_COUNT_ME_IN_TAB){
