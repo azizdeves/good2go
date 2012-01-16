@@ -16,6 +16,7 @@
 
 package com.gdma.good2go.ui;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -44,6 +45,7 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.GeoPoint;
 
@@ -56,7 +58,11 @@ public class MainActivity extends ActionBarActivity {
 	private Calendar mLastServerUpdate;
 	private boolean mNoEventsFromToday = false;
 	private String mSender;
-	
+	private String mLocalUsername;
+	private RestClient mClient;
+    private String mEventName;
+    private String mEventDesc;
+    private String mEventKey;
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	setTheme(R.style.AppTheme);    	
@@ -67,7 +73,7 @@ public class MainActivity extends ActionBarActivity {
         /***********************************************************************************************************/             
                
         /*check accounts*/
-        String mLocalUsername = getLocalUsername();
+        mLocalUsername = getLocalUsername();
         if (mLocalUsername == null){
         	showToast("no local username");
         	Intent newIntent = new Intent(this, Login.class);
@@ -201,7 +207,23 @@ public class MainActivity extends ActionBarActivity {
             	Intent newIntent = new Intent(view.getContext(), AboutTab.class);
 	            startActivity(newIntent);
             }
-        });		
+        });
+        
+        List<Event> feedbackList = remote_getEventsForFeedback();  
+        if (feedbackList!=null){
+        	for (Event event : feedbackList) {
+        		mEventDesc = event.getDescription();
+        		mEventName=event.getEventName();
+        		mEventKey=event.getEventKey();
+        		Bundle extraInfo = new Bundle();        		
+                extraInfo.putString("mEventDesc", mEventDesc);
+                extraInfo.putString("mEventName", mEventName);
+                extraInfo.putString("mEventKey", mEventKey);
+                Intent newIntent = new Intent(this, FeedbackTab.class);
+                newIntent.putExtras(extraInfo);
+                startActivity(newIntent);
+			}
+        }
 	}
 	
 	
@@ -254,6 +276,38 @@ public class MainActivity extends ActionBarActivity {
 		}
 	}
 	
+    
+    
+    public List<Event> remote_getEventsForFeedback(){
+    	String JSONResponse = null;
+		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		mClient.AddParam("action", "addUser");
+		mClient.AddParam("userName", mLocalUsername);
+		Date myDate = new Date();
+		String dateToSend = Long.toString(myDate.getTime());
+		mClient.AddParam("userDate", dateToSend);
+		try{
+			mClient.Execute(1); //1 is HTTP GET
+			
+			JSONResponse = mClient.getResponse();
+			if (JSONResponse!=null)
+			{
+				JSONResponse = JSONResponse.trim();
+				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+				
+				//Parse the response from server
+				//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
+				List<Event> events = new JSONDeserializer<List<Event>>().use(Date.class, new DateParser()).deserialize(JSONResponse);
+				return events;
+			}
+		}
+		catch (Exception e){
+			//Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
+			//debugging.show();
+			return null;
+		}
+		return null;
+    }
     
 	private List<Event> getEventsFromServer(int lat, int lon) {
 		String JSONResponse = null; // this will hold the response from server
@@ -463,4 +517,5 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+
 }
