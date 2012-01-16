@@ -20,7 +20,13 @@ import flexjson.ObjectBinder;
 import flexjson.transformer.DateTransformer;
 import flexjson.ObjectFactory;
 
+
+import com.gdma.good2goserver.RestClient;
 import com.gdma.good2goserver.Occurrence;
+import com.google.appengine.api.urlfetch.HTTPMethod;
+import com.google.appengine.api.urlfetch.HTTPRequest;
+import com.google.appengine.api.urlfetch.HTTPResponse;
+import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
@@ -71,21 +77,29 @@ public class Good2GoServerServlet extends HttpServlet {
 		int eventMin = c.get(Calendar.MINUTE);
 		return eventHour + ":" + eventMin;
 	}
-	
+	*/
 	private static final Logger log = Logger.getLogger(Good2GoServerServlet.class.getName());
 	
- 	*/
+ 	
 	
-	private void htUpdateData(){
+	private void htUpdateData(PrintWriter pw){
 		try{
 			Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
 			
-	        URL oracle = new URL("http://www.hevratova.org.il/share/");
-	        URLConnection yc = oracle.openConnection();
+	        URL url = new URL("http://www.hevratova.org.il/share/");
+	        /*URLConnection yc = url.openConnection();
 	        BufferedReader in = new BufferedReader(
 	                                new InputStreamReader(
-	                                yc.getInputStream()));
-	        
+	                                yc.getInputStream()));*/
+
+			
+			HTTPRequest req = new HTTPRequest(url,HTTPMethod.GET);
+			HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
+			byte[] bytes = res.getContent();
+			
+			String s = new String(bytes,"UTF-8");
+			BufferedReader in = new BufferedReader(new StringReader(s));
+			
 	        SimpleDateFormat df = new SimpleDateFormat("dd/MM/yy HH:mm:ss");
 	        NPOTranslate translate = new HTTranslate();
 	        
@@ -107,7 +121,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	        line = in.readLine();
 	        
 	        if (line != null) while ((line = in.readLine()) != null){
-	        	
+	        	pw.println(line);
 	        	lastEventKey = eventKey;
 	        	int len = line.length();
 	        	int start = 0;
@@ -381,13 +395,13 @@ public class Good2GoServerServlet extends HttpServlet {
 		*/
 		
 		PrintWriter pw = new PrintWriter(new OutputStreamWriter(resp.getOutputStream(), "UTF8"), true);
+		resp.setContentType("text/html; charset=UTF-8");
 		
 		String action = req.getParameter(new String("action"));
 			
 		
-		/*
-		 * Old addEvents
-		 * 
+		
+		 // Old addEvents 
 		 
 		if (action.compareToIgnoreCase("addEvents")==0){
 			
@@ -403,6 +417,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			wt.add(Event.WorkType.MENIAL);
 			
 			Event e = null;
+			Integer eventInt = new Integer(1); 
+			Integer occurrenceInt = new Integer(1); 
 			
 			// First event.
 			
@@ -417,9 +433,13 @@ public class Good2GoServerServlet extends HttpServlet {
 			
 			e = new Event("Fun Horseback Riding","","", "Help handicapped teenagers and enjoy a horseack ride",
 						  "Assist handicapped teenagers in therapeutic horse-back riding, lead their horse and help them follow instructors commands.",
-						  600, false, a, "FilthyRichForPoorPersons", vw, sf, wt, true);
+						  600, false, a, (short) 5, "FilthyRichForPoorPersons", vw, sf, wt, true);
+			e.setEventKey(eventInt.toString());
+			eventInt++;
 			
 			Occurrence o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(10, 0);
@@ -430,6 +450,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			e.addOccurrence(o);
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(12, 30);
@@ -462,9 +484,14 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setGood2GoPoint(new Good2GoPoint(32069211, 34763403));
 			
 			e = new Event("Dogs are our best friends","","", "Have a walk with a city chelter dog","Make a furry cute friend for life!",
-						  130, false, a, "CityShelter", vw, sf, wt, true);
+						  130, false, a, (short) 0, "CityShelter", vw, sf, wt, true);
+			
+			e.setEventKey(eventInt.toString());
+			eventInt++;
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(11, 30);
@@ -475,6 +502,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			e.addOccurrence(o);
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(9, 20);
@@ -505,9 +534,14 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setGood2GoPoint(new Good2GoPoint(32086865,34789581));
 			
 			e = new Event("Surf the internet","","", "Show the wonders of Google and Wikipedia to children","Share what you know by teaching internet to kids!",
-						  205, false, a, "Google Inc.", vw, sf, wt, true);
+						  205, false, a, (short) 0, "Google Inc.", vw, sf, wt, true);
+			
+			e.setEventKey(eventInt.toString());
+			eventInt++;
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(10, 00);
@@ -518,6 +552,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			e.addOccurrence(o);
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(14, 55);
@@ -548,9 +584,14 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setGood2GoPoint(new Good2GoPoint(32074938,34775591));
 			
 			e = new Event("Read your favourite book","","", "Make someone happy and provide company to the elderly","Read anything you like to the elderly",
-						  60, false, a, "Mishan", vw, sf, wt, true);
+						  60, false, a, (short) 0, "Mishan", vw, sf, wt, true);
+			
+			e.setEventKey(eventInt.toString());
+			eventInt++;
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(10, 00);
@@ -561,6 +602,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			e.addOccurrence(o);
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(13, 00);
@@ -595,9 +638,14 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setGood2GoPoint(new Good2GoPoint(32055555,34769572));
 			
 			e = new Event("Shake what your mamma gave ya","","", "Get jiggy with it!","Konichiwa bithez !!!!",
-						  119, false, a, "Pussycat", vw, sf, wt, true);
+						  119, false, a, (short) 0, "Pussycat", vw, sf, wt, true);
+			
+			e.setEventKey(eventInt.toString());
+			eventInt++;
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(22, 00);
@@ -608,6 +656,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			e.addOccurrence(o);
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(22, 00);
@@ -640,9 +690,14 @@ public class Good2GoServerServlet extends HttpServlet {
 			a.setGood2GoPoint(new Good2GoPoint(32063374,34773080));
 			
 			e = new Event("Give a hot meal to the needy","","", "Help pack and distribute hot meals to those in need","They are very hungry. Help them.",
-						  360, false, a, "Jaffa for Jaffa", vw, sf, wt, true);
+						  360, false, a, (short) 0, "Jaffa for Jaffa", vw, sf, wt, true);
+			
+			e.setEventKey(eventInt.toString());
+			eventInt++;
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
 			o.setStartTime(8, 0);
@@ -651,6 +706,8 @@ public class Good2GoServerServlet extends HttpServlet {
 			e.addOccurrence(o);
 			
 			o = new Occurrence();
+			o.setOccurrenceKey(occurrenceInt.toString());
+			occurrenceInt++;
 			
 			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
 			o.setStartTime(8, 0);
@@ -803,8 +860,6 @@ public class Good2GoServerServlet extends HttpServlet {
 					js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).include("address", "occurrences", "volunteeringWith", "suitableFor", "workType", "occurrences.endTime").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(events);
 				
 				}
-				
-				resp.setContentType("text/html; charset=UTF-8");
 				
 				pw.print(js);
 				
@@ -983,7 +1038,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		}
 		
 		else if (action.compareToIgnoreCase("updateData")==0){
-			htUpdateData();
+			htUpdateData(pw);
 		}
 	}
 }

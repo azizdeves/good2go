@@ -393,13 +393,28 @@ public class Good2GoDatabaseManager {
 	
 	//Dumb batch insert for events.
 	public void addEvents(Collection<Event> events){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PersistenceManager pm = null;
 		
-		try {
-			pm.makePersistentAll(events);		
-		}
-		finally {
-			pm.close();
+		Collection<Event> put = new LinkedList<Event>();
+		
+		Iterator<Event> it = events.iterator();
+		
+		int i = 0;
+		while (it.hasNext()){
+			put.add(it.next());
+			i++;
+			
+			if (i%50 == 0 || !it.hasNext()){
+				i=0;
+				try {
+					pm = PMF.get().getPersistenceManager();
+					pm.makePersistentAll(put);		
+				}
+				finally {
+					pm.close();
+				}
+				put.clear();
+			}
 		}
 	}
 	
@@ -480,14 +495,30 @@ public class Good2GoDatabaseManager {
 	
 	//Dumb batch insert for occurrences.
 	public void addOccurrences(Collection<Occurrence> occurrences){
-		PersistenceManager pm = PMF.get().getPersistenceManager();
+		PersistenceManager pm = null;
 		
-		try {
-			pm.makePersistentAll(occurrences);		
+		Collection<Occurrence> put = new LinkedList<Occurrence>();
+		
+		Iterator<Occurrence> it = occurrences.iterator();
+		
+		int i = 0;
+		while (it.hasNext()){
+			put.add(it.next());
+			i++;
+			
+			if (i%50 == 0 || !it.hasNext()){
+				i=0;
+				try {
+					pm = PMF.get().getPersistenceManager();
+					pm.makePersistentAll(put);		
+				}
+				finally {
+					pm.close();
+				}
+				put.clear();
+			}
 		}
-		finally {
-			pm.close();
-		}
+		
 	}
 	
 	public void addOccurrence(Occurrence newOccurrence){	
