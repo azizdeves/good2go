@@ -99,6 +99,11 @@
             android:label="@string/spinner"
             android:name=".ui.Login">
         </activity>
+        
+        <activity 
+            android:label="@string/spinner"
+            android:name=".ui.LoginNoAccounts">
+        </activity>
 
        
     </application>
