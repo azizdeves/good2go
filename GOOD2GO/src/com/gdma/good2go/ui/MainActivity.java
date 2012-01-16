@@ -22,6 +22,8 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import android.accounts.Account;
+import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
@@ -71,17 +73,23 @@ public class MainActivity extends ActionBarActivity {
         /***********************************************************************************************************/             
                
         /*check accounts*/
-        mLocalUsername = getLocalUsername();
+        String mLocalUsername = getLocalUsername();
         if (mLocalUsername == null){
-        	showToast("no local username");
-        	Intent newIntent = new Intent(this, Login.class);
-        	startActivityForResult(newIntent,7);            	
+        	
+        	Account[] accounts = getAccounts(this);
+        	if (accounts.length == 0){
+        		
+        		Intent newIntent = new Intent(this, LoginNoAccounts.class);
+        		startActivityForResult(newIntent, 7);
+        		
+        	}
+        	else{
+        		Intent newIntent = new Intent(this, Login.class);
+        		startActivityForResult(newIntent,7);
+            }
+        	
         }
         else{
-    	    //check if home has been called 
-    		Bundle extras = getIntent().getExtras();
-    		mSender = (extras!= null)? extras.getString("sender") : null;
-    				
         	continueActivityStart();
         }
     }
@@ -514,4 +522,13 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
+    
+    private Account[] getAccounts(Context cntxt){
+
+		AccountManager am = AccountManager.get(cntxt);
+   		Account[] accounts;
+		accounts = am.getAccounts();
+		return accounts;
+		
+	}
 }
