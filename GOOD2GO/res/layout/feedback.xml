@@ -10,6 +10,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="40dip"
+        android:layout_centerHorizontal="true"
         android:text="You deserve some points"/>
 
     	<TextView
@@ -63,18 +64,36 @@
         android:textStyle="bold"
         android:text="How was it? "/>     	
         
-    	
+    	<TextView
+        android:id="@+id/feedBackValue_FeedbackView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:layout_centerHorizontal="true"
+        android:layout_below="@id/howWasIt_FeedbackView"
+        android:textStyle="bold"
+        android:text=""/> 
+              	
 		<RatingBar
         android:id="@+id/ratingBar_FeedbackView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="20dp"
-        android:layout_below="@id/howWasIt_FeedbackView"
+        android:layout_below="@id/feedBackValue_FeedbackView"
         android:numStars="5"
         android:stepSize="0.2"
         android:rating="5"
         android:layout_centerHorizontal="true"
-        android:isIndicator="true" />
+        android:isIndicator="false"
+        android:indeterminate="FALSE" />
+
+		<Button
+        android:id="@+id/sendFeedBackButton_FeedbackView" 
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true" 
+    	android:background="@null"/>		
 		
     	<Button
         android:id="@+id/noThankYouButton_FeedbackView" 

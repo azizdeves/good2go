@@ -26,10 +26,12 @@ public class FeedbackTab extends ActionBarActivity  {
 	private String mOccurrenceKey="0";
 	private String mUserName;
 	private Button mnoThankYouButton;
+	private Button sendFeedBackButton;
     private String mEventName;
     private String mEventDesc;
     private String mEventKey;
     private TextView mTextEventDesc;
+    private TextView mFeedBackValue;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -49,13 +51,25 @@ public class FeedbackTab extends ActionBarActivity  {
 		mRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
 			@Override
 			public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
-				TextView t = (TextView)findViewById(R.id.howWasIt_FeedbackView);
-				t.setText(Integer.toString(rBar.getNumStars()));
-				setResult(RESULT_OK);
-				finish();
+				mFeedBackValue = (TextView)findViewById(R.id.feedBackValue_FeedbackView);
+				mFeedBackValue.setText(Float.toString(mRating.getRating()));
+				
+//				setResult(RESULT_OK);
+//				finish();
 			}
 		});
 		
+		sendFeedBackButton= (Button) findViewById(R.id.sendFeedBackButton_FeedbackView);
+		sendFeedBackButton.setText("Send");
+		sendFeedBackButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	remote_setFeedback(mUserName, mEventKey, mRating.getRating());
+                setResult(RESULT_OK);
+    			finish();
+             
+	            //startActivity(i);
+            }
+        });		
 		
 		
 		mnoThankYouButton= (Button) findViewById(R.id.noThankYouButton_FeedbackView);
@@ -69,17 +83,7 @@ public class FeedbackTab extends ActionBarActivity  {
 	            //startActivity(i);
             }
         });
-	
-	
-		OnRatingBarChangeListener barChangeListener = new OnRatingBarChangeListener() {			
-				@Override
-				public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
-					TextView t = (TextView)findViewById(R.id.howWasIt_FeedbackView);
-					t.setText(Integer.toString(rBar.getNumStars()));
-					setResult(RESULT_OK);
-					finish();
-				}
-			};
+
 			
 
 
