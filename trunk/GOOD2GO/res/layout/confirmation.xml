@@ -85,8 +85,6 @@
         android:layout_below="@id/badgesDetails1_confirmationView"
 		android:layout_centerHorizontal="true"
         android:text="Saint"/> 
-        
-    	
     	
     	<Button
         android:id="@+id/DoneConfirmationViewButton" 
