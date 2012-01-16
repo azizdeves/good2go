@@ -63,6 +63,7 @@
 	<string name="welcome_YOB">Year of brith</string>
 	<string name="welcome_lstName">Last Name</string>
 	<string name="welcome_fstName">First Name</string>
+	<string name="wlecome_enter_email">Please Enter Your Email Address</string>
 	<string name="welcom_go">GO!</string> 	
 	<string name="spinner">Login</string>
 	
