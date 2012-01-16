@@ -20,7 +20,7 @@ import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
 
-public class FeedbackTab extends ActionBarActivity  implements RatingBar.OnRatingBarChangeListener{
+public class FeedbackTab extends ActionBarActivity  {
 	private RatingBar mRating;
 	private RestClient client = null;
 	private String mOccurrenceKey="0";
@@ -35,9 +35,6 @@ public class FeedbackTab extends ActionBarActivity  implements RatingBar.OnRatin
 		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feedback);
-		mRating=(RatingBar)findViewById(R.id.ratingBar_FeedbackView);// create RatingBar object
-		mRating.setOnRatingBarChangeListener(this);
-		
 		Bundle extras = getIntent().getExtras();
 		if(extras!=null){
 			mEventName=extras.getString("mEventName");
@@ -47,6 +44,20 @@ public class FeedbackTab extends ActionBarActivity  implements RatingBar.OnRatin
 
 		mTextEventDesc = (TextView) findViewById(R.id.eventDetails_FeedbackView);
 		mTextEventDesc.setText("Thank you for being AWESOME and volunteering for "+ mEventDesc);
+
+		mRating=(RatingBar)findViewById(R.id.ratingBar_FeedbackView);// create RatingBar object
+		mRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
+			@Override
+			public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
+				TextView t = (TextView)findViewById(R.id.howWasIt_FeedbackView);
+				t.setText(Integer.toString(rBar.getNumStars()));
+				setResult(RESULT_OK);
+				finish();
+			}
+		});
+		
+		
+		
 		mnoThankYouButton= (Button) findViewById(R.id.noThankYouButton_FeedbackView);
 		mnoThankYouButton.setText("No thanks");
 		mnoThankYouButton.setOnClickListener(new View.OnClickListener() {
@@ -58,16 +69,23 @@ public class FeedbackTab extends ActionBarActivity  implements RatingBar.OnRatin
 	            //startActivity(i);
             }
         });
-	}
 	
+	
+		OnRatingBarChangeListener barChangeListener = new OnRatingBarChangeListener() {			
+				@Override
+				public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
+					TextView t = (TextView)findViewById(R.id.howWasIt_FeedbackView);
+					t.setText(Integer.toString(rBar.getNumStars()));
+					setResult(RESULT_OK);
+					finish();
+				}
+			};
+			
 
-	@Override
-	public void onRatingChanged(RatingBar ratingBar, float rating, boolean fromUser) {
-		TextView t = (TextView)findViewById(R.id.howWasIt_FeedbackView);
-		t.setText(Float.toString(rating));
-		setResult(RESULT_OK);
-		finish();
+
+	
 	}
+
 	
 
 	/** FOR ACTION BAR MENUS **/
