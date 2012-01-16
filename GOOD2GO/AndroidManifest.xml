@@ -75,7 +75,17 @@
             android:label="@string/personaldetails"
             android:name=".ui.PersonalDetailsTab">
         </activity>    
-                 
+
+        <activity
+            android:label="@string/about"
+            android:name=".ui.AboutTab">
+        </activity>    
+
+        <activity
+            android:label="@string/feedback"
+            android:name=".ui.FeedbackTab">
+        </activity>
+                    
         <activity
             android:label="@string/meview_name"
             android:name=".ui.MeTab" >
