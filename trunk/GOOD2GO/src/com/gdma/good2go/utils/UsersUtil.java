@@ -71,4 +71,40 @@ public class UsersUtil {
 		}
 		return p;
 	}
+    
+    private void remote_registerToOccurrence(String username, String occurrenceKey) {
+    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    	client.AddParam("action", "registerToOccurrence");
+		client.AddParam("username", username);
+		client.AddParam("occurrenceKey", occurrenceKey);
+		client.AddParam("userDate", (new Date()).toString());
+		
+		try{
+			client.Execute(1); //1 is HTTP GET
+		}
+		catch (Exception e){
+//			Toast debugging=Toast.makeText(this,"Connection to server - faild", Toast.LENGTH_LONG);
+//			debugging.show();
+		}
+
+    }
+    
+	private int remote_registerNewUser (String userName, String age, String sex, String city, String phone, String email){
+		
+		client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		client.AddParam("action", "??????");
+		client.AddParam("userName", userName);
+		client.AddParam("age", age);
+		client.AddParam("sex", sex);
+		client.AddParam("city", city);
+		client.AddParam("phone", phone);
+		client.AddParam("email", email);
+		try{
+			client.Execute(1); 
+			return 1;
+		}
+		catch (Exception e){
+			return 0;
+		}
+	}
 }
