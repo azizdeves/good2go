@@ -16,7 +16,6 @@
 
 package com.gdma.good2go.ui;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -45,7 +44,6 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
-import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.GeoPoint;
 
@@ -67,7 +65,7 @@ public class MainActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
     	setTheme(R.style.AppTheme);    	
         super.onCreate(savedInstanceState); 
-                              
+                             
     	/********************************************Remove this to work with Android Accounts**********************/
     	//saveLocalUsername("Bypass Account");
         /***********************************************************************************************************/             
@@ -80,10 +78,9 @@ public class MainActivity extends ActionBarActivity {
         	startActivityForResult(newIntent,7);            	
         }
         else{
-    	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
+    	    //check if home has been called 
     		Bundle extras = getIntent().getExtras();
-    		mSender= extras!= null?
-    				mSender = extras.getString("sender"):null;
+    		mSender = (extras!= null)? extras.getString("sender") : null;
     				
         	continueActivityStart();
         }
@@ -152,7 +149,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (false && mNoEventsFromToday==true)
+            	if (mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -168,7 +165,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (false && mNoEventsFromToday==true)
+            	if (mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -187,7 +184,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (false && mNoEventsFromToday==true)
+            	if (mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -319,7 +316,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
-		c.set(2011,Calendar.DECEMBER,31,0,0,0);
+		c.set(2011,Calendar.JANUARY,16,0,0,0);
 		c.set(Calendar.HOUR_OF_DAY,8);
 		Date myDate = new Date();
 		myDate = c.getTime();
@@ -332,7 +329,7 @@ public class MainActivity extends ActionBarActivity {
 			client.Execute(1); //1 is HTTP GET
 			
 			JSONResponse = client.getResponse();
-			if (JSONResponse!=null)
+			if (JSONResponse!=null && JSONResponse!="")
 			{
 				JSONResponse = JSONResponse.trim();
 				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
@@ -517,5 +514,4 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-
 }
