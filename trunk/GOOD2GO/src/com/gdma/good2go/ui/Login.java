@@ -99,8 +99,7 @@ public class Login extends Activity {
 
 		AccountManager am = AccountManager.get(cntxt);
    		Account[] accounts;
-		String authTokType = "com.google";
-		accounts = am.getAccountsByType(authTokType);
+		accounts = am.getAccounts();
 		return accounts;
 		
 	}
@@ -131,14 +130,11 @@ public class Login extends Activity {
 	private void newLocalUser(String email) {
         String firstName = "", lastName = "", yearOfBirth = "";
         
-        if (updateServer(email, firstName, lastName, email, yearOfBirth) == 1){
-        	saveLocalUsername(email);
-        	//move to menu page
-        }
-        else {
-        	saveLocalUsername("Anonymous");
-        	//move to menu page
-        }
+        updateServer(email, firstName, lastName, email, yearOfBirth);
+        saveLocalUsername(email);
+        
+  
+  
 	}
 	
 	
