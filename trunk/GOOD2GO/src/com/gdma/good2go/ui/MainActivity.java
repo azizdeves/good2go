@@ -197,9 +197,9 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.aboutbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	setTitle("About");
-            	/**TODO call About Activity */
-            	Toast.makeText(view.getContext(), "Tapped About", Toast.LENGTH_SHORT).show();
+            	//setTitle("About");
+            	Intent newIntent = new Intent(view.getContext(), AboutTab.class);
+	            startActivity(newIntent);
             }
         });		
 	}

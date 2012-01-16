@@ -51,7 +51,9 @@
  	<string name="eventdetails_tabs">Event Details</string>
  	<string name="countmein">Count Me In</string>
 	<string name="confirmation">Confirmation</string>
-	<string name="personaldetails">Personal Details</string>
+	<string name="personaldetails">Details</string>
+	<string name="about">About</string>
+	<string name="feedback">Feedback</string>
 	<string-array name="sex_array">
        <item>Female</item>
        <item>Male</item>
