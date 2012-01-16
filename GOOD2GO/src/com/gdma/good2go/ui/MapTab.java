@@ -21,6 +21,7 @@ import com.gdma.good2go.actionbarcompat.ActionBarMapActivity;
 import com.gdma.good2go.ui.maputils.EventOverlayItem;
 import com.gdma.good2go.ui.maputils.EventsItemizedOverlay;
 import com.gdma.good2go.ui.maputils.UserItemizedOverlay;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
@@ -35,7 +36,6 @@ import com.google.android.maps.OverlayItem;
 public class MapTab extends ActionBarMapActivity implements LocationListener {
 	private static final String TAG = "Map";
 	
-	private static final int GET_FILTERED_EVENTS = 10;
 	private EventsDbAdapter mDbHelper;
 	private Button buttonFilterEvents;
 	
@@ -272,7 +272,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
     
 	public void getFilterScreen(View view){
     	Intent myIntent = new Intent(view.getContext(),FilterTab.class);
-    	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
+    	startActivityForResult(myIntent, ActivitysCodeUtil.GET_FILTERED_EVENTS);		
 	}
 
 	

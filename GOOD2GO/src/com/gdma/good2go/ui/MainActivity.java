@@ -146,7 +146,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (mNoEventsFromToday==true)
+            	if (false && mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -162,7 +162,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (mNoEventsFromToday==true)
+            	if (false && mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -181,7 +181,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (mNoEventsFromToday==true)
+            	if (false && mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}

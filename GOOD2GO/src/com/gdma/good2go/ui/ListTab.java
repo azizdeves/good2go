@@ -16,6 +16,7 @@ import android.widget.SimpleCursorAdapter;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
@@ -29,7 +30,6 @@ import com.google.android.maps.GeoPoint;
 
 public class ListTab extends ActionBarListActivity {
 	private static final String TAG = "List";
-	private static final int GET_FILTERED_EVENTS = 10;
 	private EventsDbAdapter mDbHelper;
 	Cursor mEventsCursor;
 	
@@ -85,7 +85,7 @@ public class ListTab extends ActionBarListActivity {
  	protected void onActivityResult(int requestCode, int resultCode, Intent data)
  	{
  		super.onActivityResult(requestCode, resultCode, data);
-		 if (requestCode == GET_FILTERED_EVENTS) {
+		 if (requestCode == ActivitysCodeUtil.GET_FILTERED_EVENTS) {
 			if(resultCode==RESULT_OK){
 				Bundle bundleResult = data.getExtras();
 				showFilteredEventsOnList(bundleResult);
@@ -222,7 +222,7 @@ public class ListTab extends ActionBarListActivity {
     
 	public void getFilterScreen(View view){
     	Intent myIntent = new Intent(view.getContext(),FilterTab.class);
-    	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
+    	startActivityForResult(myIntent, ActivitysCodeUtil.GET_FILTERED_EVENTS);		
 	}
 	
 	private void updateEventsDistance()
