@@ -14,7 +14,7 @@ import com.gdma.good2go.facebook.Facebook;
 import com.gdma.good2go.facebook.FacebookError;
 import com.gdma.good2go.facebook.Facebook.DialogListener;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
-import com.gdma.good2go.utils.AppPreferences;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.PointsUtil;
 
@@ -53,7 +53,7 @@ public class CountMeIn extends ActionBarActivity {
     private String mPhone;
     private String mEmail;
     private String mSex;
-    private AppPreferences mUsersPrefs;    
+    private AppPreferencesPrivateDetails mUsersPrefs;    
     private RestClient mClient;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -148,7 +148,7 @@ public class CountMeIn extends ActionBarActivity {
 	    		////setResult(Activity.RESULT_OK);
 	    		////finish();
 	        	
-	        	mUsersPrefs = new AppPreferences(view.getContext());
+	        	mUsersPrefs = new AppPreferencesPrivateDetails(view.getContext());
 	        	if(!mUsersPrefs.isUsernameExists()){
 	        		remote_registerUserForTheFirstTime(mUsername, mAge, mSex, mCity, mPhone, mEmail);
 	        	}

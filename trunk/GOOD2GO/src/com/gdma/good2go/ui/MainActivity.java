@@ -48,6 +48,7 @@ import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
+import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.PointsUtil;
 import com.google.android.maps.GeoPoint;
@@ -66,6 +67,7 @@ public class MainActivity extends ActionBarActivity {
     private String mEventName;
     private String mEventDesc;
     private String mEventKey;
+    private AppPreferencesEventsRetrievalDate mEventsRetrievalDate;
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	setTheme(R.style.AppTheme);    	
