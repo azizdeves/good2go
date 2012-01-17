@@ -16,19 +16,19 @@
 
 package com.gdma.good2go.ui;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
-import android.accounts.Account;
-import android.accounts.AccountManager;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -46,7 +46,9 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.PointsUtil;
 import com.google.android.maps.GeoPoint;
 
 import flexjson.JSONDeserializer;
@@ -67,29 +69,24 @@ public class MainActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
     	setTheme(R.style.AppTheme);    	
         super.onCreate(savedInstanceState); 
-                             
+                              
     	/********************************************Remove this to work with Android Accounts**********************/
     	//saveLocalUsername("Bypass Account");
         /***********************************************************************************************************/             
                
         /*check accounts*/
-        String mLocalUsername = getLocalUsername();
+        mLocalUsername = getLocalUsername();
         if (mLocalUsername == null){
-        	
-        	Account[] accounts = getAccounts(this);
-        	if (accounts.length == 0){
-        		
-        		Intent newIntent = new Intent(this, LoginNoAccounts.class);
-        		startActivityForResult(newIntent, 7);
-        		
-        	}
-        	else{
-        		Intent newIntent = new Intent(this, Login.class);
-        		startActivityForResult(newIntent,7);
-            }
-        	
+        	showToast("no local username");
+        	Intent newIntent = new Intent(this, Login.class);
+        	startActivityForResult(newIntent,7);            	
         }
         else{
+    	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
+    		Bundle extras = getIntent().getExtras();
+    		mSender= extras!= null?
+    				mSender = extras.getString("sender"):null;
+    				
         	continueActivityStart();
         }
     }
@@ -157,7 +154,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (mNoEventsFromToday==true)
+            	if (false && mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -173,7 +170,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (mNoEventsFromToday==true)
+            	if (false && mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -192,7 +189,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (mNoEventsFromToday==true)
+            	if (false && mNoEventsFromToday==true)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -272,6 +269,9 @@ public class MainActivity extends ActionBarActivity {
     	protected void onPostExecute(List<Event> eventList) {
     		dialog.dismiss();
     		writeEventsToLocalDB(eventList);
+    		
+    		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mClient);
     		setDashboardView();
     	}
 			
@@ -337,7 +337,7 @@ public class MainActivity extends ActionBarActivity {
 			client.Execute(1); //1 is HTTP GET
 			
 			JSONResponse = client.getResponse();
-			if (JSONResponse!=null && JSONResponse!="")
+			if (JSONResponse!=null)
 			{
 				JSONResponse = JSONResponse.trim();
 				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
@@ -522,13 +522,5 @@ public class MainActivity extends ActionBarActivity {
         }
         return super.onOptionsItemSelected(item);
     }
-    
-    private Account[] getAccounts(Context cntxt){
 
-		AccountManager am = AccountManager.get(cntxt);
-   		Account[] accounts;
-		accounts = am.getAccounts();
-		return accounts;
-		
-	}
 }
