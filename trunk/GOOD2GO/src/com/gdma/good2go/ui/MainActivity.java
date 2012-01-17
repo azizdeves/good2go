@@ -42,6 +42,7 @@ import android.widget.Toast;
 
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.VolunteeringWith;
+import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
@@ -272,6 +273,7 @@ public class MainActivity extends ActionBarActivity {
     		
     		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
     		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mClient);
+    		showToast("You just earned"+"???" +" points for <giving feedback>! You’re awesome!");
     		setDashboardView();
     	}
 			
@@ -307,8 +309,6 @@ public class MainActivity extends ActionBarActivity {
 			}
 		}
 		catch (Exception e){
-			//Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
-			//debugging.show();
 			return null;
 		}
 		return null;
