@@ -16,6 +16,7 @@ import com.gdma.good2go.facebook.Facebook.DialogListener;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.AppPreferences;
 import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.PointsUtil;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
@@ -53,6 +54,7 @@ public class CountMeIn extends ActionBarActivity {
     private String mEmail;
     private String mSex;
     private AppPreferences mUsersPrefs;    
+    private RestClient mClient;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -88,9 +90,9 @@ public class CountMeIn extends ActionBarActivity {
 	    fbStatus.setText(mFbStatus);
 	    
 	    
-	    
-
-		
+/**************************************************************/	    
+/**************NOTICE THE 'addKarma' SECTION*******************/
+/**************************************************************/		
 		
 //	    final Button buttonFBInvite = (Button) findViewById(R.id.fbinvite);
 //		   
@@ -102,6 +104,11 @@ public class CountMeIn extends ActionBarActivity {
 //	            startActivityForResult(newIntent, 1);*/
 //	    		Toast.makeText(view.getContext(), "onButtonClick FB Invite",
 //				Toast.LENGTH_LONG).show();
+	    		/***Adding point for inviting a friend***/
+//	    		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+//	    		PointsUtil.remote_addKarma(mUsername, PointsUtil.INVITE_A_FRIEND, client);
+
+	    
 //	        }
 //	    });
 //	    
@@ -175,6 +182,8 @@ public class CountMeIn extends ActionBarActivity {
         					Log.d(this.getClass().getName(), "Facebook.authorize Complete: ");
         					saveFBToken(facebook.getAccessToken(), facebook.getAccessExpires());
         					updateStatus(values.getString(facebook.getAccessToken()));
+        					mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+        					PointsUtil.remote_addKarma(mUsername, PointsUtil.POST_STATUS, mClient);
         				}
 
         				@Override
