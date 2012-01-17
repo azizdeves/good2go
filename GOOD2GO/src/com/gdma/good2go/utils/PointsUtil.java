@@ -7,8 +7,8 @@ import com.gdma.good2go.communication.RestClient;
 public class PointsUtil {
 	
 	public static final String OPEN_APP = "OPEN_APP";
-
 	public static final String INVITE_A_FRIEND = "INVITE_FRIEND";
+
 	public static final String POST_STATUS= "POST_STATUS";
 	
 	public static final int EVENT_REGISTRATION = 100;	

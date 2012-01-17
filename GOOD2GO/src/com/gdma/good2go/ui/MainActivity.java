@@ -209,7 +209,7 @@ public class MainActivity extends ActionBarActivity {
             @Override
             public void onClick(View view) {
             	//setTitle("About");
-            	Intent newIntent = new Intent(view.getContext(), FeedbackTab.class);
+            	Intent newIntent = new Intent(view.getContext(), AboutTab.class);
 	            startActivity(newIntent);
             }
         });
