@@ -16,7 +16,7 @@ public class PointsUtil {
 	public static final int GIVE_FEEDBACK= 100;
 	
 	
-	public int remote_addKarma(String userName, String type, RestClient client){
+	public static int remote_addKarma(String userName, String type, RestClient client){
 		client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "addKarma");
 		client.AddParam("userName", userName);
