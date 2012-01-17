@@ -1,11 +1,17 @@
 package com.gdma.good2go.ui;
+import java.util.ArrayList;
+
+import com.gdma.good2go.Event;
 import com.gdma.good2go.R;
 
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.FiltersUtil;
 
 
 import android.content.Intent;
+import android.database.Cursor;
 
 import android.os.Bundle;
 import android.view.Menu;
@@ -14,30 +20,31 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.TextView;
 
+import android.widget.Toast;
 import android.widget.ToggleButton;
 import android.widget.SeekBar;
 
 
 
 public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarChangeListener{
-	private static final String TAG = "Filter";
-	  SeekBar durationSeekBar;
-	  SeekBar radiusSeekBar;
+	private  static final String TAG = "Filter";
+	private  SeekBar durationSeekBar;
+	private  SeekBar radiusSeekBar;
 
-	  TextView durationTrackingText;
-	  TextView radiusTrackingText;
+	private  TextView durationTrackingText;
+	private  TextView radiusTrackingText;
 	  
-	  private static Bundle b =null;
-	  
-	  int duration=0;
-	  int radius=0;
-	  String caller="";
-	  ToggleButton togglebutton_Animals;
-	  ToggleButton togglebutton_Children;
-	  ToggleButton togglebutton_Disabled;
-	  ToggleButton togglebutton_Env;
-	  ToggleButton togglebutton_Elderly;
-	  ToggleButton togglebutton_Special;
+	private  static Bundle b =null;
+	private  EventsDbAdapter mDbHelper;
+	private  int duration=0;
+	private  int radius=0;
+	private  String caller="";
+	private  ToggleButton togglebutton_Animals;
+	private  ToggleButton togglebutton_Children;
+	private  ToggleButton togglebutton_Disabled;
+	private  ToggleButton togglebutton_Env;
+	private  ToggleButton togglebutton_Elderly;
+	private  ToggleButton togglebutton_Special;
   @Override
   public void onCreate(Bundle savedInstanceState) {
       super.onCreate(savedInstanceState);
@@ -185,6 +192,16 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 		b.putInt("durationInMinutes", duration);
 		b.putInt("radius", radius);
 
+		mDbHelper = new EventsDbAdapter(this);
+	    mDbHelper.open();
+	    String[] types = FiltersUtil.getArrayOfFiltersParams(b);
+		Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
+		if (eventsCursor.getCount()==0){
+			Toast noDataAlert=Toast.makeText(this, "There are no search results that match your criteria", Toast.LENGTH_LONG);
+			noDataAlert.show();
+			return;
+		}
+		
 		
 		if (caller!= null && caller.compareTo("MainTab")==0){
 			Intent newIntent = new Intent(this, MapTab.class);

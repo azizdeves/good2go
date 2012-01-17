@@ -358,5 +358,12 @@ public class EventsDbAdapter {
         return mDb.update(DATABASE_TABLE, args, KEY_EVENTID + " = " + eventId, null) > 0;
     }
 
+    public boolean isEventsEmpty(){
+    	Cursor c = fetchAllEvents();
+    	if (!c.isBeforeFirst())
+    		return true;
+    	return false;
+
+    }
 
 }
