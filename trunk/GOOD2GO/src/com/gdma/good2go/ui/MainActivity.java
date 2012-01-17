@@ -275,7 +275,7 @@ public class MainActivity extends ActionBarActivity {
     		
     		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
     		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mClient);
-    		showToast("You just earned"+"???" +" points for <giving feedback>! You’re awesome!");
+    		showToast("You just earned"+" 10 " +"points for apploading the app! You’re awesome!");
     		setDashboardView();
     	}
 			
