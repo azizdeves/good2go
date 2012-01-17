@@ -109,9 +109,7 @@
         android:layout_height="wrap_content"
         android:layout_below ="@id/duration"  
         android:layout_toRightOf ="@id/ihave_duration"  
-        android:max="2000"
-        android:progress="20" 
-        
+        android:max="600"
         android:progressDrawable="@drawable/seekbar_progress"/>
 
         	
