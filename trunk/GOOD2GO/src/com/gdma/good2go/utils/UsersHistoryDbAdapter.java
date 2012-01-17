@@ -1,5 +1,7 @@
 package com.gdma.good2go.utils;
 
+import java.util.Date;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -49,6 +51,7 @@ public class UsersHistoryDbAdapter {
     	        + KEY_EVENTKEY
     	        + "));";
 
+    private Date lastUpdate = null;
     private static class DatabaseHelper extends SQLiteOpenHelper {
 
         DatabaseHelper(Context context) {
@@ -145,6 +148,22 @@ public class UsersHistoryDbAdapter {
 
         return mDb.query(DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
         		KEY_EVENTDATE, KEY_EVENPOINTS,KEY_EVENT_DURATION}, null, null, null, null, null, null);
+    }
+    
+    public boolean isUserHistoryEmpty(){
+    	Cursor c = fetchAllUsersHistory();
+    	if (!c.isBeforeFirst())
+    		return true;
+    	return false;
+
+    }
+    
+    public Date getLastUpdateDate(){
+    	return lastUpdate;
+    }
+    
+    public void setLastUpdateDate(Date d){
+    	this.lastUpdate=d;
     }
 
 
