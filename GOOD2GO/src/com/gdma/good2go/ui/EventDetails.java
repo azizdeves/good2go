@@ -18,7 +18,7 @@ import android.widget.Toast;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarTabActivity;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
-import com.gdma.good2go.utils.AppPreferences;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventDetailsUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
@@ -38,7 +38,7 @@ public class EventDetails extends ActionBarTabActivity {
     private int mEventImage;
     private String mSender;    
     private EventsDbAdapter mDbHelper;
-    private AppPreferences mUsersPrefs;
+    private AppPreferencesPrivateDetails mUsersPrefs;
     private Context mContext;
     private String mUsername="";
     private String mUserAge="";
@@ -137,7 +137,7 @@ public class EventDetails extends ActionBarTabActivity {
 	    	buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 		        public void onClick(View view) {
 		        	mContext = view.getContext();
-		        	mUsersPrefs = new AppPreferences(view.getContext());
+		        	mUsersPrefs = new AppPreferencesPrivateDetails(view.getContext());
 		        	if (!mUsersPrefs.isUsernameExists()){
 		        	  Intent newIntent = new Intent(view.getContext(), PersonalDetailsTab.class);
 		        	  startActivityForResult(newIntent, ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS);

@@ -6,13 +6,13 @@ import android.content.SharedPreferences;
 import android.content.SharedPreferences.Editor;
 import android.content.SharedPreferences;  
 
-public class AppPreferences {
+public class AppPreferencesPrivateDetails {
 	
      private static final String APP_SHARED_PRIVATE_DETAILS = "users_private_details"; 
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
 
-     public AppPreferences(Context context)
+     public AppPreferencesPrivateDetails(Context context)
      {
          this.appSharedPrefs = context.getSharedPreferences(APP_SHARED_PRIVATE_DETAILS, Activity.MODE_PRIVATE);
          this.prefsEditor = appSharedPrefs.edit();
