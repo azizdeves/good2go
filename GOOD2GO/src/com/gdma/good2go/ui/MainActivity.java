@@ -281,7 +281,17 @@ public class MainActivity extends ActionBarActivity {
 			
 		@Override
 		protected List<Event> doInBackground(Integer... coordinates) {
-			return getEventsFromServer(coordinates[0],coordinates[1]);
+			
+			mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
+			if (mEventsRetrievalDate.isDateExists()){
+				int halfADay= 12*(1000*60*60);
+				Long currDate = (new Date()).getTime();
+				Long retDate = mEventsRetrievalDate.getDate();
+				if (currDate-retDate > halfADay){
+					return getEventsFromServer(coordinates[0],coordinates[1]);
+				}
+			}
+			return new ArrayList<Event>();
 		}
 	}
 	
