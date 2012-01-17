@@ -40,12 +40,12 @@ public class EventDetails extends ActionBarTabActivity {
     private EventsDbAdapter mDbHelper;
     private AppPreferences mUsersPrefs;
     private Context mContext;
-    private String mUsername;
-    private String mUserAge;
-    private String mCity;
-    private String mPhone;
-    private String mEmail;
-    private String mSex;
+    private String mUsername="";
+    private String mUserAge="";
+    private String mCity="";
+    private String mPhone="";
+    private String mEmail="";
+    private String mSex="";
     
     /**@TODO - add all the fields here in case this activity dies, so it can resume
   

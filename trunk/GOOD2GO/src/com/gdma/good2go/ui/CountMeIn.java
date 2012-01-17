@@ -14,6 +14,7 @@ import com.gdma.good2go.facebook.Facebook;
 import com.gdma.good2go.facebook.FacebookError;
 import com.gdma.good2go.facebook.Facebook.DialogListener;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
+import com.gdma.good2go.utils.AppPreferences;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
 import android.app.Activity;
@@ -51,7 +52,7 @@ public class CountMeIn extends ActionBarActivity {
     private String mPhone;
     private String mEmail;
     private String mSex;
-    
+    private AppPreferences mUsersPrefs;    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		// TODO Auto-generated method stub
@@ -130,9 +131,6 @@ public class CountMeIn extends ActionBarActivity {
 //	        		updateStatus(mFacebookToken);
 //	        	}
 
-	        	//remote_registerToOccurrence(username, key);
-	        	
-	        	
 	           // mSoundManager.playSound(3);
 	            /*Intent newIntent = new Intent(view.getContext(), 
 	                            CountMeIn.class);
@@ -140,10 +138,14 @@ public class CountMeIn extends ActionBarActivity {
 	    		//Toast.makeText(view.getContext(), "Thanks for being awesome! We'll love to see you at: " +mEventName+ ".",
 				//Toast.LENGTH_LONG).show();
 	    		
-	    		//setResult(Activity.RESULT_OK);
-	    		//finish();
+	    		////setResult(Activity.RESULT_OK);
+	    		////finish();
 	        	
-	        	remote_registerNewUser(mUsername, mAge, mSex, mCity, mPhone, mEmail);
+	        	mUsersPrefs = new AppPreferences(view.getContext());
+	        	if(!mUsersPrefs.isUsernameExists()){
+	        		remote_registerUserForTheFirstTime(mUsername, mAge, mSex, mCity, mPhone, mEmail);
+	        	}
+	        	remote_registerToOccurrence(mUsersPrefs.getUserName(), Long.toString(mEventId));
 	        	Bundle extraInfo = new Bundle();
 	            extraInfo.putString("eventname", mEventName);
 	            extraInfo.putString("desc", mEventDesc);
@@ -316,7 +318,7 @@ public class CountMeIn extends ActionBarActivity {
     }
 
     
-	private int remote_registerNewUser (String userName, String age, String sex, String city, String phone, String email){
+	private int remote_registerUserForTheFirstTime (String userName, String age, String sex, String city, String phone, String email){
 		
 		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
 		client.AddParam("action", "??????");
