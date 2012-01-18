@@ -32,4 +32,15 @@ public class AppPreferencesEventsRetrievalDate {
          prefsEditor.putLong("date", numOfSec);
          prefsEditor.commit();
      }
+     
+     public boolean isFromToday() {
+    	 if (isDateExists())
+    	 {
+    		long oneDay = 24 * 60 * 60 * 1000;
+    		long lastWriteDate = getDate() / oneDay;
+    		long nowDate = new Date().getTime() / oneDay;
+    		return lastWriteDate == nowDate;
+    	 }
+    	 return false;
+     }
 }

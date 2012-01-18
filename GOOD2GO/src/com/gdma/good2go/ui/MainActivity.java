@@ -16,7 +16,6 @@
 
 package com.gdma.good2go.ui;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Iterator;
@@ -28,11 +27,11 @@ import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
-import android.graphics.Point;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -42,12 +41,10 @@ import android.widget.Toast;
 
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.VolunteeringWith;
-import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
-import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.PointsUtil;
@@ -56,18 +53,20 @@ import com.google.android.maps.GeoPoint;
 import flexjson.JSONDeserializer;
 
 public class MainActivity extends ActionBarActivity {
+	private static final String TAG = "Main";
+	private static final int FEEDBACK_REQUEST = 1;
+	private static final int LOGIN_REQUEST = 7;
 	
 	private EventsDbAdapter mDbHelper;
 	private GeoPoint mMyGeoPoint;
-	private Calendar mLastServerUpdate;
-	private boolean mNoEventsFromToday = false;
 	private String mSender;
 	private String mLocalUsername;
-	private RestClient mClient;
+	private RestClient mRestClient;
     private String mEventName;
     private String mEventDesc;
     private String mEventKey;
     private AppPreferencesEventsRetrievalDate mEventsRetrievalDate;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
     	setTheme(R.style.AppTheme);    	
@@ -82,13 +81,12 @@ public class MainActivity extends ActionBarActivity {
         if (mLocalUsername == null){
         	showToast("no local username");
         	Intent newIntent = new Intent(this, Login.class);
-        	startActivityForResult(newIntent,7);            	
+        	startActivityForResult(newIntent,LOGIN_REQUEST);            	
         }
         else{
-    	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
+    	    /*get sender*/
     		Bundle extras = getIntent().getExtras();
-    		mSender= extras!= null?
-    				mSender = extras.getString("sender"):null;
+    		mSender= (extras!=null) ? extras.getString("sender") : null;
     				
         	continueActivityStart();
         }
@@ -99,12 +97,12 @@ public class MainActivity extends ActionBarActivity {
     protected void onResume() {
         super.onResume();
         
-    	if (mNoEventsFromToday==true)
-    	{
-            /*new GetEventsFromDatastoreTask().execute(
-            		mMyGeoPoint.getLatitudeE6(), 
-            		mMyGeoPoint.getLongitudeE6());*/  
-    	}
+//    	if (areEventsFromToday()==false)
+//    	{
+//            new GetEventsFromDatastoreTask().execute(
+//            		mMyGeoPoint.getLatitudeE6(), 
+//            		mMyGeoPoint.getLongitudeE6()); 
+//    	}
     }
     
     
@@ -117,23 +115,61 @@ public class MainActivity extends ActionBarActivity {
     private void continueActivityStart() {   	
     	if (mSender==null)
 		{
-	    	/**GET MY LOCATION**/       
-	        mMyGeoPoint = getUserLocation();
-	     	        
-	        mDbHelper = new EventsDbAdapter(this);
-	        
-	        /**GET EVENTS FROM SERVER ASYNC**/	               
-	        new GetEventsFromDatastoreTask().execute(
-	        		mMyGeoPoint.getLatitudeE6(), 
-	        		mMyGeoPoint.getLongitudeE6());
+    		if (areEventsFromToday()==false)
+    		{
+		    	/**GET MY LOCATION**/       
+		        mMyGeoPoint = getUserLocation();
+		     	        
+		        mDbHelper = new EventsDbAdapter(this);
+		        
+		        /**GET EVENTS FROM SERVER ASYNC**/	               
+		        new GetEventsFromDatastoreTask().execute(
+		        		mMyGeoPoint.getLatitudeE6(), 
+		        		mMyGeoPoint.getLongitudeE6());
+    		}
+    		
+        	checkFeedback();
+        	givePoints();
 		}
-		else
-		{
-			setDashboardView();
-		}
+    	else
+    	{
+    		setDashboardView();
+    	}
 	}
 	
 	
+	private void givePoints() {
+		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mRestClient);
+		showToast("You just earned"+" 10 " +"points for checking out the app! You’re awesome!");		
+	}
+
+
+	private void checkFeedback() {
+        List<Event> feedbackList = remote_getEventsForFeedback();  
+        if (feedbackList!=null){
+        	for (Event event : feedbackList) {
+        		mEventDesc = event.getDescription();
+        		mEventName=event.getEventName();
+        		mEventKey=event.getEventKey();
+        		Bundle extraInfo = new Bundle();        		
+                extraInfo.putString("mEventDesc", mEventDesc);
+                extraInfo.putString("mEventName", mEventName);
+                extraInfo.putString("mEventKey", mEventKey);
+                Intent newIntent = new Intent(this, FeedbackTab.class);
+                newIntent.putExtras(extraInfo);
+                startActivity(newIntent);
+			}
+        }
+		
+	}
+
+
+	private boolean areEventsFromToday() {
+		mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
+		return (mEventsRetrievalDate.isFromToday());
+	}
+
+
 	private GeoPoint getUserLocation() {
 		LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
         Location locationGPS = locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
@@ -142,7 +178,7 @@ public class MainActivity extends ActionBarActivity {
         double lat = (locationGPS != null) ? locationGPS.getLatitude() : 
         	(locationNETWORK != null) ? locationNETWORK.getLatitude() : 32.067228;
         double lon = (locationGPS != null) ? locationGPS.getLongitude() : 
-        	(locationNETWORK != null) ? locationNETWORK.getLongitude() : 32.067228;
+        	(locationNETWORK != null) ? locationNETWORK.getLongitude() : 34.824256;
         	
         return new GeoPoint((int)(lat * 1E6),(int)(lon * 1E6));		
 	}
@@ -157,7 +193,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (false && mNoEventsFromToday==true)
+            	if (areEventsFromToday()==false)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -173,7 +209,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (false && mNoEventsFromToday==true)
+            	if (areEventsFromToday()==false)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -192,7 +228,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (false && mNoEventsFromToday==true)
+            	if (areEventsFromToday()==false)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -213,50 +249,57 @@ public class MainActivity extends ActionBarActivity {
 	            startActivity(newIntent);
             }
         });
-        
-        List<Event> feedbackList = remote_getEventsForFeedback();  
-        if (feedbackList!=null){
-        	for (Event event : feedbackList) {
-        		mEventDesc = event.getDescription();
-        		mEventName=event.getEventName();
-        		mEventKey=event.getEventKey();
-        		Bundle extraInfo = new Bundle();        		
-                extraInfo.putString("mEventDesc", mEventDesc);
-                extraInfo.putString("mEventName", mEventName);
-                extraInfo.putString("mEventKey", mEventKey);
-                Intent newIntent = new Intent(this, FeedbackTab.class);
-                newIntent.putExtras(extraInfo);
-                startActivity(newIntent);
-			}
-        }
 	}
 	
 	
     private void showToast(String message){
     	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
-    
-    
-	private void saveLocalUsername(String userName){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("userNameVal", userName);
-		editor.commit();
-	}
 
 	
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
 		super.onActivityResult(requestCode, resultCode, data);
 		
-		if (resultCode==Activity.RESULT_OK)
-		{
-			continueActivityStart();
-		}
+        if (requestCode == LOGIN_REQUEST) {
+        	if (resultCode==Activity.RESULT_OK)
+        	{
+        		continueActivityStart();
+        	}
+        }
 	}	
 	
 	
-	/**THREADS*/		
+    public List<Event> remote_getEventsForFeedback(){
+    	String JSONResponse = null;
+		mRestClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		mRestClient.AddParam("action", "addUser");
+		mRestClient.AddParam("userName", mLocalUsername);
+		Date myDate = new Date();
+		String dateToSend = Long.toString(myDate.getTime());
+		mRestClient.AddParam("userDate", dateToSend);
+		try{
+			mRestClient.Execute(1); //1 is HTTP GET
+			
+			JSONResponse = mRestClient.getResponse();
+			if (JSONResponse!=null)
+			{
+				JSONResponse = JSONResponse.trim();
+				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+				
+				List<Event> events = new JSONDeserializer<List<Event>>().
+						use(Date.class, new DateParser()).deserialize(JSONResponse);
+				return events;
+			}
+		}
+		catch (Exception e){
+			return null;
+		}
+		return null;
+    }
+	
+	
+    /**THREADS*/		
     private class GetEventsFromDatastoreTask extends AsyncTask<Integer, Void, List<Event>> {
     	Dialog dialog;
 
@@ -272,59 +315,16 @@ public class MainActivity extends ActionBarActivity {
     	protected void onPostExecute(List<Event> eventList) {
     		dialog.dismiss();
     		writeEventsToLocalDB(eventList);
-    		
-    		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-    		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mClient);
-    		showToast("You just earned"+" 10 " +"points for apploading the app! You’re awesome!");
     		setDashboardView();
     	}
 			
 		@Override
 		protected List<Event> doInBackground(Integer... coordinates) {
-			
-			mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
-			if (mEventsRetrievalDate.isDateExists()){
-				int halfADay= 12*(1000*60*60);
-				Long currDate = (new Date()).getTime();
-				Long retDate = mEventsRetrievalDate.getDate();
-				if (currDate-retDate > halfADay){
-					return getEventsFromServer(coordinates[0],coordinates[1]);
-				}
+			return getEventsFromServer(coordinates[0],coordinates[1]);
 			}
-			return new ArrayList<Event>();
-		}
-	}
 	
-    
-    
-    public List<Event> remote_getEventsForFeedback(){
-    	String JSONResponse = null;
-		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		mClient.AddParam("action", "addUser");
-		mClient.AddParam("userName", mLocalUsername);
-		Date myDate = new Date();
-		String dateToSend = Long.toString(myDate.getTime());
-		mClient.AddParam("userDate", dateToSend);
-		try{
-			mClient.Execute(1); //1 is HTTP GET
-			
-			JSONResponse = mClient.getResponse();
-			if (JSONResponse!=null)
-			{
-				JSONResponse = JSONResponse.trim();
-				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-				
-				//Parse the response from server
-				//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
-				List<Event> events = new JSONDeserializer<List<Event>>().use(Date.class, new DateParser()).deserialize(JSONResponse);
-				return events;
-			}
-		}
-		catch (Exception e){
-			return null;
-		}
-		return null;
     }
+    
     
 	private List<Event> getEventsFromServer(int lat, int lon) {
 		String JSONResponse = null; // this will hold the response from server
@@ -336,7 +336,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
-		c.set(2011,Calendar.DECEMBER,31,0,0,0);
+		c.set(2012,Calendar.JANUARY,16,0,0,0);
 		c.set(Calendar.HOUR_OF_DAY,8);
 		Date myDate = new Date();
 		myDate = c.getTime();
@@ -349,23 +349,29 @@ public class MainActivity extends ActionBarActivity {
 			client.Execute(1); //1 is HTTP GET
 			
 			JSONResponse = client.getResponse();
+			if (JSONResponse=="")
+			{
+				//handle alerting the user that there are no events for today
+				Log.i(TAG, "No events for today");
+				return null;
+			}
 			if (JSONResponse!=null)
 			{
 				JSONResponse = JSONResponse.trim();
 				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 				
 				//Parse the response from server
-				//return new JSONDeserializer<List<Event>>().deserialize(JSONResponse);
 				List<Event> events = new JSONDeserializer<List<Event>>()
 							.use(Date.class, new DateParser()).deserialize(JSONResponse);
 				
-				mLastServerUpdate = Calendar.getInstance();
-				mNoEventsFromToday = false;
+				mEventsRetrievalDate.saveDate(new Date());
 				return events;
 			}
 		}
 		catch (Exception e)
 		{
+			String  eMsg= e.getMessage();
+			Log.e(TAG, "Couldn't get events from server: " + eMsg);
 		}
 		return null;
 	}
@@ -440,28 +446,44 @@ public class MainActivity extends ActionBarActivity {
 	        			elderly,environment,special,eventImage, startTime, endTime);
 	        }
 	     }
-        else 
-        {
-        	if (mLastServerUpdate == null ||
-        			daysBetween(mLastServerUpdate, Calendar.getInstance()) > 0)
+        else
+        	if (mEventsRetrievalDate.isFromToday() == false )
         	{
-        		mNoEventsFromToday = true;
         		showToast ("Couldn't connect to the server");
+        		
+        		//DEBUG
+        		mDbHelper.open();
+        		createManualEventForDebug();
+        		mEventsRetrievalDate.saveDate(new Date());
+        		//DEBUG
         	}
         }
-     }
-
-    private static long daysBetween(Calendar startDate, Calendar endDate) {
-    	  Calendar date = (Calendar) startDate.clone();
-    	  long daysBetween = 0;
-    	  while (date.before(endDate)) {
-    	      date.add(Calendar.DAY_OF_MONTH, 1);
-    	      daysBetween++;
-    	  }
-    	  return daysBetween;
-    	}
+     
     
-    private String getDuration(int totalDurationInMins) 
+    private void createManualEventForDebug() {
+    	String eventTest="eventTest";
+    	String lat="32067228";
+    	String lon="32067228";
+    	String type="1";
+    	int image = R.drawable.event_children;
+    	String image2 = Integer.toString(image);
+    	
+	    	mDbHelper.createEvent(eventTest,eventTest,
+	    			eventTest,
+	    			eventTest,
+	    			lat, lon,"1 km","20 min",
+	    			eventTest,
+	    			eventTest,
+	    			type,
+	    			type, type,type,
+	    			type,type,type,
+	    			image2,
+	    			"08:00", "22:00");
+	    	
+	}
+
+
+	private String getDuration(int totalDurationInMins) 
     {
     	int actualDurationHours = totalDurationInMins/60;
     	int actualDurationMins = totalDurationInMins%60;
