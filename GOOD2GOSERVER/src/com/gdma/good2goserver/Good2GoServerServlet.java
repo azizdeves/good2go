@@ -23,6 +23,7 @@ import flexjson.ObjectFactory;
 
 import com.gdma.good2goserver.RestClient;
 import com.gdma.good2goserver.Occurrence;
+import com.gdma.good2goserver.DateParser;
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
@@ -67,7 +68,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			return null;
 		}
 		
-	}
+	}*/
 	
 	private String getTime(Date dateFromEvent) {
  		Calendar c = Calendar.getInstance();
@@ -77,7 +78,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		int eventMin = c.get(Calendar.MINUTE);
 		return eventHour + ":" + eventMin;
 	}
-	*/
+	
 	private static final Logger log = Logger.getLogger(Good2GoServerServlet.class.getName());
 	
  	
@@ -394,7 +395,8 @@ public class Good2GoServerServlet extends HttpServlet {
 		}
 		*/
 		
-		PrintWriter pw = new PrintWriter(new OutputStreamWriter(resp.getOutputStream(), "UTF8"), true);
+		resp.setCharacterEncoding("UTF-8");
+		PrintWriter pw = resp.getWriter();
 		resp.setContentType("text/html; charset=UTF-8");
 		
 		String action = req.getParameter(new String("action"));
@@ -848,30 +850,30 @@ public class Good2GoServerServlet extends HttpServlet {
 			if (userDate!=null && gp!=null){
 				List<Event> events = dbm.getNextEventsByGood2GoPoint(gp, userDate, duration, distance, vw, sf, wt);
 				
-				String js = new String("No results");
+				String js = new String("[]");
 				
 				if (events != null){
 					for (Event e : events){
 						e.setOccurrenceKeys(null);
 						for (Occurrence o : e.getOccurrences())
 							o.setRegisteredUserNames(null);
+						
 					}
-				
+
 					js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).include("address", "occurrences", "volunteeringWith", "suitableFor", "workType", "occurrences.endTime").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(events);
-				
+					
 				}
-				
+
 				pw.print(js);
 				
 				/*For debugging
-				 * 
-				 * 
-				 * List<Event> e = new JSONDeserializer<List<Event>>().use(Date.class,new DateParser()).deserialize(js);
+				
+				List<Event> e = new JSONDeserializer<List<Event>>().use(Date.class,new DateParser()).deserialize(js);
 				
 				String startTime = getTime(e.get(0).getOccurrences().get(0).getStartTime());
 				String endTime = getTime(e.get(0).getOccurrences().get(0).getEndTime());
 				
-				int i = 0;*/
+				int k = 0;*/
 			}
 			
 			else
