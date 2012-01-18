@@ -135,6 +135,10 @@ public class MainActivity extends ActionBarActivity {
 		        		mMyGeoPoint.getLatitudeE6(), 
 		        		mMyGeoPoint.getLongitudeE6());
     		}
+    		else
+    		{
+    			setDashboardView();
+    		}
     		
         	checkFeedback();
         	givePoints();
