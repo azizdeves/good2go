@@ -1,90 +1,117 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:layout_marginLeft="14.5sp"    
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent" 
+    android:layout_marginTop="10dip"
+
     android:orientation="vertical" >
 
     	<TextView
-        android:id="@+id/title_confirmationView"
+        android:id="@+id/thanks_confirmationView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_marginTop="40dip"
-        android:text="Thank you for being awesome"/>
-
-    	<TextView
-        android:id="@+id/details_confirmationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/title_confirmationView"
-        android:text="We got you for"/>
-    	
-		<View
-		 android:id="@+id/separateLine1_confirmationView"
-		 android:layout_width="match_parent"
-		 android:layout_height="1dp"
-		 android:layout_below="@id/details_confirmationView"
-		 android:layout_marginTop="20dp"
-		 android:background="@android:color/black" />
-
-		<TextView
-        android:id="@+id/points_confirmationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/separateLine1_confirmationView"
-        android:layout_marginTop="20dp"
-        android:text="POINTS"/>
-
-    	<TextView
-        android:id="@+id/pointsDetails1_confirmationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/points_confirmationView"
-        android:text="Nice! You've just earned"/>
-    	
-    	<TextView
-        android:id="@+id/pointsDetails2_confirmationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/pointsDetails1_confirmationView"
-		android:layout_centerHorizontal="true"
-        android:text=""/> 
-    	
-    	
-		<View
-		 android:id="@+id/separateLine2_confirmationView"
-		 android:layout_width="match_parent"
-		 android:layout_height="1dp"
-		 android:layout_below="@id/pointsDetails2_confirmationView"
-		 android:layout_marginTop="20dp"
-		 android:background="@android:color/black" />    	
-    	
-		
-		
-		<TextView
-        android:id="@+id/badges_confirmationView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/separateLine2_confirmationView"
-        android:layout_marginTop="10dp"
-        android:text="BADGES"/>	
         
+        android:layout_marginLeft="10dip"
+
+
+        android:textColor="@color/app_text_main"
+        android:text="@string/confirm_thanks"/> 
+
+    	<TextView
+        android:id="@+id/gotYou_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginLeft="10dip"
 		
+		android:textColor="@color/app_text_main"
+        android:text="@string/confirm_got_you"/>
+
+		<TextView
+        android:id="@+id/pointsTitle_confirmationView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textColor="@color/app_text_white"
+		android:textStyle="bold"
+        android:text="@string/confirm_points"/>
+
+    	<TextView
+        android:id="@+id/pointsWinText_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginLeft="10dip"
+
+        android:textColor="@color/app_text_main"
+        android:text="@string/confirm_points_win"/>
+    	    	
+    	<Button
+    	android:id="@+id/pointsWinNumber_confirmationView"
+
+	    android:layout_width="wrap_content"
+	    android:layout_height="wrap_content"
+	    
+	    android:layout_marginTop="10dip"
+	    android:layout_gravity="center_horizontal"
+	    
+	    android:clickable="false"
+
+    	android:drawableLeft="@drawable/points_plus_left"
+    	android:background="@drawable/points_plus"
+        
+        android:textColor="@color/app_text_white"
+        android:text="200000"/>
 		
 		<TextView
-        android:id="@+id/badgesDetails1_confirmationView"
+        android:id="@+id/badgesTitle_confirmationView"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+		
+		android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textStyle="bold"
+		android:textColor="@color/app_text_white"
+        android:text="@string/confirm_badges"/>	
+        		
+		
+		<TextView
+        android:id="@+id/badgesText_confirmationView" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/badges_confirmationView"
-        android:text=""/>
+        
+        android:layout_marginLeft="10dip"
+        
+        android:textColor="@color/app_text_main"
+        android:text="@string/confirm_badge_current"/>
+    	
+    	
+    	<ImageView
+        android:id="@+id/badgeImage_confirmationView"
+        style="@style/BadgeImage"
+       
+        android:layout_gravity="center_horizontal"
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"/>
     	
     	<TextView
-        android:id="@+id/badgesDetails2_confirmationView"
+        android:id="@+id/badgeName_confirmationView" 
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_below="@id/badgesDetails1_confirmationView"
-		android:layout_centerHorizontal="true"
+        
+		android:layout_gravity="center_horizontal"
+		
+        android:textColor="@color/app_text_main"
         android:text="Saint"/> 
+        
     	
     	<Button
         android:id="@+id/DoneConfirmationViewButton" 
@@ -95,4 +122,4 @@
         android:layout_alignParentBottom="true" 
     	android:background="@null"/>
 			
-</RelativeLayout>
+</LinearLayout>

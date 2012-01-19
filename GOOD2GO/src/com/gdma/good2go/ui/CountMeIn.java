@@ -149,9 +149,9 @@ public class CountMeIn extends ActionBarActivity {
 	    		////finish();
 	        	
 	        	mUsersPrefs = new AppPreferencesPrivateDetails(view.getContext());
-	        	if(!mUsersPrefs.isUsernameExists()){
-	        		remote_registerUserForTheFirstTime(mUsername, mAge, mSex, mCity, mPhone, mEmail);
-	        	}
+//	        	if(!mUsersPrefs.isUsernameExists()){
+//	        		remote_registerUserForTheFirstTime(mUsername, mAge, mSex, mCity, mPhone, mEmail);
+//	        	}
 	        	remote_registerToOccurrence(mUsersPrefs.getUserName(), Long.toString(mEventId));
 	        	Bundle extraInfo = new Bundle();
 	            extraInfo.putString("eventname", mEventName);

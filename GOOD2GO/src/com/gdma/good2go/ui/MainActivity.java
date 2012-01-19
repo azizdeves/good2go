@@ -48,6 +48,7 @@ import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.PointsUtil;
 import com.google.android.maps.GeoPoint;
@@ -86,12 +87,12 @@ public class MainActivity extends ActionBarActivity {
         	if (accounts.length == 0){
         		
         		Intent newIntent = new Intent(this, LoginNoAccounts.class);
-        		startActivityForResult(newIntent, 7);
+        		startActivityForResult(newIntent, LOGIN_REQUEST );
         		
         	}
         	else{
         		Intent newIntent = new Intent(this, Login.class);
-        		startActivityForResult(newIntent,7);
+        		startActivityForResult(newIntent,LOGIN_REQUEST );
             }
         	
         }
@@ -115,8 +116,10 @@ public class MainActivity extends ActionBarActivity {
     
     
 	private String getLocalUsername(){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		return settings.getString("userNameVal", null);
+		AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
+		return prefs.getUserName();
+		//SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
+		//return settings.getString("userNameVal", null);
 	}
 
 	

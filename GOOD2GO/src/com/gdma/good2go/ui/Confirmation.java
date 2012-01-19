@@ -1,94 +1,117 @@
 	package com.gdma.good2go.ui;
 
-	import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 import android.widget.TextView;
 
 import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.UsersUtil;
 
 public class Confirmation extends ActionBarActivity{
-		private Context mContext;	
-		private String mUserFirstName = "Dina";
-		private String mUserName = "496351";
-		private String mEventDesc;
+		
+		private String mUserFirstName;
+		private String mUserName;
 		private String mEventName;
 		private Long mEventId;
 		private int mPoints;
+		
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.confirmation);
-
-			TextView badgeDetails1 = (TextView) findViewById(R.id.badgesDetails1_confirmationView);
-			TextView badgeDetails2= (TextView) findViewById(R.id.badgesDetails2_confirmationView);
+			
+			mUserName=getLocalUsername();
+			mUserFirstName=getLocalUserFirstname();
+			
 			Bundle extras = getIntent().getExtras();
-		    mEventName=(extras!=null)?extras.getString("eventname"):null;
-		    mEventDesc=(extras!=null)?extras.getString("desc"):null;
-		    String EvenIdString=(extras!=null)?extras.getString("event_id"):null;
-		    mEventId = Long.valueOf(EvenIdString);
-		    mPoints=(extras!=null)?extras.getInt("points"):0;
-		  	
-		    String currentBadge=Karma.Badge.getMyBadge(mPoints).getName();
-		  	long newPoints=UsersUtil.remote_getUsersKarma(mUserName)+mPoints;
+			if (extras!=null)
+			{
+				mEventName = extras.getString("eventname");
+				mEventId = Long.valueOf(extras.getString("event_id"));
+				mPoints = extras.getInt("points");	
+			}
+			
+			TextView thanksUser = (TextView) findViewById(R.id.thanks_confirmationView);
+			TextView gotYou = (TextView) findViewById(R.id.gotYou_confirmationView);
+			Button pointsNumber = (Button) findViewById(R.id.pointsWinNumber_confirmationView);
+			TextView badgeMessage = (TextView) findViewById(R.id.badgesText_confirmationView);
+			ImageView badgePic = (ImageView)findViewById(R.id.badgeImage_confirmationView);
+			TextView badgeName= (TextView) findViewById(R.id.badgeName_confirmationView);
+
+		  	thanksUser.setText("Thanks for being awesome " + mUserFirstName +"!");
+		  	gotYou.setText(R.string.confirm_got_you + mEventName);
+		  	pointsNumber.setText(Integer.toString(mPoints));
+			
+		  	//badge message
+		    String currentBadge = Karma.Badge.getMyBadge(mPoints).getName();
+		  	long newPoints = UsersUtil.remote_getUsersKarma(mUserName) + mPoints;
 		  	String newBadge = Karma.Badge.getMyBadge(newPoints).getName();
 		  	if(newBadge.compareTo(currentBadge)!=0){
-		  		badgeDetails1.setText("Whooo! You've just earned a new badge!!!");
-		  		badgeDetails2.setText(newBadge);
+		  		badgeMessage.setText(R.string.confirm_badge_win);
 		  	}
-		  	else{
-		  		badgeDetails1.setText("Your current badge is:");
-		  		badgeDetails2.setText(currentBadge);
-		  	}
-		    
-		    
-		    TextView eventDetails = (TextView) findViewById(R.id.details_confirmationView);
-		    	eventDetails.setText("We got you for "+mEventDesc);
-		    TextView title = (TextView) findViewById(R.id.title_confirmationView);
-		    	title.setText("Thank you for being awesome "+mUserFirstName +"!");
-		    	
-		    TextView txpoints= (TextView) findViewById(R.id.points_confirmationView);
-		    	txpoints.setText("+"+Integer.toString(mPoints));
+		  	
+		  	badgeName.setText(newBadge);
+		  	
+		  	int BadgeImage = getBadgeImage(newBadge);
+		  	badgePic.setImageResource(BadgeImage); 
 		    
 				
-			Button buttonDone = (Button) findViewById(R.id.DoneConfirmationViewButton);
-			buttonDone.setOnClickListener(new View.OnClickListener() {
-	            public void onClick(View v) {
-	            	Intent i = new Intent();
-	                i.putExtra("sender", "confirmation");
-	                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
-	                setResult(RESULT_OK, i);
-	    			finish();
-	             
-		            //startActivity(i);
-	            }
-	        });
+//			Button buttonDone = (Button) findViewById(R.id.DoneConfirmationViewButton);
+//			buttonDone.setOnClickListener(new View.OnClickListener() {
+//	            public void onClick(View v) {
+//	            	Intent i = new Intent();
+//	                i.putExtra("sender", "confirmation");
+//	                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
+//	                setResult(RESULT_OK, i);
+//	    			finish();
+//	            }
+//	        });
 				    	
 		    
 		}
 		
+		private String getLocalUserFirstname() {
+			AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
+			return prefs.getUserFirstName();
+		}
 
-	    @Override
-	    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-	    	super.onActivityResult(requestCode, resultCode, data);	
-	    }
+		private String getLocalUsername(){
+			AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
+			return prefs.getUserName();
+		}
 	    
+		private int getBadgeImage(String badge) {
+			if (badge.compareTo(Karma.Badge.ANGEL.getName())==0)
+				return R.drawable.badge_angel;
+			if (badge.compareTo(Karma.Badge.BUDDHIST_MONK.getName())==0)
+				return R.drawable.badge_buddhistmonk;
+			if (badge.compareTo(Karma.Badge.DALAI_LAMA.getName())==0)
+				return R.drawable.badge_dalailama;
+			if (badge.compareTo(Karma.Badge.GOD.getName())==0)
+				return R.drawable.badge_god;
+			if (badge.compareTo(Karma.Badge.MOTHER_TERESA.getName())==0)
+				return R.drawable.badge_mothertheresa;
+			
+			return R.drawable.badge_mrniceguy;			
+		}
+
+
 		/** FOR ACTION BAR MENUS **/
 		
 	    @Override
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	        MenuInflater menuInflater = getMenuInflater();
-	        menuInflater.inflate(R.menu.empty, menu);
+	        menuInflater.inflate(R.menu.confirm, menu);
 
 	        return super.onCreateOptionsMenu(menu);
 	    }
@@ -104,8 +127,16 @@ public class Confirmation extends ActionBarActivity{
 	        	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
 	        	startActivity(newIntent);	
 	        	break;
-	        }
-	        
+	        	
+	        case R.id.menu_done:	
+            	Intent i = new Intent();
+                i.putExtra("sender", "confirmation");
+                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
+                setResult(RESULT_OK, i);
+    			finish();
+	        	break;
+	        	
+	        }	        
 	        return super.onOptionsItemSelected(item);
 	    }
 	}

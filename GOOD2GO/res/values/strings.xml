@@ -70,4 +70,19 @@
 	
 	<string name="account_prompt">Choose an account</string>
 	
+	    	
+	<string name="confirm_thanks">Thanks for being awesome</string>
+	<string name="confirm_got_you">We\'ve got you for \n</string>
+	<string name="confirm_points">POINTS</string>
+	<string name="confirm_points_win">Nice! You\'ve just earned</string>
+	<string name="confirm_badges">BADGES</string>
+	<string name="confirm_badge_win">Whoa! You just got yourself a new badge!</string>
+	<string name="confirm_badge_current">Your last badge:</string>
+
+
+	
+
+	
+	 
+	
 </resources>
