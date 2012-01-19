@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<cronentries>
+  <cron>
+    <url>/good2goserver?action=updateData</url>
+    <description>Update from Hevra Tova</description>
+    <timezone>Asia/Jerusalem</timezone>
+    <schedule>every day 22:11</schedule>
+  </cron>
+</cronentries>

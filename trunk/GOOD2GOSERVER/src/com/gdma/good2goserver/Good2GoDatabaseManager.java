@@ -54,10 +54,13 @@ public class Good2GoDatabaseManager {
 	
 	public Event getEvent(String eventKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Event result = null;
+		Event result = null, detached = null;
 		
 		try{
 			result = pm.getObjectById(Event.class, eventKey);
+			result.getEventAddress();
+			
+			detached = pm.detachCopy(result);
 		}
 		catch(Exception e){
 			return null;
@@ -66,15 +69,16 @@ public class Good2GoDatabaseManager {
 			pm.close();
 		}
 		
-		return result;
+		return detached;
 	}
 	
 	public Occurrence getOccurrence(String occurrenceKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
-		Occurrence result = null;
+		Occurrence result = null, detached = null;
 		
 		try{
 			result = pm.getObjectById(Occurrence.class, occurrenceKey);
+			detached = pm.detachCopy(result);
 		}
 		catch(Exception e){
 			return null;
@@ -83,7 +87,7 @@ public class Good2GoDatabaseManager {
 			pm.close();
 		}
 		
-		return result;
+		return detached;
 	}
 	
 	public void addUser(User newUser) throws IOException{
