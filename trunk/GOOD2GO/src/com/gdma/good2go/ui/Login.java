@@ -102,10 +102,44 @@ public class Login extends Activity {
 		AccountManager am = AccountManager.get(cntxt);
    		Account[] accounts;
 		accounts = am.getAccounts();
-		return accounts;
+		Account[] tempAccs, tempAccs2;
+		tempAccs = new Account[accounts.length];
+		int j = 0;
 		
-	}
-	
+		for (int i = 0; i<accounts.length; i++){
+			if (accounts[i].name.contains("@")){
+				tempAccs[j++] = accounts[i];
+			}
+		}
+		
+		
+		boolean tst;
+		int finCount=0;
+		
+		for (int i = 0; i<j; i++){
+			tst = true;
+			for (int k = 0; k<i; k++){
+				if (tempAccs[i].name.equals(tempAccs[k].name)){
+					tst = false;
+					tempAccs[i] = null;
+				}
+			}
+			if (tst == true){
+				finCount++;
+			}
+		}
+		
+		tempAccs2 = new Account[finCount];
+		j = 0;
+		for (int i = 0; i<tempAccs.length; i++){
+			if (tempAccs[i] != null){
+				tempAccs2[j++] = tempAccs[i];
+			}
+		}
+		
+		return tempAccs2;
+		
+	}	
 	private int updateServer (String userName, String email, String firstName, String lastName, String yearOfBirth){
 		
 		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
