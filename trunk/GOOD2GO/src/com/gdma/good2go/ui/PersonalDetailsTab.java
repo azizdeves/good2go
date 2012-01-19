@@ -1,70 +1,106 @@
 	package com.gdma.good2go.ui;
 
-	import android.content.Context;
-import android.content.Intent;
-import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
+	import android.os.Bundle;
 import android.view.View;
+import android.widget.ArrayAdapter;
+import android.widget.AutoCompleteTextView;
 import android.widget.Button;
 import android.widget.Spinner;
 import android.widget.TextView;
 
-import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
-import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.UsersUtil;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 
 public class PersonalDetailsTab extends ActionBarActivity{
-		private String mName = "Dina";
-		private String mAge = "496351";
-		private String mSex;
-		private String mCity;
-		private String mPhone;
-		private String mEmail;
+	
+    private static final String[] COUNTRIES = new String[] {
+        "Belgium", "France", "Italy", "Germany", "Spain"
+    };
+    
+	TextView mFirstName;
+	TextView mLastName;
+	TextView mAge;
+	AutoCompleteTextView mCity;
+	Spinner mSex;
+	TextView mPhone;
+	Button mButtonDone;
+    
+
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
 			super.onCreate(savedInstanceState);
 			setContentView(R.layout.personal_details);
 			
+        	mFirstName = (TextView)
+        			findViewById(R.id.nameDetails_personalDetailsView);
+        	mLastName = (TextView)
+        			findViewById(R.id.nameDetails_personalDetailsView2);
+        	mAge = (TextView)
+        			findViewById(R.id.ageDetails_personalDetailsView);
+        	mCity = (AutoCompleteTextView)
+	                 findViewById(R.id.cityDetails_personalDetailsView);
+        	mSex = (Spinner)
+        			findViewById(R.id.sexDetails_personalDetailsView);
+        	mPhone = (TextView)
+        			findViewById(R.id.phoneDetails_personalDetailsView);
 			
-		    
+			ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,
+	                 android.R.layout.simple_dropdown_item_1line, COUNTRIES);
+
+			mCity.setAdapter(adapter);
+					    
 				
-			Button buttonDone = (Button) findViewById(R.id.DonePrivateDetailsButton);
-			buttonDone.setOnClickListener(new View.OnClickListener() {
+			mButtonDone = (Button) findViewById(R.id.DonePrivateDetailsButton);
+			mButtonDone.setOnClickListener(new View.OnClickListener() {
 	            public void onClick(View v) {
-	            	TextView name = (TextView)findViewById(R.id.nameDetails_personalDetailsView);
-	            	TextView age = (TextView)findViewById(R.id.ageDetails_personalDetailsView);
-	            	TextView city = (TextView)findViewById(R.id.cityDetails_personalDetailsView);
-	            	Spinner sex = (Spinner)findViewById(R.id.sexDetails_personalDetailsView);
-	            	TextView phone = (TextView)findViewById(R.id.phoneDetails_personalDetailsView);
-	            	TextView email = (TextView)findViewById(R.id.emailDetails_personalDetailsView);
-	            	mName=name.getText()!=null ? name.getText().toString() : "";
-	            	mAge= age.getText()!=null ?age.getText().toString()  : "";
-	            	mCity= city.getText()!=null ? city.getText().toString()  : "";
-	            	mSex=String.valueOf(sex.getSelectedItem());
-	            	mPhone= phone.getText()!=null ? phone.getText().toString()  : "";
-	            	mEmail= email.getText()!=null ? email.getText().toString()  : "";
-	            	Intent i = new Intent();
-	            	i.putExtra("name", mName);
-	            	i.putExtra("age", mAge);
-	            	i.putExtra("city", mName);
-	            	i.putExtra("sex", mAge);
-	            	i.putExtra("phone", mName);
-	            	i.putExtra("email", mAge);
-	                setResult(RESULT_OK, i);
-	    			finish();
-	             
-		            //startActivity(i);
+	            	
+	            	if (fieldsValid()){
+		            	String userFirstName = mFirstName.getText().toString();
+		            	String userLastName = mLastName.getText().toString();
+		            	String userAge= mAge.getText().toString();
+		            	String userCity= mCity.getText().toString();
+		            	String userSex=String.valueOf(mSex.getSelectedItem());
+		            	String userPhone= mPhone.getText().toString();
+		            	
+		        		AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(v.getContext());
+		        		prefs.setAllPrivatePrefs(userFirstName, userLastName, userAge, userCity, userSex, userPhone);
+		            	
+		                setResult(RESULT_OK);
+		    			finish();
+	            	}
 	            }
-	        });
-				    	
-		    
+
+				private boolean fieldsValid() {
+	            	boolean fieldsOK = true;
+	            	
+	            	if (mFirstName.getText().toString().length()==0){
+	            		mFirstName.setError( "First name is required" );
+	            		fieldsOK = false;
+	            	}
+	            	
+	            	if (mLastName.getText().toString().length()==0){
+	            		mLastName.setError( "Last name is required" );
+	            		fieldsOK = false;
+	            	}
+	            	
+	            	if (mAge.getText().toString().length()==0){
+	            		mAge.setError( "Age is required" );
+	            		fieldsOK = false;
+	            	}
+	            	
+	            	if (mCity.getText().toString().length()==0){
+	            		mCity.setError( "City is required" );
+	            		fieldsOK = false;
+	            	}
+	            	
+	            	if (mPhone.getText().toString().length()==0){
+	            		mPhone.setError( "City is required" );
+	            		fieldsOK = false;
+	            	}
+	            	return fieldsOK;
+				}
+	        });		    
 		}
-
-		
-
 	}

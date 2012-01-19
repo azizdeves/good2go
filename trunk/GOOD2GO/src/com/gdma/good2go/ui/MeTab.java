@@ -28,6 +28,7 @@ import com.gdma.good2go.Karma;
 import com.gdma.good2go.User;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.KeyManager;
 import com.gdma.good2go.utils.UsersHistoryDbAdapter;
 import com.gdma.good2go.utils.UsersUtil;
@@ -68,11 +69,25 @@ public class MeTab extends ActionBarListActivity {
        // badge="BUDDHIST_MONK";
         points=UsersUtil.remote_getUsersKarma(userName);
  		badge=Karma.Badge.getMyBadge(points).getName();
-        User u = UsersUtil.remote_getUsersDetails(userName);
-        if (u!=null){
-        	userFirstName=u.getFirstName();
-        	userLastName=u.getLastName();
-        }
+//        User u = UsersUtil.remote_getUsersDetails(userName);
+//        if (u!=null){
+//        	userFirstName=u.getFirstName();
+//        	userLastName=u.getLastName();
+//        }
+ 		
+ 		
+ 		AppPreferencesPrivateDetails userPrefs = new AppPreferencesPrivateDetails(this);
+ 		String userName = userPrefs.getUserName();
+
+		userFirstName = userPrefs.doPrivateDetailsExist() ?
+				userPrefs.getUserFirstName()
+				: userName.substring(0,userName.indexOf('@'));				
+	
+		userLastName  = userPrefs.doPrivateDetailsExist() ?
+				userPrefs.getUserLastName()
+				: "";
+
+ 		
         userNiceName=userFirstName+" "+ userLastName;
         TextView tvName = (TextView) findViewById(R.id.userNameMeView);
         TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);

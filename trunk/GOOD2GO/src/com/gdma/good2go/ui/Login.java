@@ -6,7 +6,6 @@ import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
 import android.content.Context;
-import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.view.View;
@@ -19,6 +18,7 @@ import android.widget.Toast;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 
 
 
@@ -88,10 +88,12 @@ public class Login extends Activity {
 	
 	
 	private void saveLocalUsername(String userName){
-		SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		SharedPreferences.Editor editor = settings.edit();
-		editor.putString("userNameVal", userName);
-		editor.commit();
+		AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
+		prefs.setUserName(userName);
+//		SharedPreferences settings = getSharedPreferences("user_private_details", MODE_PRIVATE);
+//		SharedPreferences.Editor editor = settings.edit();
+//		editor.putString("userNameVal", userName);
+//		editor.commit();
 	}
 	
 	

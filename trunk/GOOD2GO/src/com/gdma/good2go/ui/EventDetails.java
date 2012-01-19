@@ -138,7 +138,7 @@ public class EventDetails extends ActionBarTabActivity {
 		        public void onClick(View view) {
 		        	mContext = view.getContext();
 		        	mUsersPrefs = new AppPreferencesPrivateDetails(view.getContext());
-		        	if (!mUsersPrefs.isUsernameExists()){
+		        	if (!mUsersPrefs.doPrivateDetailsExist()){
 		        	  Intent newIntent = new Intent(view.getContext(), PersonalDetailsTab.class);
 		        	  startActivityForResult(newIntent, ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS);
 		        	}
@@ -158,13 +158,13 @@ public class EventDetails extends ActionBarTabActivity {
 		if (resultCode==Activity.RESULT_OK)
 		{
 			if(requestCode==ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS){
-				mUsername=data.getStringExtra("name")!=null ? data.getStringExtra("name") : "";
-				mUserAge=data.getStringExtra("age")!=null ? data.getStringExtra("age") : "";
-            	mCity= data.getStringExtra("city")!=null ? data.getStringExtra("city") : "";
-            	mSex= data.getStringExtra("sex")!=null ? data.getStringExtra("sex") : "";
-            	mPhone=data.getStringExtra("phone")!=null ? data.getStringExtra("phone") : "";
-            	mEmail= data.getStringExtra("email")!=null ? data.getStringExtra("email") : "";
-            	mUsersPrefs.saveUserName(mUsername);
+//				mUsername=data.getStringExtra("name")!=null ? data.getStringExtra("name") : "";
+//				mUserAge=data.getStringExtra("age")!=null ? data.getStringExtra("age") : "";
+//            	mCity= data.getStringExtra("city")!=null ? data.getStringExtra("city") : "";
+//            	mSex= data.getStringExtra("sex")!=null ? data.getStringExtra("sex") : "";
+//            	mPhone=data.getStringExtra("phone")!=null ? data.getStringExtra("phone") : "";
+//            	mEmail= data.getStringExtra("email")!=null ? data.getStringExtra("email") : "";
+//            	mUsersPrefs.setUserName(mUsername);
             	getCountMeInTab(mContext);
 			}
 			if(requestCode==ActivitysCodeUtil.GET_COUNT_ME_IN_TAB){

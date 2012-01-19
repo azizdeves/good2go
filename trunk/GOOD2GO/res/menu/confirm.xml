@@ -14,19 +14,12 @@
   limitations under the License.
   -->
 
-<resources>
-    <color name="actionbar_title_color">#ffffff</color>
-    
-        
-    <color name="actionbar_text">#ff29549f</color>
-    <color name="accent_1">#31a6c6</color>
-    
-    <color name="app_main_color">#31a6c6</color>
-     <color name="app_secondary_color">#98afc7</color>
-     
-     <color name="app_text_main">#717D7D</color>    
-     <color name="app_text_secondary">#AFC7C7</color>
-     
-     <color name="app_text_white">#ffffff</color>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
 
-</resources>
+    <item android:id="@+id/menu_done"
+        android:title="@string/menu_done"
+        android:icon="@drawable/ic_action_go" 
+        android:orderInCategory="0"
+        android:showAsAction="always" />
+
+</menu>

@@ -130,7 +130,8 @@
         <item name="android:textColor">@color/app_text_white</item>
         <item name="android:textStyle">bold</item>
         <item name="android:textSize">@dimen/text_size_small</item>       
-    </style>    
+    </style>   
+    
        
     <style name="ButtonCountMeIn" parent="@android:style/Widget.Button">
         <item name="android:gravity">center_vertical|center_horizontal</item>
