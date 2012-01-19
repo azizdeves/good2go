@@ -40,36 +40,6 @@ import java.io.*;
 @SuppressWarnings("serial")
 public class Good2GoServerServlet extends HttpServlet {
 	
-/* For debugging
- * 
- * 
- * 	private class DateParser implements ObjectFactory{
-
-		@Override
-		public Object instantiate(ObjectBinder context, Object value, Type targetType, Class targetClass) {
-			if (value instanceof String){
-				String v = (String) value;
-				v = v.replace('.', ':');
-				
-				String[] parts = v.split(":");
-				
-				Calendar c = Calendar.getInstance();
-				c.set(Calendar.YEAR, Integer.parseInt(parts[0]));
-				c.set(Calendar.MONTH, Integer.parseInt(parts[1]) - 1);
-				c.set(Calendar.DATE, Integer.parseInt(parts[2]));
-				c.set(Calendar.HOUR_OF_DAY, Integer.parseInt(parts[3]));
-				c.set(Calendar.MINUTE, Integer.parseInt(parts[5]));
-				c.set(Calendar.SECOND, Integer.parseInt(parts[6]));
-				c.set(Calendar.MILLISECOND, Integer.parseInt(parts[7]));
-				
-				Date ret = c.getTime();
-				return ret;
-			}
-			return null;
-		}
-		
-	}*/
-	
 	private String getTime(Date dateFromEvent) {
  		Calendar c = Calendar.getInstance();
  		
@@ -81,18 +51,75 @@ public class Good2GoServerServlet extends HttpServlet {
 	
 	private static final Logger log = Logger.getLogger(Good2GoServerServlet.class.getName());
 	
- 	
+ 	private Good2GoPoint getCoordinate(Event.Address address){
+ 		
+ 		if (address == null || address.getCity() == null || address.getCity().length() == 0)
+ 			return null;
+ 		
+ 		try {
+ 			
+ 			String addressString = new String("http://maps.googleapis.com/maps/api/geocode/json?sensor=false&language=iw&address=" + address.getCity());
+ 			if (address.getStreet() != null && address.getStreet().length() != 0){
+ 				addressString += " " + address.getStreet();
+ 				
+ 				if (address.getNumber() != 0)
+ 					addressString += " " + address.getNumber();
+ 			}
+ 			
+ 			addressString = addressString.replace(" ", "%20");
+			URL url = new URL(addressString);
+			
+			HTTPRequest req = new HTTPRequest(url,HTTPMethod.GET);
+			HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
+			byte[] bytes = res.getContent();
+			
+			String s = new String(bytes,"UTF-8");
+			int begin = 0;
+			int end = 0;
+			
+			begin = s.indexOf("location");
+			begin = s.indexOf("lat",begin);
+			
+			while (begin<s.length() && !Character.isDigit(s.charAt(begin)))
+				begin++;
+			
+			end = begin;
+			while (end<s.length() && (Character.isDigit(s.charAt(end)) || s.charAt(end) == '.'))
+				end++;
+			
+			if (end > begin + 9)
+				end = begin + 9;
+			
+			int lat = Integer.parseInt(s.substring(begin,end).replace(".", ""));
+			
+			begin = s.indexOf("lng",begin);
+			
+			while (begin<s.length() && !Character.isDigit(s.charAt(begin)))
+				begin++;
+			
+			end = begin;
+			while (end<s.length() && (Character.isDigit(s.charAt(end)) || s.charAt(end) == '.'))
+				end++;
+			
+			if (end > begin + 9)
+				end = begin + 9;
+			
+			int lon = Integer.parseInt(s.substring(begin,end).replace(".", ""));
+			
+			return new Good2GoPoint(lat,lon);
+					
+		}
+ 		catch (Exception e) {
+		}
+ 		
+ 		return null;
+ 	}
 	
 	private void htUpdateData(PrintWriter pw){
 		try{
 			Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
 			
 	        URL url = new URL("http://www.hevratova.org.il/share/");
-	        /*URLConnection yc = url.openConnection();
-	        BufferedReader in = new BufferedReader(
-	                                new InputStreamReader(
-	                                yc.getInputStream()));*/
-
 			
 			HTTPRequest req = new HTTPRequest(url,HTTPMethod.GET);
 			HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
@@ -120,9 +147,7 @@ public class Good2GoServerServlet extends HttpServlet {
 
 	        String line;
 	        line = in.readLine();
-	        
 	        if (line != null) while ((line = in.readLine()) != null){
-	        	pw.println(line);
 	        	lastEventKey = eventKey;
 	        	int len = line.length();
 	        	int start = 0;
@@ -172,6 +197,7 @@ public class Good2GoServerServlet extends HttpServlet {
 		        				}
 		        					
 	        					e = dbm.getEvent(eventKey);
+	        					
 		        				if (e==null){
 		        					isNewEvent = true;
 		        					e = new Event();
@@ -286,6 +312,11 @@ public class Good2GoServerServlet extends HttpServlet {
 	        					}
 	        					catch (Exception ex){
 	        					}
+	        					
+	        					if (address.getGood2GoPoint() == null || address.getGood2GoPoint().getLat() == 0 || address.getGood2GoPoint().getLon() == 0){
+	        						address.setGood2GoPoint(getCoordinate(address));
+	        					}
+	        					
 	        					e.setEventAddress(address);
 	        				}
 	        				break;
@@ -366,368 +397,12 @@ public class Good2GoServerServlet extends HttpServlet {
 			throws IOException {	
 		
 		Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
-
-		/* Gson debugging		
-		Gson gson = new Gson();
-		JsonArray jsonArray = new JsonArray();
-		JsonObject jsonKarma = null;
-		DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
-		
-		String dateString = dateFormatter.format(new Date());
-		
-		jsonKarma = new JsonObject();
-		jsonKarma.addProperty("Date", dateString);
-		jsonKarma.addProperty("Event", "testEvent");
-		jsonKarma.addProperty("Points", (long) 200010102);
-		
-		jsonArray.add(jsonKarma);
-		
-		String json = gson.toJson(jsonArray);
-		
-		JsonParser parser = new JsonParser();
-		
-		jsonArray = parser.parse(json).getAsJsonArray();
-		for (int i=0;i<jsonArray.size();i++){
-			jsonKarma = (JsonObject) jsonArray.get(i);
-			String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
-			String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
-			long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
-		}
-		*/
 		
 		resp.setCharacterEncoding("UTF-8");
 		PrintWriter pw = resp.getWriter();
 		resp.setContentType("text/html; charset=UTF-8");
 		
 		String action = req.getParameter(new String("action"));
-			
-		
-		
-		 // Old addEvents 
-		 
-		if (action.compareToIgnoreCase("addEvents")==0){
-			
-			Set<Event.VolunteeringWith> vw = new HashSet<Event.VolunteeringWith>();
-			vw.add(Event.VolunteeringWith.CHILDREN);
-			vw.add(Event.VolunteeringWith.DISABLED);
-			
-			Set<Event.SuitableFor> sf = new HashSet<Event.SuitableFor>();
-			sf.add(Event.SuitableFor.GROUPS);
-			sf.add(Event.SuitableFor.INDIVIDUALS);
-			
-			Set<Event.WorkType> wt = new HashSet<Event.WorkType>();
-			wt.add(Event.WorkType.MENIAL);
-			
-			Event e = null;
-			Integer eventInt = new Integer(1); 
-			Integer occurrenceInt = new Integer(1); 
-			
-			// First event.
-			
-			Event.Address a = null;
-		
-			a = new Event.Address();
-			
-			a.setCity("TLV");
-			a.setStreet("Weissman");
-			a.setNumber((short) 100);
-			a.setGood2GoPoint(new Good2GoPoint(32069156, 34774003));
-			
-			e = new Event("Fun Horseback Riding","","", "Help handicapped teenagers and enjoy a horseack ride",
-						  "Assist handicapped teenagers in therapeutic horse-back riding, lead their horse and help them follow instructors commands.",
-						  600, false, a, (short) 5, "FilthyRichForPoorPersons", vw, sf, wt, true);
-			e.setEventKey(eventInt.toString());
-			eventInt++;
-			
-			Occurrence o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
-			o.setStartTime(10, 0);
-			o.setEndTime(20, 20);
-			//o.addRegisteredUser("Dana");
-			//o.addRegisteredUser("Gil");
-			
-			e.addOccurrence(o);
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
-			o.setStartTime(12, 30);
-			o.setEndTime(15, 40);
-			//o.addRegisteredUser("Gil");
-			//o.addRegisteredUser("Mor");
-			
-			e.addOccurrence(o);
-			
-			dbm.addEvent(e);
-
-			// Second event.
-			
-			vw = new HashSet<Event.VolunteeringWith>();
-			vw.add(Event.VolunteeringWith.ANIMALS);
-			
-			sf = new HashSet<Event.SuitableFor>();
-			sf.add(Event.SuitableFor.GROUPS);
-			sf.add(Event.SuitableFor.INDIVIDUALS);
-			sf.add(Event.SuitableFor.KIDS);
-			
-			wt = new HashSet<Event.WorkType>();
-			wt.add(Event.WorkType.MENIAL);
-
-			a = new Event.Address();
-			
-			a.setCity("TLV");
-			a.setStreet("somewhere");
-			a.setNumber((short) 1);
-			a.setGood2GoPoint(new Good2GoPoint(32069211, 34763403));
-			
-			e = new Event("Dogs are our best friends","","", "Have a walk with a city chelter dog","Make a furry cute friend for life!",
-						  130, false, a, (short) 0, "CityShelter", vw, sf, wt, true);
-			
-			e.setEventKey(eventInt.toString());
-			eventInt++;
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
-			o.setStartTime(11, 30);
-			o.setEndTime(13, 40);
-			//o.addRegisteredUser("Mor");
-			//o.addRegisteredUser("Adi");
-			
-			e.addOccurrence(o);
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
-			o.setStartTime(9, 20);
-			o.setEndTime(20, 15);
-			//o.addRegisteredUser("Dana");
-			//o.addRegisteredUser("Shimon Peres");
-			
-			e.addOccurrence(o);
-			
-			dbm.addEvent(e);
-
-			// Third event.
-			
-			vw = new HashSet<Event.VolunteeringWith>();
-			vw.add(Event.VolunteeringWith.CHILDREN);
-			
-			sf = new HashSet<Event.SuitableFor>();
-			sf.add(Event.SuitableFor.INDIVIDUALS);
-			
-			wt = new HashSet<Event.WorkType>();
-			wt.add(Event.WorkType.MENTAL);
-	
-			a = new Event.Address();
-			
-			a.setCity("TLV");
-			a.setStreet("Center");
-			a.setNumber((short) 20);
-			a.setGood2GoPoint(new Good2GoPoint(32086865,34789581));
-			
-			e = new Event("Surf the internet","","", "Show the wonders of Google and Wikipedia to children","Share what you know by teaching internet to kids!",
-						  205, false, a, (short) 0, "Google Inc.", vw, sf, wt, true);
-			
-			e.setEventKey(eventInt.toString());
-			eventInt++;
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
-			o.setStartTime(10, 00);
-			o.setEndTime(13, 25);
-			//o.addRegisteredUser("Avi");
-			//o.addRegisteredUser("Hezi");
-			
-			e.addOccurrence(o);
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
-			o.setStartTime(14, 55);
-			o.setEndTime(23, 00);
-			//o.addRegisteredUser("Shlomo");
-			
-			e.addOccurrence(o);
-			
-			dbm.addEvent(e);
-	
-			// Fourth event.
-			
-			vw = new HashSet<Event.VolunteeringWith>();
-			vw.add(Event.VolunteeringWith.ELDERLY);
-			
-			sf = new HashSet<Event.SuitableFor>();
-			sf.add(Event.SuitableFor.INDIVIDUALS);
-			sf.add(Event.SuitableFor.KIDS);
-			
-			wt = new HashSet<Event.WorkType>();
-			wt.add(Event.WorkType.MENTAL);
-	
-			a = new Event.Address();
-			
-			a.setCity("TLV");
-			a.setStreet("Einstein");
-			a.setNumber((short) 30);
-			a.setGood2GoPoint(new Good2GoPoint(32074938,34775591));
-			
-			e = new Event("Read your favourite book","","", "Make someone happy and provide company to the elderly","Read anything you like to the elderly",
-						  60, false, a, (short) 0, "Mishan", vw, sf, wt, true);
-			
-			e.setEventKey(eventInt.toString());
-			eventInt++;
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
-			o.setStartTime(10, 00);
-			o.setEndTime(11, 00);
-			//o.addRegisteredUser("Johnny");
-			//o.addRegisteredUser("Franky");
-			
-			e.addOccurrence(o);
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
-			o.setStartTime(13, 00);
-			o.setEndTime(14, 00);
-			//o.addRegisteredUser("Amos");
-			//o.addRegisteredUser("Hilbert");
-			
-			e.addOccurrence(o);
-			
-			dbm.addEvent(e);
-			
-			// Fifth event.
-			
-			vw = new HashSet<Event.VolunteeringWith>();
-			vw.add(Event.VolunteeringWith.ELDERLY);
-			vw.add(Event.VolunteeringWith.DISABLED);
-			vw.add(Event.VolunteeringWith.CHILDREN);
-			
-			sf = new HashSet<Event.SuitableFor>();
-			sf.add(Event.SuitableFor.INDIVIDUALS);
-			sf.add(Event.SuitableFor.GROUPS);
-			sf.add(Event.SuitableFor.KIDS);
-			
-			wt = new HashSet<Event.WorkType>();
-			wt.add(Event.WorkType.MENIAL);
-	
-			a = new Event.Address();
-			
-			a.setCity("TLV");
-			a.setStreet("Hayarkon");
-			a.setNumber((short) 20);
-			a.setGood2GoPoint(new Good2GoPoint(32055555,34769572));
-			
-			e = new Event("Shake what your mamma gave ya","","", "Get jiggy with it!","Konichiwa bithez !!!!",
-						  119, false, a, (short) 0, "Pussycat", vw, sf, wt, true);
-			
-			e.setEventKey(eventInt.toString());
-			eventInt++;
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
-			o.setStartTime(22, 00);
-			o.setEndTime(23, 59);
-			//o.addRegisteredUser("Maya");
-			//o.addRegisteredUser("Avner");
-			
-			e.addOccurrence(o);
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
-			o.setStartTime(22, 00);
-			o.setEndTime(23, 59);
-			//o.addRegisteredUser("Terry");
-			//o.addRegisteredUser("Giliam");
-			
-			e.addOccurrence(o);
-			
-			dbm.addEvent(e);
-	
-			// Sixth event.
-			
-			vw = new HashSet<Event.VolunteeringWith>();
-			vw.add(Event.VolunteeringWith.SPECIAL);
-			
-			sf = new HashSet<Event.SuitableFor>();
-			sf.add(Event.SuitableFor.INDIVIDUALS);
-			sf.add(Event.SuitableFor.GROUPS);
-			sf.add(Event.SuitableFor.KIDS);
-			
-			wt = new HashSet<Event.WorkType>();
-			wt.add(Event.WorkType.MENIAL);
-	
-			a = new Event.Address();
-			
-			a.setCity("TLV");
-			a.setStreet("Jaffa port");
-			a.setNumber((short) 1);
-			a.setGood2GoPoint(new Good2GoPoint(32063374,34773080));
-			
-			e = new Event("Give a hot meal to the needy","","", "Help pack and distribute hot meals to those in need","They are very hungry. Help them.",
-						  360, false, a, (short) 0, "Jaffa for Jaffa", vw, sf, wt, true);
-			
-			e.setEventKey(eventInt.toString());
-			eventInt++;
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2011, Calendar.DECEMBER, 31);
-			o.setStartTime(8, 0);
-			o.setEndTime(14, 0);
-			
-			e.addOccurrence(o);
-			
-			o = new Occurrence();
-			o.setOccurrenceKey(occurrenceInt.toString());
-			occurrenceInt++;
-			
-			o.setOccurrenceDate(2012,Calendar.JANUARY,1);
-			o.setStartTime(8, 0);
-			o.setEndTime(15, 0);
-			
-			e.addOccurrence(o);
-			
-			dbm.addEvent(e);
-				
-		}
-		
-		
-		
-		/******************************
-		********End of addEvents*******
-		******************************/
-		
-		
 		
 		if (action.compareToIgnoreCase("getUserHistory")==0){
 			String userName = req.getParameter(new String("userName"));
@@ -785,23 +460,6 @@ public class Good2GoServerServlet extends HttpServlet {
 			String userDateString = req.getParameter(new String("userDate"));
 			String durationString = req.getParameter(new String("duration"));
 			String distanceString = req.getParameter(new String("distance"));
-			
-			/*debugging
-			Calendar c = Calendar.getInstance();
-			c.set(2011, Calendar.DECEMBER,31,8,0,0);
-			c.set(Calendar.MILLISECOND,0);
-			Date myDate = c.getTime();
-			
-			int d = myDate.getDay();
-			int m = myDate.getMonth();
-			int y = myDate.getYear();
-			int h = myDate.getHours();
-			int min = myDate.getMinutes();
-			int s = myDate.getSeconds();
-
-			String dateToSend = Long.toString(myDate.getTime());
-			
-			debugging*/
 			
 			if (userDateString!=null){
 				userDate = new Date();
@@ -865,15 +523,6 @@ public class Good2GoServerServlet extends HttpServlet {
 				}
 
 				pw.print(js);
-				
-				/*For debugging
-				
-				List<Event> e = new JSONDeserializer<List<Event>>().use(Date.class,new DateParser()).deserialize(js);
-				
-				String startTime = getTime(e.get(0).getOccurrences().get(0).getStartTime());
-				String endTime = getTime(e.get(0).getOccurrences().get(0).getEndTime());
-				
-				int k = 0;*/
 			}
 			
 			else
@@ -975,15 +624,7 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 				User user = dbm.getUserDetails(userName);
 				
-				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);
-				
-				/*for debugging*/
-				User u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(js); 
-				
-				resp.setContentType("text/plain");
-				
-				pw.print(js);
-				
+				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);				
 			}
 			else{
 				pw.print("Unspecified username");
