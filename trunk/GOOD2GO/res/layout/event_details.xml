@@ -158,7 +158,7 @@
 	            android:layout_height="fill_parent">
 
          <TextView 
-	                android:id="@+id/eventdetails"
+	                android:id="@+id/event_details"
 	                android:layout_width="fill_parent"
 	                android:layout_height="fill_parent" 
 	                android:layout_alignParentLeft="true"
@@ -166,12 +166,12 @@
 	                android:text="The kayaking activity includes kayak sailing, swimming, challenging water activities and social interaction. All activities are managed by the volunteers and provide them joy, happiness and challenge. \nWe need volunteers to support and guide the children. \nCome and have fun with us! " />
 
 	            <TextView 
-	                android:id="@+id/textview2"
+	                android:id="@+id/map_view"
 	                android:layout_width="fill_parent"
 	                android:layout_height="fill_parent" 
 	                android:text="This is a map to the event" />
 	            <TextView 
-	                android:id="@+id/textview3"
+	                android:id="@+id/npo_view"
 	                android:layout_width="fill_parent"
 	                android:layout_height="fill_parent" 
 	                android:text="This is info about the NPO" />
