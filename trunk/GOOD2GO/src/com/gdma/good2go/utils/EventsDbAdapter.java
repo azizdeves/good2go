@@ -57,6 +57,14 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_IMAGE = "image";
 	public static final String KEY_EVENT_START_TIME = "starttime";
 	public static final String KEY_EVENT_END_TIME = "endtime";
+	public static final String KEY_EVENT_PRE_REQ = "prereq";
+	public static final String KEY_EVENT_NPO_NAME = "npo_name";
+	public static final String KEY_EVENT_IS_FOR_GROUPS = "for_groups";
+	public static final String KEY_EVENT_IS_FOR_INDIVID = "for_individ";
+	public static final String KEY_EVENT_IS_FOR_KIDS = "for_kids";
+	public static final String KEY_EVENT_WORK_MENIAL = "menial";
+	public static final String KEY_EVENT_WORL_MENTAL = "mental";
+
 	public static final String KEY_EVENTID = "_id";
 	
 	
@@ -93,6 +101,13 @@ public class EventsDbAdapter {
 	        + KEY_EVENT_IMAGE + " text not null, "
 	        + KEY_EVENT_START_TIME + " text not null, "
 	        + KEY_EVENT_END_TIME + " text not null, "
+	        + KEY_EVENT_PRE_REQ + " text not null, "
+		    + KEY_EVENT_NPO_NAME + " text not null, "
+		    + KEY_EVENT_IS_FOR_GROUPS + " text not null, "
+		    + KEY_EVENT_IS_FOR_INDIVID + " text not null, "
+		    + KEY_EVENT_IS_FOR_KIDS + " text not null, "
+		    + KEY_EVENT_WORK_MENIAL + " text not null, "
+		    + KEY_EVENT_WORL_MENTAL + " text not null, "
 	        + "UNIQUE ("
 	        + KEY_EVENT_KEY
 	        + "));";
@@ -100,7 +115,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 14;
+    private static final int DATABASE_VERSION = 16;
 
     private final Context mCtx;
 
@@ -164,6 +179,13 @@ public class EventsDbAdapter {
      * @param details the long details of the event
      * @param gplat the geopoint latitude
      * @param gplong the geopoint longtitude
+     * @param mental 
+     * @param menial 
+     * @param kids 
+     * @param individ 
+     * @param groups 
+     * @param npoName 
+     * @param preReq 
      * @return rowId or -1 if failed
      */
     public long createEvent(String eventkey, String name, String info, String details, 
@@ -171,7 +193,9 @@ public class EventsDbAdapter {
     		String city, String street, String streetNumber,
     		String typeAnimal, String typeChildren,String typeDisabled,
     		String typeElderly,String typeEnvironment,String typeSpecial, 
-    		String eventImage, String startTime, String endTime) 
+    		String eventImage, String startTime, String endTime, 
+    		String preReq, String npoName, String groups, String individ, String kids, 
+    		String menial, String mental) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -195,6 +219,13 @@ public class EventsDbAdapter {
         initialValues.put(KEY_EVENT_IMAGE, eventImage);
         initialValues.put(KEY_EVENT_START_TIME, startTime);
         initialValues.put(KEY_EVENT_END_TIME, endTime);
+        initialValues.put(KEY_EVENT_PRE_REQ, preReq);
+        initialValues.put(KEY_EVENT_NPO_NAME, npoName);
+        initialValues.put(KEY_EVENT_IS_FOR_GROUPS, groups);
+        initialValues.put(KEY_EVENT_IS_FOR_INDIVID, individ);
+        initialValues.put(KEY_EVENT_IS_FOR_KIDS, kids);
+        initialValues.put(KEY_EVENT_WORK_MENIAL, menial);
+	    initialValues.put(KEY_EVENT_WORL_MENTAL, mental);
         
 
         long result=mDb.insert(DATABASE_TABLE, null, initialValues);
@@ -211,6 +242,16 @@ public class EventsDbAdapter {
 
         return mDb.delete(DATABASE_TABLE, KEY_EVENTID + "=" + eventId, null) > 0;
     }
+    
+    /**
+     * Delete all records in events table
+     * 
+     * @return true if deleted, false otherwise
+     */
+    public boolean deleteAllEvents() {
+
+        return mDb.delete(DATABASE_TABLE, "1", null) > 0;
+    }
 
     /**
      * Return a Cursor over the list of all events in the database
@@ -219,13 +260,8 @@ public class EventsDbAdapter {
      */
     public Cursor fetchAllEvents() {
 
-        return mDb.query(DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
-        		KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-        		KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
-        		KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
-        		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER,
-        		KEY_EVENT_IMAGE, KEY_EVENT_START_TIME, KEY_EVENT_END_TIME},
-        		null, null, null, null, EVENTS_ORDER, null);
+        return mDb.query(DATABASE_TABLE, null, null, null, null, null, 
+        		EVENTS_ORDER, null);
     }
 
     /**
@@ -239,14 +275,7 @@ public class EventsDbAdapter {
 
         Cursor mCursor =
 
-            mDb.query(true, DATABASE_TABLE, new String[] {KEY_EVENTID, KEY_EVENTNAME,
-                    KEY_EVENT_SHORT_INFO, KEY_EVENT_DETAILS, 
-                    KEY_EVENT_GP_LONG, KEY_EVENT_GP_LAT, 
-                    KEY_EVENT_DISTANCE, KEY_EVENT_DURATION,
-            		KEY_EVENT_CITY, KEY_EVENT_STREET, KEY_EVENT_STREET_NUMBER,
-            		KEY_EVENT_TYPE_ANIMAL, KEY_EVENT_TYPE_CHILDREN, KEY_EVENT_TYPE_DISABLED,
-            		KEY_EVENT_TYPE_ELDERLY,KEY_EVENT_TYPE_ENVIRONMENT,KEY_EVENT_TYPE_SPECIAL,
-            		KEY_EVENT_IMAGE , KEY_EVENT_START_TIME, KEY_EVENT_END_TIME}, 
+            mDb.query(true, DATABASE_TABLE, null, 
                     KEY_EVENTID + "=" + eventId, null,
                     null, null, null, null);
         if (mCursor != null) {

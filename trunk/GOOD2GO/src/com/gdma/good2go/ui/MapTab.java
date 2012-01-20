@@ -73,7 +73,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         mMap.setBuiltInZoomControls(true);
         
         mMapController = mMap.getController();
-        mMapController.setZoom(16);
+        mMapController.setZoom(12);
         
         mLocationManager = (LocationManager)this.getSystemService(LOCATION_SERVICE);
 		

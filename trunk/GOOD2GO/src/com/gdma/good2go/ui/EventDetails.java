@@ -35,17 +35,13 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventSreet;
     private String mEventWhen;
     private String mEventDuration;
+    private String mEventNPO;
     private int mEventImage;
     private String mSender;    
     private EventsDbAdapter mDbHelper;
     private AppPreferencesPrivateDetails mUsersPrefs;
     private Context mContext;
-    private String mUsername="";
-    private String mUserAge="";
-    private String mCity="";
-    private String mPhone="";
-    private String mEmail="";
-    private String mSex="";
+
     
     /**@TODO - add all the fields here in case this activity dies, so it can resume
   
@@ -76,11 +72,12 @@ public class EventDetails extends ActionBarTabActivity {
 	    /**POPULATE VIEWS FROM DB*/   
 	    TextView eventTitle = (TextView) findViewById(R.id.eventTitle);
 	    TextView eventDescription = (TextView) findViewById(R.id.eventDescription);
-	    TextView eventDetails = (TextView) findViewById(R.id.eventdetails);
+	    TextView eventDetails = (TextView) findViewById(R.id.event_details);
 	    TextView eventDuration = (TextView) findViewById(R.id.howlong);
 	    TextView eventWhen = (TextView) findViewById(R.id.when);
 	    TextView eventWhere = (TextView) findViewById(R.id.where);
 	    ImageView eventImage = (ImageView) findViewById(R.id.eventPic);
+	    TextView eventNPO = (TextView) findViewById(R.id.npo_view);
 
 	    
 	    mEventName = event.getString(event.getColumnIndexOrThrow
@@ -102,7 +99,8 @@ public class EventDetails extends ActionBarTabActivity {
 	    		+ "-" 
 	    		+ event.getString(event.getColumnIndexOrThrow
 	    				(EventsDbAdapter.KEY_EVENT_END_TIME));
-	    
+	    mEventNPO = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_NPO_NAME));
 	    	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
@@ -111,6 +109,7 @@ public class EventDetails extends ActionBarTabActivity {
 	    eventDuration.setText(mEventDuration);
 	    eventWhen.setText(mEventWhen);	    
 	    eventImage.setImageResource(mEventImage);
+	    eventNPO.setText(mEventNPO);
 	    
 	    /**TODO: add distance*/
 
@@ -121,11 +120,11 @@ public class EventDetails extends ActionBarTabActivity {
 	    
 	    /**SHOW TABS AND LAYOUT*/
 	    mTabHost.addTab(mTabHost.newTabSpec("tab_about_event").setIndicator
-	    		("About").setContent(R.id.eventdetails));
+	    		("About").setContent(R.id.event_details));
 	    mTabHost.addTab(mTabHost.newTabSpec("tab_map_event").setIndicator(
-	    		"Map").setContent(R.id.textview2));
+	    		"Map").setContent(R.id.map_view));
 	    mTabHost.addTab(mTabHost.newTabSpec("tab_npo").setIndicator
-	    		("Who").setContent(R.id.textview3));
+	    		("Who").setContent(R.id.npo_view));
 	    
 	    mTabHost.setCurrentTab(0);
 
@@ -209,12 +208,12 @@ public class EventDetails extends ActionBarTabActivity {
 
 	private void getCountMeInTab( Context c){
 		Bundle extraInfo = new Bundle();
-		extraInfo.putString("userName", mUsername);
-		extraInfo.putString("userAge", mUserAge);
-		extraInfo.putString("userCity", mCity);
-		extraInfo.putString("userPhone", mPhone);
-		extraInfo.putString("userEmail", mEmail);
-		extraInfo.putString("userSex", mSex);
+//		extraInfo.putString("userName", mUsername);
+//		extraInfo.putString("userAge", mUserAge);
+//		extraInfo.putString("userCity", mCity);
+//		extraInfo.putString("userPhone", mPhone);
+//		extraInfo.putString("userEmail", mEmail);
+//		extraInfo.putString("userSex", mSex);
 		
         extraInfo.putString("eventname", mEventName);
         extraInfo.putString("desc", mEventDesc);

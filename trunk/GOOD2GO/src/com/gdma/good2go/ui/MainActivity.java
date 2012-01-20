@@ -42,7 +42,9 @@ import android.view.Window;
 import android.widget.Toast;
 
 import com.gdma.good2go.Event;
+import com.gdma.good2go.Event.SuitableFor;
 import com.gdma.good2go.Event.VolunteeringWith;
+import com.gdma.good2go.Event.WorkType;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
@@ -351,7 +353,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
-		c.set(2012,Calendar.JANUARY,16,0,0,0);
+		c.set(2012,Calendar.JANUARY,23,0,0,0);
 		c.set(Calendar.HOUR_OF_DAY,8);
 		Date myDate = new Date();
 		myDate = c.getTime();
@@ -396,11 +398,10 @@ public class MainActivity extends ActionBarActivity {
         if (eventList!=null)
         {
 	        /**POPULATE DB**/
-	        
-	        /**TODO: drop what we have if it's a new day
-	         * or if there's been a change since last read
-	         */
+        	
 	        mDbHelper.open();
+	        boolean res = mDbHelper.deleteAllEvents();
+	        
 	        for(Event event : eventList)
 	        {
 	        	String eventLat=Integer.toString(
@@ -421,44 +422,44 @@ public class MainActivity extends ActionBarActivity {
 	        	String endTime = getTime(event.getOccurrences().get(0).getEndTime());
 	        	
 	        	//get eventAdditionalDetails
-	        	event.getNPOName();
-	        	event.getSuitableFor();
-	        	event.getWorkType();
-	        	   	        	
-	        	//assign event types
-	        	Set<VolunteeringWith> listType = event.getVolunteeringWith();
-	        	String animals="0", children="0", disabled="0", elderly="0", environment="0", special="0" ;
+	        	String preReq = event.getPrerequisites();
+	        	String npoName = event.getNPOName();
 	        	
-	        	for (Iterator<VolunteeringWith> iterator = listType.iterator(); iterator.hasNext();) 
-	        	{
-					VolunteeringWith volunteeringWith = (VolunteeringWith) iterator.next();
-					if(volunteeringWith==VolunteeringWith.ANIMALS)
-						animals="1";
-					else if(volunteeringWith==VolunteeringWith.CHILDREN)
-						children="1";
-					else if(volunteeringWith==VolunteeringWith.DISABLED)
-						disabled="1";
-					else if(volunteeringWith==VolunteeringWith.ELDERLY)
-						elderly="1";
-					else if(volunteeringWith==VolunteeringWith.ENVIRONMENT)
-						environment="1";
-					else if(volunteeringWith==VolunteeringWith.SPECIAL)
-						special="1";
-				}
+	        	//get suitable for	        	
+	        	Set<SuitableFor> sf = event.getSuitableFor();
+	        	String groups = isSetContains(sf, SuitableFor.GROUPS);
+	        	String individ = isSetContains(sf, SuitableFor.INDIVIDUALS);
+	        	String kids = isSetContains(sf, SuitableFor.KIDS); 
+	        	
+	        	//get work type
+	        	Set<WorkType> wt = event.getWorkType();
+	        	String menial = isSetContains(wt, WorkType.MENIAL);
+	        	String mental = isSetContains(wt, WorkType.MENTAL);
+	        		        	   	        	
+	        	//assign event types
+	        	Set<VolunteeringWith> vw = event.getVolunteeringWith();
+	        	String animals = isSetContains(vw, VolunteeringWith.ANIMALS);
+	        	String children = isSetContains(vw, VolunteeringWith.CHILDREN); 
+	        	String disabled = isSetContains(vw, VolunteeringWith.DISABLED);
+	        	String elderly = isSetContains(vw, VolunteeringWith.ELDERLY);
+	        	String env = isSetContains(vw, VolunteeringWith.ENVIRONMENT);
+	        	String special = isSetContains(vw, VolunteeringWith.SPECIAL);
 	        	
 	        	//assign an image to event 
-	        	String eventImage = chooseImage (animals, children, disabled, elderly, environment, special);	
+	        	String eventImage = chooseImage (animals, children, disabled, elderly, env, special);	
 	        	
 	        	//populate db
-	        	mDbHelper.createEvent(event.getEventKey(),event.getEventName(),
+	        	mDbHelper.createEvent(event.getEventKey(),event.getInfo(),
 	        			event.getDescription(),
-	        			event.getPrerequisites(),
+	        			event.getContent(),
 	        			eventLat, eventLon,distance,duration,
 	        			event.getEventAddress().getCity(),
 	        			event.getEventAddress().getStreet(),
 	        			String.valueOf(event.getEventAddress().getNumber()),
 	        			animals, children,disabled,
-	        			elderly,environment,special,eventImage, startTime, endTime);
+	        			elderly, env, special, eventImage, startTime, endTime,
+	        			preReq, npoName, groups, individ, kids, 
+	        			menial, mental);
 	        }
 	     }
         else
@@ -475,7 +476,12 @@ public class MainActivity extends ActionBarActivity {
         }
      
     
-    private void createManualEventForDebug() {
+    private  <T> String isSetContains(Set<T> set, T member) {
+		return  set.contains(member) ? "1" : "0";
+	}
+
+
+	private void createManualEventForDebug() {
     	String eventTest="eventTest";
     	String lat="32067228";
     	String lon="32067228";
@@ -493,7 +499,8 @@ public class MainActivity extends ActionBarActivity {
 	    			type, type,type,
 	    			type,type,type,
 	    			image2,
-	    			"08:00", "22:00");
+	    			"08:00", "22:00", eventTest, eventTest, type, type, type, 
+	    			type, type);
 	    	
 	}
 
@@ -524,10 +531,7 @@ public class MainActivity extends ActionBarActivity {
 	private String chooseImage(String animals, String children, String disabled, 
     		String elderly, String environment, String special) 
     {
-    	  int imageId=R.drawable.event_paint;;
-    	  
-    	  if (animals=="1")
-    		  imageId=R.drawable.event_animals;
+    	  int imageId=R.drawable.event_paint;
     	  
     	  if (children=="1")
     		  imageId=R.drawable.event_children;
@@ -543,6 +547,9 @@ public class MainActivity extends ActionBarActivity {
     	  
     	  if (special=="1")
     		  imageId=R.drawable.event_special;
+    	  
+    	  if (animals=="1")
+    		  imageId=R.drawable.event_animals;
     	      	  
 		return Integer.toString(imageId);
 	}
