@@ -16,6 +16,7 @@
 
 package com.gdma.good2go.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -53,7 +54,6 @@ import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.PointsUtil;
 import com.google.android.maps.GeoPoint;
 
 import flexjson.JSONDeserializer;
@@ -67,10 +67,7 @@ public class MainActivity extends ActionBarActivity {
 	private GeoPoint mMyGeoPoint;
 	private String mSender;
 	private String mLocalUsername;
-	private RestClient mRestClient;
-    private String mEventName;
-    private String mEventDesc;
-    private String mEventKey;
+	
     private AppPreferencesEventsRetrievalDate mEventsRetrievalDate;
     
     @Override
@@ -131,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
     private void continueActivityStart() {   	
     	if (mSender==null)
 		{
-    		if (areEventsFromToday()==false)
+    		if (areEventsFromLastHour()==false)
     		{
 		    	/**GET MY LOCATION**/       
 		        mMyGeoPoint = getUserLocation();
@@ -168,6 +165,11 @@ public class MainActivity extends ActionBarActivity {
 	private boolean areEventsFromToday() {
 		mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
 		return (mEventsRetrievalDate.isFromToday());
+	}
+	
+	private boolean areEventsFromLastHour() {
+		mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
+		return (mEventsRetrievalDate.isFromLastHour());
 	}
 
 
@@ -243,7 +245,6 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.aboutbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	//setTitle("About");
             	Intent newIntent = new Intent(view.getContext(), AboutTab.class);
 	            startActivity(newIntent);
             }
@@ -324,7 +325,8 @@ public class MainActivity extends ActionBarActivity {
 			if (JSONResponse=="")
 			{
 				/**TODO handle alerting the user that there are no events for today*/
-				Log.i(TAG, "No events for today");
+				Log.i(TAG, "No events for today response is completely empty");
+				mEventsRetrievalDate.removeDate();
 				return null;
 			}
 			if (JSONResponse!=null)
@@ -341,13 +343,27 @@ public class MainActivity extends ActionBarActivity {
 					mEventsRetrievalDate.saveDate(new Date());
 					return events;
 					}
+				else
+				{
+					//no events from today - json is  []
+					Log.i(TAG, "No events for today, response is empty");
+					//mEventsRetrievalDate.removeDate();
+				}
 			}
+		}
+		catch (ClassCastException e)
+		{
+			String  eMsg= e.getMessage();
+			Log.e(TAG, "Couldn't get events from server, due to HTTP 505 Error: " + eMsg);
+			//mEventsRetrievalDate.removeDate();
 		}
 		catch (Exception e)
 		{
 			String  eMsg= e.getMessage();
 			Log.e(TAG, "Couldn't get events from server: " + eMsg);
+			//mEventsRetrievalDate.removeDate();
 		}
+
 		return null;
 	}
     

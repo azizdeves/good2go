@@ -1,10 +1,9 @@
 package com.gdma.good2go.ui;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.Set;
-
 
 import android.R.drawable;
 import android.content.Intent;
@@ -22,18 +21,14 @@ import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
 import android.widget.Toast;
 
-
-import com.gdma.good2go.R;
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Karma;
+import com.gdma.good2go.R;
 import com.gdma.good2go.User;
-import com.gdma.good2go.Event.Address;
-import com.gdma.good2go.Event.SuitableFor;
-import com.gdma.good2go.Event.VolunteeringWith;
-import com.gdma.good2go.Event.WorkType;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
+import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.KeyManager;
 import com.gdma.good2go.utils.UsersHistoryDbAdapter;
 import com.gdma.good2go.utils.UsersUtil;
@@ -63,14 +58,18 @@ public class MeTab extends ActionBarListActivity {
 	private AppPreferencesPrivateDetails mUsersPref; 
     private String mEventName;
     private String mEventDesc;
-    private String mEventKey;	 
+    private String mEventKey;
+    private String mEventDate;
+    private String mOccurenceKey;
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
  
         setContentView(R.layout.me);
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
-        
+        //ADI - DEBUG
+        checkFeedback();
+        //adi - debUG
 //("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
         mUsersPref = new AppPreferencesPrivateDetails(this) ;
         mUserName = mUsersPref.getUserName();
@@ -350,13 +349,20 @@ public class MeTab extends ActionBarListActivity {
         feedbackList.add(new Event());
         if (feedbackList!=null){
         	for (Event event : feedbackList) {
-        		mEventDesc = event.getDescription();
         		mEventName=event.getEventName();
-        		mEventKey=event.getEventKey();
+        		mOccurenceKey=event.getOccurrences().get(0).getOccurrenceKey();
+        		
+        		Date occDate = event.getOccurrences().get(0).getOccurrenceDate();
+        		SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM");
+        		mEventDate = sdf.format(occDate);
+        		
         		Bundle extraInfo = new Bundle();        		
-                extraInfo.putString("mEventDesc", mEventDesc);
-                extraInfo.putString("mEventName", mEventName);
-                extraInfo.putString("mEventKey", mEventKey);
+                extraInfo.putString(EventsDbAdapter.KEY_EVENTNAME, mEventName);
+                extraInfo.putString(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY, mOccurenceKey);
+                extraInfo.putString("VOLUNTEER_DATE", mEventDate);
+                //TODO add points
+                extraInfo.putString("POINTS", "3200");
+                
                 Intent newIntent = new Intent(this, FeedbackTab.class);
                 newIntent.putExtras(extraInfo);
                 startActivity(newIntent);

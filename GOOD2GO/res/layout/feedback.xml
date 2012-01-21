@@ -1,106 +1,190 @@
 <?xml version="1.0" encoding="utf-8"?>
+
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-	android:layout_marginLeft="20sp"    
-    android:orientation="vertical" >
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+	<LinearLayout
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent"
+	    android:orientation="vertical">
+	
+	    	<TextView
+	        android:id="@+id/feedback_deserve"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="10dip"      
+	        android:layout_marginTop="10dip"
+	        android:layout_gravity="center"
+	        
+	        android:textStyle="bold"
+	        android:textSize="18dp"
+	        android:textColor="@color/app_text_main"
+	        android:text="@string/feedback_deserve"/>
+	
+	    	
+	   <LinearLayout
+	    	    android:layout_gravity="center_horizontal"
+	    	    android:orientation="horizontal"
+	    	    android:layout_width="wrap_content"
+	        	android:layout_height="wrap_content">
+		    	
+		    	<ImageView
+			    	android:id="@+id/feedback_pointsPic"		
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    
+				    android:layout_marginTop="10dip"
+	
+			    	android:src="@drawable/points_plus_left"/>
+		    	
+		    	
+		    	<Button
+			    	android:id="@+id/feedback_pointsvalue"
+			
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    			    
+				    android:layout_marginTop="10dip"
+			    
+				    android:clickable="false"
+			
+			    	android:background="@drawable/points_plus_middle"  
+			        
+			        android:textStyle="bold"
+			        android:textColor="@color/app_text_white"
+			        android:text=" 200000 "/>
+		    	
+		    	<ImageView
+			    	android:id="@+id/feedback_pointsRightPic"		
+				    android:layout_width="wrap_content"
+				    android:layout_height="wrap_content"
+				    
+				    android:layout_marginTop="10dip"
+	
+			    	android:src="@drawable/points_plus_right"/>
+			</LinearLayout>
+	    	
+			<TextView
+	        android:id="@+id/feedback_points_separator"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginBottom="15dip"
+	        android:layout_marginTop="15dip"
+			
+			android:background="@color/app_secondary_color"
+			
+			android:textColor="@color/app_text_white"
+			android:textStyle="bold"
+	        android:text="WHAT FOR"/>
+			
+	    	<TextView
+	        android:id="@+id/feedback_event"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="10dip"      
+	        
+	        android:textColor="@color/app_text_main"
+	        android:text="@string/feedback_event"/>
+	    	
+	    	<TextView
+	        android:id="@+id/feedback_time"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="10dip"    
+	        
+	        android:textColor="@color/app_text_main"
+	        android:text="on Sunday the 23 of January"/>  		
+	
+			<TextView
+	        android:id="@+id/feedback_event_separator"
+	        android:layout_width="fill_parent"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginBottom="15dip"
+	        android:layout_marginTop="15dip"
+			
+			android:background="@color/app_secondary_color"
+			
+			android:textColor="@color/app_text_white"
+			android:textStyle="bold"
+	        android:text="HOW TO GET THEM"/>
+			
+			 
+	    	<TextView
+	        android:id="@+id/feedback_all_urs"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginLeft="10dip"
+	        android:layout_marginRight="10dip"    
+	        
+	        android:textColor="@color/app_text_main"
+	        android:text="@string/feedback_all_urs"/>     	
+	   
+	    	<TextView
+	        android:id="@+id/feedback_hwi"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	       
+	        android:layout_marginTop="15dp"
+	        android:layout_gravity="center"
+	        android:textSize="18dp"
+	
+	        android:textStyle="bold"
+	        android:textColor="@color/app_text_main"
+	        android:text="@string/feedback_hwi"/>
+	              	
+			<RatingBar
+	        android:id="@+id/ratingBar_FeedbackView"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginTop="10dp"
+	        android:layout_gravity="center"
+	        
+	        android:numStars="5"
+	        android:stepSize="1"
+	        android:rating="4"                
+	        android:isIndicator="false"
+	        android:indeterminate="FALSE" />
+			   	    			
+	</LinearLayout>
 
-    	<TextView
-        android:id="@+id/pointsTitle_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="40dip"
-        android:layout_centerHorizontal="true"
-        android:text="You deserve some points"/>
-
-    	<TextView
-        android:id="@+id/pointsDetails_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/pointsTitle_FeedbackView"
-		android:layout_centerHorizontal="true"
-		android:layout_marginTop="10dp"
-        android:text="+100"/> 
-    	
-		<View
-		 android:id="@+id/separateLine1_FeedbackView"
-		 android:layout_width="match_parent"
-		 android:layout_height="1dp"
-		 android:layout_below="@id/pointsDetails_FeedbackView"
-		 android:layout_marginTop="20dp"
-		 android:background="@android:color/black" />
-		
-    	<TextView
-        android:id="@+id/eventDetails_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/separateLine1_FeedbackView"
-        android:layout_marginTop="10dp"
-        android:text="bla"/> 		
-
-    	<View
-		 android:id="@+id/separateLine2_FeedbackView"
-		 android:layout_width="match_parent"
-		 android:layout_height="1dp"
-		 android:layout_below="@id/eventDetails_FeedbackView"
-		 android:layout_marginTop="20dp"
-		 android:background="@android:color/black" />	
-		 
-    	<TextView
-        android:id="@+id/askForFeedback_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/separateLine2_FeedbackView"
-        android:layout_marginTop="10dp"
-        android:text="These points will be all yours after answering a siple question: "/>     	
-   
-    	<TextView
-        android:id="@+id/howWasIt_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/askForFeedback_FeedbackView"
-        android:textStyle="bold"
-        android:text="How was it? "/>     	
-        
-    	<TextView
-        android:id="@+id/feedBackValue_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="10dp"
-        android:layout_centerHorizontal="true"
-        android:layout_below="@id/howWasIt_FeedbackView"
-        android:textStyle="bold"
-        android:text=""/> 
-              	
-		<RatingBar
-        android:id="@+id/ratingBar_FeedbackView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="20dp"
-        android:layout_below="@id/feedBackValue_FeedbackView"
-        android:numStars="5"
-        android:stepSize="0.2"
-        android:rating="5"
-        android:layout_centerHorizontal="true"
-        android:isIndicator="false"
-        android:indeterminate="FALSE" />
-
-		<Button
-        android:id="@+id/sendFeedBackButton_FeedbackView" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignParentLeft="true"
-        android:layout_alignParentBottom="true" 
-    	android:background="@null"/>		
-		
     	<Button
-        android:id="@+id/noThankYouButton_FeedbackView" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
+        android:id="@+id/noThankYouButton_FeedbackView"
+        style="@style/ButtonCountMeIn"
+        
+        android:layout_width="80dip"
+        android:layout_height="40dip"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentBottom="true"
+        
+        android:layout_marginLeft="10dp"
+        android:layout_marginBottom="10dp"
+         
+    	android:textSize="12sp"
+		android:text="NO THANKS"/>
+		
+		
+		<Button
+        android:id="@+id/sendFeedBackButton_FeedbackView"
+        style="@style/ButtonCountMeIn"
+        
+        android:layout_width="80dip"
+        android:layout_height="40dip"
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true" 
-    	android:background="@null"/>
-    	    			
-</RelativeLayout>
+        
+        android:layout_marginRight="10dp"
+        android:layout_marginBottom="10dp"
+        
+        android:textSize="12sp"
+    	android:text="DONE"/>	
+    </RelativeLayout>
