@@ -36,7 +36,8 @@
         <activity 
             android:name=".ui.MainActivity" 
             android:label="@string/app_name"
-            android:theme="@style/BackTheme" >
+            android:theme="@style/BackTheme"
+            android:screenOrientation="portrait" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -46,63 +47,75 @@
        
         <activity
             android:label="@string/listview_name"
-            android:name=".ui.ListTab" >
+            android:name=".ui.ListTab"
+            android:screenOrientation="portrait" >
         </activity>
         
         <activity
             android:label="@string/searchview_name"
-            android:name=".ui.FilterTab" >
+            android:name=".ui.FilterTab"
+            android:screenOrientation="portrait" >
         </activity>
         
      
         <activity
             android:label="@string/eventdetails_tabs"
-            android:name=".ui.EventDetails" >
+            android:name=".ui.EventDetails"
+            android:screenOrientation="portrait" >
         </activity>
         
             
         <activity
             android:label="@string/countmein"
-            android:name=".ui.CountMeIn">
+            android:name=".ui.CountMeIn"
+            android:screenOrientation="portrait">
         </activity>
 
 		<activity
             android:label="@string/confirmation"
-            android:name=".ui.Confirmation">
+            android:name=".ui.Confirmation"
+            android:screenOrientation="portrait">
         </activity>    
         
     	<activity
             android:label="@string/personaldetails"
-            android:name=".ui.PersonalDetailsTab">
+            android:name=".ui.PersonalDetailsTab"
+            android:screenOrientation="portrait">
         </activity>    
 
         <activity
             android:label="@string/about"
-            android:name=".ui.AboutTab">
+            android:name=".ui.AboutTab"
+            android:screenOrientation="portrait">
         </activity>    
 
         <activity
             android:label="@string/feedback"
-            android:name=".ui.FeedbackTab">
+            android:name=".ui.FeedbackTab"
+            android:screenOrientation="portrait">
         </activity>
                     
         <activity
             android:label="@string/meview_name"
-            android:name=".ui.MeTab" >
+            android:name=".ui.MeTab"
+            android:screenOrientation="portrait" >
         </activity>
         
         <activity
             android:label="@string/mapview_name"
-            android:name=".ui.MapTab">
+            android:name=".ui.MapTab"
+            android:screenOrientation="portrait">
         </activity>
         <activity 
             android:label="@string/spinner"
-            android:name=".ui.Login">
+            android:name=".ui.Login"
+            android:screenOrientation="portrait">
         </activity>
         
         <activity 
             android:label="@string/spinner"
-            android:name=".ui.LoginNoAccounts">
+            android:name=".ui.LoginNoAccounts"
+            android:screenOrientation="portrait">
         </activity>
 
        

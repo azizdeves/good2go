@@ -37,9 +37,11 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventDuration;
     private String mEventNPO;
     private int mEventImage;
+    private String mOccurenceKey;
     private String mSender;    
     private EventsDbAdapter mDbHelper;
     private AppPreferencesPrivateDetails mUsersPrefs;
+    private String mUserName;
     private Context mContext;
 
     
@@ -101,6 +103,9 @@ public class EventDetails extends ActionBarTabActivity {
 	    				(EventsDbAdapter.KEY_EVENT_END_TIME));
 	    mEventNPO = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_NPO_NAME));
+	    
+	    mOccurenceKey = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY));
 	    	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
@@ -137,6 +142,7 @@ public class EventDetails extends ActionBarTabActivity {
 		        public void onClick(View view) {
 		        	mContext = view.getContext();
 		        	mUsersPrefs = new AppPreferencesPrivateDetails(view.getContext());
+		        	mUserName = mUsersPrefs.getUserName();
 		        	if (!mUsersPrefs.doPrivateDetailsExist()){
 		        	  Intent newIntent = new Intent(view.getContext(), PersonalDetailsTab.class);
 		        	  startActivityForResult(newIntent, ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS);
@@ -157,13 +163,6 @@ public class EventDetails extends ActionBarTabActivity {
 		if (resultCode==Activity.RESULT_OK)
 		{
 			if(requestCode==ActivitysCodeUtil.GET_USERS_PRIVATE_DETAILS){
-//				mUsername=data.getStringExtra("name")!=null ? data.getStringExtra("name") : "";
-//				mUserAge=data.getStringExtra("age")!=null ? data.getStringExtra("age") : "";
-//            	mCity= data.getStringExtra("city")!=null ? data.getStringExtra("city") : "";
-//            	mSex= data.getStringExtra("sex")!=null ? data.getStringExtra("sex") : "";
-//            	mPhone=data.getStringExtra("phone")!=null ? data.getStringExtra("phone") : "";
-//            	mEmail= data.getStringExtra("email")!=null ? data.getStringExtra("email") : "";
-//            	mUsersPrefs.setUserName(mUsername);
             	getCountMeInTab(mContext);
 			}
 			if(requestCode==ActivitysCodeUtil.GET_COUNT_ME_IN_TAB){
@@ -208,15 +207,10 @@ public class EventDetails extends ActionBarTabActivity {
 
 	private void getCountMeInTab( Context c){
 		Bundle extraInfo = new Bundle();
-//		extraInfo.putString("userName", mUsername);
-//		extraInfo.putString("userAge", mUserAge);
-//		extraInfo.putString("userCity", mCity);
-//		extraInfo.putString("userPhone", mPhone);
-//		extraInfo.putString("userEmail", mEmail);
-//		extraInfo.putString("userSex", mSex);
-		
+		extraInfo.putString("userName", mUserName);
         extraInfo.putString("eventname", mEventName);
         extraInfo.putString("desc", mEventDesc);
+        extraInfo.putString("occurence_key", mOccurenceKey);       
         extraInfo.putString("event_id", Long.toString(mRowId));
         Intent newIntent = new Intent(c, CountMeIn.class);
         newIntent.putExtras(extraInfo);

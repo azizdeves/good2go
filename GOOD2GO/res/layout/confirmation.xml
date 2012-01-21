@@ -2,20 +2,19 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
-    android:layout_marginTop="10dip"
 
     android:orientation="vertical" >
 
     	<TextView
-        android:id="@+id/thanks_confirmationView"
+        android:id="@+id/urgood2go_confirmationView"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         
+        android:layout_marginTop="20dip"
         android:layout_marginLeft="10dip"
 
-
         android:textColor="@color/app_text_main"
-        android:text="@string/confirm_thanks"/> 
+        android:text="@string/confirm_good2go"/> 
 
     	<TextView
         android:id="@+id/gotYou_confirmationView"
@@ -26,6 +25,16 @@
 		
 		android:textColor="@color/app_text_main"
         android:text="@string/confirm_got_you"/>
+    	
+    	<TextView
+        android:id="@+id/thanks_confirmationView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginLeft="10dip"
+
+        android:textColor="@color/app_text_main"
+        android:text="@string/confirm_thanks"/> 
 
 		<TextView
         android:id="@+id/pointsTitle_confirmationView"
@@ -50,23 +59,48 @@
 
         android:textColor="@color/app_text_main"
         android:text="@string/confirm_points_win"/>
-    	    	
-    	<Button
-    	android:id="@+id/pointsWinNumber_confirmationView"
+    	
+    	<LinearLayout
+    	    android:layout_gravity="center_horizontal"
+    	    android:orientation="horizontal"
+    	    android:layout_width="wrap_content"
+        	android:layout_height="wrap_content">
+	    	
+	    	<ImageView
+		    	android:id="@+id/pointsPic"		
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    
+			    android:layout_marginTop="10dip"
 
-	    android:layout_width="wrap_content"
-	    android:layout_height="wrap_content"
-	    
-	    android:layout_marginTop="10dip"
-	    android:layout_gravity="center_horizontal"
-	    
-	    android:clickable="false"
+		    	android:src="@drawable/points_plus_left"/>
+	    	
+	    	
+	    	<Button
+		    	android:id="@+id/pointsWinNumber_confirmationView"
+		
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    			    
+			    android:layout_marginTop="10dip"
+		    
+			    android:clickable="false"
+		
+		    	android:background="@drawable/points_plus_middle"  
+		        
+		        android:textStyle="bold"
+		        android:textColor="@color/app_text_white"
+		        android:text=" 200000 "/>
+	    	
+	    	<ImageView
+		    	android:id="@+id/pointsRightPic"		
+			    android:layout_width="wrap_content"
+			    android:layout_height="wrap_content"
+			    
+			    android:layout_marginTop="10dip"
 
-    	android:drawableLeft="@drawable/points_plus_left"
-    	android:background="@drawable/points_plus"
-        
-        android:textColor="@color/app_text_white"
-        android:text="200000"/>
+		    	android:src="@drawable/points_plus_right"/>
+		</LinearLayout>
 		
 		<TextView
         android:id="@+id/badgesTitle_confirmationView"
@@ -110,16 +144,5 @@
 		android:layout_gravity="center_horizontal"
 		
         android:textColor="@color/app_text_main"
-        android:text="Saint"/> 
-        
-    	
-    	<Button
-        android:id="@+id/DoneConfirmationViewButton" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true" 
-    	android:background="@null"/>
-			
+        android:text="Saint"/> 			
 </LinearLayout>

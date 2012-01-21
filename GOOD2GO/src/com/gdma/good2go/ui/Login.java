@@ -5,8 +5,9 @@ package com.gdma.good2go.ui;
 import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.app.Activity;
+import android.app.ProgressDialog;
 import android.content.Context;
-import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.AdapterView;
@@ -14,10 +15,9 @@ import android.widget.AdapterView.OnItemSelectedListener;
 import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.Spinner;
-import android.widget.Toast;
 
 import com.gdma.good2go.R;
-import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 
 
@@ -41,13 +41,6 @@ public class Login extends Activity {
 		for (int i = 0; i<accounts.length; i++){
 			actsArr[i] = accounts[i].name.toString();
 		}
-		/*
-		actsArr[0]=accounts[0].name.toString(); 
-		actsArr[1]=accounts[1].name.toString(); 
-		actsArr[2]="option 3"; 
-		actsArr[3]="option 4"; 
-		actsArr[4]="option 5"; 
-*/
 		
 		Spinner s = (Spinner) findViewById(R.id.spinner);
 		ArrayAdapter adapter = new ArrayAdapter(this, android.R.layout.simple_spinner_item, actsArr); 
@@ -59,24 +52,18 @@ public class Login extends Activity {
 		final Button buttonGo = (Button) findViewById(R.id.goButton);
 		   
 	    buttonGo.setOnClickListener(new View.OnClickListener() {
-	        public void onClick(View view) {
-	        	
-				showToast("The account you selected is: " + selectedAccount);
-				newLocalUser(selectedAccount);
-				
-				
-	        	setResult(Activity.RESULT_OK);
-	        	finish();
-	        	
+	        public void onClick(View view) {            
+	    		//register user on the server
+	            new registerUserOnServerTask().execute(selectedAccount);
+	            //save user locally
+	            saveLocalUsername(selectedAccount);   	
 	        }
 	    });
 
 	
 	
 	}
-	
-	
-	
+		
 	public class MyOnItemSelectedListener implements OnItemSelectedListener {    
 		public void onItemSelected(AdapterView<?> parent, View view, int pos, long id) {      
 			selectedAccount = parent.getItemAtPosition(pos).toString();		
@@ -90,10 +77,6 @@ public class Login extends Activity {
 	private void saveLocalUsername(String userName){
 		AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
 		prefs.setUserName(userName);
-//		SharedPreferences settings = getSharedPreferences("user_private_details", MODE_PRIVATE);
-//		SharedPreferences.Editor editor = settings.edit();
-//		editor.putString("userNameVal", userName);
-//		editor.commit();
 	}
 	
 	
@@ -140,45 +123,35 @@ public class Login extends Activity {
 		return tempAccs2;
 		
 	}	
-	private int updateServer (String userName, String email, String firstName, String lastName, String yearOfBirth){
-		
-		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "addUser");
-		client.AddParam("userName", userName);
-		client.AddParam("firstName", firstName);
-		client.AddParam("lastName", lastName);
-		client.AddParam("email", email);
-		client.AddParam("birthYear", yearOfBirth);
-		
-		
 
-		try{
-			client.Execute(1); //1 is HTTP GET
-			return 1;
-		}
-		catch (Exception e){
-			//Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
-			//debugging.show();
-			return 0;
-		}
-	}
+    /**THREADS*/		
+    private class registerUserOnServerTask extends AsyncTask<String, Void, Integer> {
+    	ProgressDialog dialog;
 
-	private void newLocalUser(String email) {
-        String firstName = "", lastName = "", yearOfBirth = "";
-        
-        updateServer(email, firstName, lastName, email, yearOfBirth);
-        saveLocalUsername(email);
-        
-  
-  
-	}
-	
-	
-    private void showToast(String message){
-    	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
-    }
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(Login.this);
+    		dialog.setMessage(getString(R.string.welcome_register));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
 
+    	protected void onPostExecute(Integer execResult) {
+    		dialog.dismiss();
+    		
+	        setResult(RESULT_OK);
+			finish();
+    	}
+			
+		@Override
+		protected Integer doInBackground(String... userDetails) {
+    		RemoteFunctions rf = RemoteFunctions.INSTANCE;
+    		
+    		return rf.addUser(RemoteFunctions.ADD_USER, userDetails[0]);
+			}
 	
+    }	
 }
 
 

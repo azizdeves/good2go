@@ -310,7 +310,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 		    mDbHelper.open();
 		    
 	    	Cursor eventsCursor = mDbHelper.fetchAllEvents();
-	        startManagingCursor(eventsCursor); //is this needed?
+	        startManagingCursor(eventsCursor);
 	        
 	        int cnt=0;//BUG IN CURSOR
 	        if(eventsCursor.moveToFirst()){
@@ -319,8 +319,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	        		itemizedoverlay.addOverlay(point);
 	        		cnt++;//BUG IN CURSOR
 	        		}
-	        	while(eventsCursor.moveToNext()&&cnt!=6/*BUG IN CURSOR*/);
-	        	/**TODO fix the bug*/
+	        	while(eventsCursor.moveToNext()&& cnt!=eventsCursor.getCount());
 	        }
 	        
 	        /**SHOW ON MAP*/ 

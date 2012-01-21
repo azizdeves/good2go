@@ -241,19 +241,23 @@ public class ListTab extends ActionBarListActivity {
             	int lon=(mEventsCursor.getInt
             			(mEventsCursor.getColumnIndexOrThrow(EventsDbAdapter.KEY_EVENT_GP_LONG)));
             	
-            	float results[]=new float[3];
-    			Location.distanceBetween(mLatitude / 1E6, mLongitude/ 1E6, lat / 1E6, lon / 1E6, results);
-            	String newDistance=String.format("%.1f", (float)(results[0]/1E3))+" km";	
-            	
-            	if (oldDistance.compareTo(newDistance)==0) 
-            		break;
-            	
-            	mDbHelper.updateEvent(eventId, newDistance);
-        		
-            	cnt++;//BUG IN CURSOR
-        		}
-        	while(mEventsCursor.moveToNext()&&cnt!=6/*BUG IN CURSOR*/);
-        	/**TODO fix the bug*/
+            	if (lat!=0 && lon!=0)
+            	{
+            		
+	            	float results[]=new float[3];
+	    			
+	            	Location.distanceBetween(mLatitude / 1E6, mLongitude/ 1E6, lat / 1E6, lon / 1E6, results);
+	            	String newDistance=String.format("%.1f", (float)(results[0]/1E3))+" km";	
+	            	
+	            	if (oldDistance.compareTo(newDistance)==0) 
+	            		break;
+	            	
+	            	mDbHelper.updateEvent(eventId, newDistance);
+	        		
+	            	cnt++;
+	            	}
+            	}
+        	while(mEventsCursor.moveToNext() && cnt!=mEventsCursor.getCount());
         }
         
         mEventsCursor.requery();

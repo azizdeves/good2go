@@ -54,35 +54,43 @@
 	<string name="personaldetails">Details</string>
 	<string name="about">About</string>
 	<string name="feedback">Feedback</string>
-	<string-array name="sex_array">
-       <item>Female</item>
-       <item>Male</item>
-    </string-array>  
 	<string name="welcome">Welcome to GOOD2GO!</string>
-	<string name="wlecome_choose_act">Please Choose Your Account</string>
+	<string name="wlecome_choose_act">Please choose your email</string>
 	<string name="welcome_YOB">Year of brith</string>
 	<string name="welcome_lstName">Last Name</string>
 	<string name="welcome_fstName">First Name</string>
-	<string name="wlecome_enter_email">Please Enter Your Email Address</string>
-	<string name="welcom_go">GO!</string> 	
+	<string name="wlecome_enter_email">Please enter your email</string>
+	<string name="welcome_terms">By signing up you agree to GOOD2GO terms and conditions</string>
+	<string name="welcom_go">Sign Up</string>
+	<string name="welcome_register">Registering user...</string> 	
 	<string name="spinner">Login</string>
 	
-	
+	<string name="server_communication">Communicating with the server...</string>
 	<string name="account_prompt">Choose an account</string>
 	
-	    	
+	<string name="confirm_good2go">You\'re GOOD2GO!</string>   	
 	<string name="confirm_thanks">Thanks for being awesome</string>
-	<string name="confirm_got_you">We\'ve got you for \n</string>
+	<string name="confirm_got_you">We\'ve got you for:  </string>
 	<string name="confirm_points">POINTS</string>
 	<string name="confirm_points_win">Nice! You\'ve just earned</string>
 	<string name="confirm_badges">BADGES</string>
 	<string name="confirm_badge_win">Whoa! You just got yourself a new badge!</string>
 	<string name="confirm_badge_current">Your last badge:</string>
-
-
 	
+	<string name="personal_details_message">Please fill out the details required from us by the NPOs. No worries, this is a one time thing :)</string>
 
-	
+
+	<string name="sending_user_details">"Please wait while sending details..."</string>
+	<string name="loading">"Loading..."</string>
+
+	<string name="developersTitle">"DEVELOPERS"</string>
+	<string name="developers">"Adi Anna Telezhynski\nDana Deutsch\nGil Ben-David\nMor Yogev"</string>
+	<string name="collabsTitle">"IN COLLABORATION WITH"</string>
+	<string name="contactTitle">"CONTACT DETAILS</string>
+	<string name="contact">"GOOD2GO.israel@gmail.com"</string>
+	<string name="special_thanksTitle">"SPECIAL THANKS"</string>
+	<string name="special_thanks">"To Ori Wachtel for believing in the idea and for his warm support along the way"</string>
+	<string name="contribTitle">"OTHER CONTRIBUTORS"</string>
 	 
 	
 </resources>
