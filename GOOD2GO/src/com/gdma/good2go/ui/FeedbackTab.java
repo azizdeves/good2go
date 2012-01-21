@@ -16,6 +16,7 @@ import android.widget.RatingBar.OnRatingBarChangeListener;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
@@ -63,6 +64,18 @@ public class FeedbackTab extends ActionBarActivity  {
 		sendFeedBackButton.setText("Send");
 		sendFeedBackButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	
+            	//MOR - I suggest you use the new remoteFuncs singleton like below*/
+        		/**
+        		 * RemoteFunctions rf = RemoteFunctions.INSTANCE;
+        		 * 
+        		 * rf.addFeedback(RemoteFunctions.ADD_USER_EVENT_FEEDBACK, 
+        				userName, occurrenceKey, rating);
+        				*/
+        		/*also - i see that you're using eventKey which is incorrect
+        		 * since it should be occurenceKey.
+        		 * Please fix this - i already added this in the internal DB.
+        		 */
             	remote_setFeedback(mUserName, mEventKey, mRating.getRating());
                 setResult(RESULT_OK);
     			finish();

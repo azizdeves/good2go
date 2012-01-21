@@ -69,7 +69,7 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENTID = "_id";
 	
 	
-	public static final String EVENTS_ORDER = KEY_EVENT_DISTANCE + " ASC ";
+	public static final String EVENTS_ORDER = "ABS(" + KEY_EVENT_DISTANCE + ")" + " ASC ";
 	
 
     private static final String TAG = "EventsDbAdapter";
@@ -117,7 +117,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 18;
+    private static final int DATABASE_VERSION = 19;
 
     private final Context mCtx;
 

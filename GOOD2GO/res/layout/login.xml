@@ -13,13 +13,15 @@
   See the License for the specific language governing permissions and
   limitations under the License.
   -->
+  
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+<LinearLayout 
     android:layout_width="fill_parent"
     android:layout_height="fill_parent" 
     android:orientation="vertical"
-    android:layout_marginLeft="10dip"
-	android:layout_marginRight="10dip"
-	android:layout_marginBottom="10dip"  >
+    android:layout_margin = "10dip" >
 
     <TextView
         android:id="@+id/textView1"
@@ -27,7 +29,7 @@
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         
-        android:layout_marginTop="20dip"
+        android:layout_marginTop="10dip"
         android:layout_marginBottom="20dip"
 
         android:text="@string/welcome"
@@ -80,7 +82,8 @@
         android:layout_marginBottom="50dip"
 
         android:text="@string/welcom_go" />
-
+</LinearLayout>
+    
     <ImageView
         android:id="@+id/nice2meet"
         android:layout_width="176dp"
@@ -89,5 +92,4 @@
         android:layout_alignParentRight="true"
         android:layout_alignParentBottom="true" 
         android:src="@drawable/login_nice2meet" />
-
-</RelativeLayout>
+    </RelativeLayout>

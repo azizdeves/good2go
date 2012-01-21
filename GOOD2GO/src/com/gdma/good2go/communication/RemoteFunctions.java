@@ -2,7 +2,29 @@ package com.gdma.good2go.communication;
 
 import android.util.Pair;
 
+/**
+ * Remote functions provider
+ * 
+ * USAGE:
+ * 			RemoteFunctions rf = RemoteFunctions.INSTANCE;
+ * 
+ * 			rf.<funcName>(RemoteFunctions.<funcDefConstant>,<funcParams>);
+ * 
+ * WHERE:
+ * 			<funcName> - is one of the defined functions in the class
+ * 			<funcDefConstant> - is one of the defined constants in the class 
+ * 								it's a Pair that holds 
+ * 								> a remote func name as a first param
+ * 								> all the needed params for the remote func
+ * 			<funcParams> - are the values to pass to the remote func
+ * 
+ * EXAMPLE:
+ *   			rf.addFeedback(RemoteFunctions.ADD_USER_EVENT_FEEDBACK,
+ *   							userName, occurrenceKey, rating);
+ */
+
 public enum RemoteFunctions {
+	
 	
 	INSTANCE;
 

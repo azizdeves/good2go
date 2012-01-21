@@ -9,7 +9,8 @@ import android.content.SharedPreferences.Editor;
 
 public class AppPreferencesEventsRetrievalDate {
 	
-     private static final String APP_SHARED_EVENTS_RETRIEVAL_DATE = "event_retrieval_date"; 
+     private static final String APP_SHARED_EVENTS_RETRIEVAL_DATE = "event_retrieval_date";
+     private static final String DATE_PREF = "date"; 
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
 
@@ -20,16 +21,21 @@ public class AppPreferencesEventsRetrievalDate {
      }
 
      public Long getDate() {
-         return appSharedPrefs.getLong("date", 0);
+         return appSharedPrefs.getLong(DATE_PREF, 0);
      }
 
      public boolean isDateExists(){
-    	 return appSharedPrefs.contains("date");
+    	 return appSharedPrefs.contains(DATE_PREF);
+     }
+     
+     public void removeDate(){
+         prefsEditor.remove(DATE_PREF);
+         prefsEditor.commit();
      }
      
      public void saveDate(Date date) {
     	 Long numOfSec = date.getTime();
-         prefsEditor.putLong("date", numOfSec);
+         prefsEditor.putLong(DATE_PREF, numOfSec);
          prefsEditor.commit();
      }
      

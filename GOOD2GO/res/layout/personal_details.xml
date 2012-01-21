@@ -3,18 +3,16 @@
 	android:layout_width="fill_parent"
 	android:layout_height="fill_parent"
 	
-	android:layout_marginRight="10dip"
-	android:layout_marginBottom="10dip"  >
+	android:layout_margin="10dip" >
 <TableLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
- android:layout_marginLeft="10dip"
+ 	android:layout_marginLeft="10dip"
     android:stretchColumns="1"> 
     	
     	<TextView
         android:id="@+id/enterDetails"
         style = "@style/TextRegular"
-        android:layout_marginTop="10dip"
         android:layout_marginBottom="20dip"
         android:layout_width="wrap_content"
         android:text="@string/personal_details_message"/>
@@ -71,7 +69,10 @@
         android:text="City"/>
  	
     	<AutoCompleteTextView
-        android:id="@+id/cityData"/> 	
+        android:id="@+id/cityData"
+        android:completionThreshold="1"
+        android:textColor="@android:color/black"
+        android:textColorHint="@color/app_text_secondary"/> 	
     </TableRow>  
   		
     <TableRow>  
@@ -90,6 +91,7 @@
             android:id="@+id/speech_bubble_personal"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
+            android:layout_marginLeft="10dip"
             android:layout_alignParentRight="true"
         	android:layout_alignParentBottom="true" 
 
