@@ -21,6 +21,7 @@ import com.gdma.good2go.utils.PointsUtil;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
+import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.os.Bundle;
@@ -110,25 +111,7 @@ public class CountMeIn extends ActionBarActivity {
 	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
 	        	
-	        	mAuthAttempts = 0;
 	        	
-//	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
-//	        	mFacebookToken = prefs.getString("FacebookToken", "");
-//	        	
-//	        	//ADI - added this to get new status in case user changed it
-//	    
-//	    	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
-//	    	    mFbStatus=fbStatus.getText().toString();
-//	    	    
-//	    	    //ADI - added this to get new status in case user changed it
-//	        	
-//	        	
-//	        	if(mFacebookToken.equals("")){
-//	        		fbAuthAndPost(mFbStatus);
-//	        	}
-//	        	else{
-//	        		updateStatus(mFacebookToken);
-//	        	}
 
 	           // mSoundManager.playSound(3);
 	            /*Intent newIntent = new Intent(view.getContext(), 
@@ -157,10 +140,29 @@ public class CountMeIn extends ActionBarActivity {
 	            extraInfo.putInt("points", 100); 
 	            /*MOR - WHY are the point static? If you can't get from dana - use her classes to calculate how much!*/
 	            
-	            Intent newIntent = new Intent(view.getContext(), Confirmation.class);
-	            newIntent.putExtras(extraInfo);
-	            startActivityForResult(newIntent, ActivitysCodeUtil.GET_CONFIRMATION);
-	        }
+	            
+	            mAuthAttempts = 0;
+	        	
+	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
+	        	mFacebookToken = prefs.getString("FacebookToken", "");
+	        	
+	        	//ADI - added this to get new status in case user changed it
+	    
+	    	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
+	    	    mFbStatus=fbStatus.getText().toString();
+	    	    
+	    	    //ADI - added this to get new status in case user changed it
+	        	
+	        	
+	        	if(mFacebookToken.equals("")){
+	        		fbAuthAndPost(mFbStatus, view.getContext(), extraInfo);
+	        	}
+	        	else{
+	        		updateStatus(mFacebookToken);
+	        	}
+	            
+	            
+	            	        }
 	    });
 
 	}
@@ -172,6 +174,45 @@ public class CountMeIn extends ActionBarActivity {
 	}
 	
 	
+	private void fbAuthAndPost(final String message, final Context view, final Bundle extraInfo){
+        facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream", "read_friendlists" },
+        		new DialogListener() {
+        				@Override
+        				public void onComplete(Bundle values) {
+        					Log.d(this.getClass().getName(), "Facebook.authorize Complete: ");
+        					saveFBToken(facebook.getAccessToken(), facebook.getAccessExpires());
+        					updateStatus(values.getString(facebook.getAccessToken()));
+        					mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+        					PointsUtil.remote_addKarma(mUsername, PointsUtil.POST_STATUS, mClient);
+        					
+        					
+        					Intent newIntent = new Intent(view, Confirmation.class);
+        		            newIntent.putExtras(extraInfo);
+        		            startActivityForResult(newIntent, ActivitysCodeUtil.GET_CONFIRMATION);
+        				}
+
+        				@Override
+        				public void onFacebookError(FacebookError error) {
+        					Log.d(this.getClass().getName(), "Facebook.authorize Error: "+error.toString());
+        				}
+        				@Override
+        				public void onError(DialogError e) {
+        					Log.d(this.getClass().getName(),"Facebook.authorize DialogError: "+e.toString());
+        				}
+
+        				@Override
+        				public void onCancel() {
+        					Log.d(this.getClass().getName(),"Facebook authorization canceled");
+        				}
+                 }
+            );
+        
+        
+	}
+
+
+	
+
 	private void fbAuthAndPost(final String message){
         facebook.authorize(this, new String[] { "email", "offline_access", "publish_checkins", "publish_stream", "read_friendlists" },
         		new DialogListener() {
@@ -200,9 +241,9 @@ public class CountMeIn extends ActionBarActivity {
                  }
             );
         
+        
 	}
 
-	
 
 	
 	
