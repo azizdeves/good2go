@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+     <!-- Used in personal details for sex -->
+	<string-array name="sex_array">
+       <item>Female</item>
+       <item>Male</item>
+    </string-array>  
+    
+	        		
+	<!-- Used in personal details for city-->
+	<string-array name="cities_array">		
+		<item>אבן יהודה</item>
+		<item>אופקים</item>
+		<item>אור הנר</item>
+		<item>אור יהודה</item>
+		<item>אזור</item>
+		<item>אילת</item>
+		<item>אמירים</item>
+		<item>אפרת</item>
+		<item>אריאל</item>
+		<item>אשדוד</item>
+		<item>אשקלון</item>
+		<item>באר יעקב</item>
+		<item>באר שבע</item>
+		<item>בית דגן</item>
+		<item>בית שאן</item>
+		<item>בית שמש</item>
+		<item>בית שערים</item>
+		<item>בני ברק</item>
+		<item>בנימינה</item>
+		<item>בת ים</item>
+		<item>גבעת סביון</item>
+		<item>גבעת שמואל</item>
+		<item>גבעתיים</item>
+		<item>גדרה</item>
+		<item>גלעד</item>
+		<item>גן יבנה</item>
+		<item>גני תקוה</item>
+		<item>הוד השרון</item>
+		<item>הרצליה</item>
+		<item>זכרון יעקב</item>
+		<item>חדרה</item>
+		<item>חולון</item>
+		<item>חיפה</item>
+		<item>חצור הגלילית</item>
+		<item>טבעון</item>
+		<item>טבריה</item>
+		<item>טירת הכרמל</item>
+		<item>יבנה</item>
+		<item>יהוד</item>
+		<item>ים המלח</item>
+		<item>יפו</item>
+		<item>יקנעם עילית</item>
+		<item>ירוחם</item>
+		<item>ירושלים</item>
+		<item>כוכב יאיר</item>
+		<item>כפר אזר</item>
+		<item>כפר ורדים</item>
+		<item>כפר מל"ל</item>
+		<item>כפר סבא</item>
+		<item>כפר שמריהו</item>
+		<item>כפר תבור</item>
+		<item>כרכור</item>
+		<item>כרמיאל</item>
+		<item>לוד</item>
+		<item>לפיד</item>
+		<item>מבשרת ציון</item>
+		<item>מגדל</item>
+		<item>מגדל העמק</item>
+		<item>מודיעין</item>
+		<item>מטולה</item>
+		<item>מכבים</item>
+		<item>מכמורת</item>
+		<item>מפלסים</item>
+		<item>מצפה רמון</item>
+		<item>מקווה ישראל</item>
+		<item>נהריה</item>
+		<item>נווה אור</item>
+		<item>נווה איתן</item>
+		<item>ניר ח"ן</item>
+		<item>נס ציונה</item>
+		<item>נען</item>
+		<item>נצרת</item>
+		<item>נצרת עילית</item>
+		<item>נתיב הל"ה</item>
+		<item>נתניה</item>
+		<item>סביון</item>
+		<item>עכו</item>
+		<item>עפולה</item>
+		<item>ערד</item>
+		<item>עתלית</item>
+		<item>פרדס חנה</item>
+		<item>פתח-תקוה</item>
+		<item>צור הדסה</item>
+		<item>צורעה</item>
+		<item>צפת</item>
+		<item>קדימה</item>
+		<item>קיבוץ אורטל</item>
+		<item>קיבוץ נחל עוז</item>
+		<item>קיבוץ עלומים</item>
+		<item>קיסריה</item>
+		<item>קצרין</item>
+		<item>קרית אונו</item>
+		<item>קרית אתא</item>
+		<item>קרית ביאליק</item>
+		<item>קרית גת</item>
+		<item>קרית מוצקין</item>
+		<item>קרית שמונה</item>
+		<item>ראש העין</item>
+		<item>ראש פינה</item>
+		<item>ראשון לציון</item>
+		<item>רחובות</item>
+		<item>רמלה</item>
+		<item>רמת אפעל</item>
+		<item>רמת השרון</item>
+		<item>רמת ישי</item>
+		<item>רמת רזיאל</item>
+		<item>רמת-גן</item>
+		<item>רעננה</item>
+		<item>שדרות</item>
+		<item>שוהם</item>
+		<item>שילה</item>
+		<item>תל-אביב</item>
+   </string-array>  
+   	    
+</resources>

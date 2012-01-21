@@ -2,15 +2,137 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:orientation="vertical" >
-
-    <TextView
-        android:id="@+id/text_aboutView"
-        android:layout_width="185dp"
+    android:orientation="vertical" >
+  <TextView
+        android:id="@+id/developersTitle"
+        android:layout_width="fill_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="50dip"
-        android:layout_marginLeft="50dp"
-        android:layout_weight="0.34"
-        android:text="good2go bla bla bla" />
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textColor="@color/app_text_white"
+		android:textStyle="bold"
+        android:text="@string/developersTitle"/>
+    
+  
+
+
+			<TextView
+	        android:id="@+id/developers"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        
+	        android:layout_marginLeft="10dip"
+	        style = "@style/TextRegular"
+	        android:text="@string/developers" />
+
+
+    
+<TextView
+        android:id="@+id/contactTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textColor="@color/app_text_white"
+		android:textStyle="bold"
+        android:text="@string/contactTitle"/> 
+        
+    <TextView
+        android:id="@+id/contact"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        style = "@style/TextRegular"
+        android:text="@string/contact" />
+    
+    <TextView
+        android:id="@+id/collabsTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textColor="@color/app_text_white"
+		android:textStyle="bold"
+        android:text="@string/collabsTitle"/> 
+      
+      
+    <ImageView
+        android:id="@+id/hevratova"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        android:layout_gravity="center"
+        android:src="@drawable/logo_hevra_tova" />
+      
+     
+    <TextView
+        android:id="@+id/special_thanksTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textColor="@color/app_text_white"
+		android:textStyle="bold"
+        android:text="@string/special_thanksTitle"/> 
+        
+    <TextView
+        android:id="@+id/collabs"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="10dip"
+        style = "@style/TextRegular"
+        android:text="@string/special_thanks" />
+     
+     <TextView
+        android:id="@+id/contribTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        
+        android:layout_marginBottom="10dip"
+        android:layout_marginTop="10dip"
+		
+		android:background="@color/app_secondary_color"
+		
+		android:textColor="@color/app_text_white"
+		android:textStyle="bold"
+        android:text="@string/contribTitle"/> 
+    
+	    <LinearLayout
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent"
+	        android:orientation="horizontal" >
+
+	        <ImageView
+	            android:id="@+id/ujafedny"
+	            android:layout_width="wrap_content"
+	            android:layout_height="55dp"
+	            android:layout_marginLeft="10dip"
+	            android:layout_weight="0.95"
+	            android:src="@drawable/logo_ujafedny" />
+
+	        <ImageView
+	            android:id="@+id/daronet"
+	            android:layout_width="134dp"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="10dip"
+	            android:layout_marginRight="10dip"
+
+	            android:src="@drawable/logo_daronet" />
+
+	    </LinearLayout>
 
 </LinearLayout>

@@ -1,7 +1,6 @@
 	package com.gdma.good2go.ui;
 
-	import android.content.Context;
-import android.content.Intent;
+	import android.content.Intent;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -12,7 +11,7 @@ import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 
 
 public class AboutTab extends ActionBarActivity{
-
+	private static final String TAG = "About";
 		@Override
 		protected void onCreate(Bundle savedInstanceState) {
 			// TODO Auto-generated method stub
@@ -45,6 +44,7 @@ public class AboutTab extends ActionBarActivity{
 	        
 	        case android.R.id.home:	
 	        	newIntent = new Intent(this, MainActivity.class);
+	        	newIntent.putExtra("sender", TAG);
 	        	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
 	        	startActivity(newIntent);	
 	        	break;

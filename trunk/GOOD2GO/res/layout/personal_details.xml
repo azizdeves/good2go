@@ -1,150 +1,97 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent"
+	
+	android:layout_marginRight="10dip"
+	android:layout_marginBottom="10dip"  >
+<TableLayout
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-	android:layout_marginLeft="14.5sp"    
-    android:orientation="vertical" >
-
-
-    	<TextView
-        android:id="@+id/name_personalDetailsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Name"/>
- 	
-    	<EditText
-        android:id="@+id/nameDetails_personalDetailsView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/app_secondary_color"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"  
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_toRightOf="@id/name_personalDetailsView"
-        
-        android:inputType="textPersonName"
-  		/>
+ android:layout_marginLeft="10dip"
+    android:stretchColumns="1"> 
     	
     	<TextView
-        android:id="@+id/name_personalDetailsView2"
+        android:id="@+id/enterDetails"
+        style = "@style/TextRegular"
+        android:layout_marginTop="10dip"
+        android:layout_marginBottom="20dip"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Last Name"
-        android:layout_below="@id/nameDetails_personalDetailsView"/>
- 	
-    	<EditText
-        android:id="@+id/nameDetails_personalDetailsView2"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/app_secondary_color"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"  
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_toRightOf="@id/name_personalDetailsView"
-          android:layout_below="@id/nameDetails_personalDetailsView"
-        
-        android:inputType="textPersonName"
-  		/>
-
-     	<TextView
-        android:id="@+id/age_personalDetailsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/name_personalDetailsView2"
-
-        android:text="Age"/>
- 	
-    	<EditText
-        android:id="@+id/ageDetails_personalDetailsView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/app_secondary_color"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"  
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_toRightOf="@id/age_personalDetailsView"
-         android:layout_below="@id/nameDetails_personalDetailsView2"
-         
-         android:inputType="number"
-  		/>   	
-  
+        android:text="@string/personal_details_message"/>
+   
+   
+   <TableRow>
     	<TextView
-        android:id="@+id/sex_personalDetailsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/ageDetails_personalDetailsView"
+        android:id="@+id/nameTitle"
+        style = "@style/TextRegular"
+        android:text="First Name "/>
+    	
+    	<EditText
+        android:id="@+id/nameData"      
+        android:inputType="textPersonName"/>
+    </TableRow>
+    	
+   <TableRow>
+    	<TextView
+        android:id="@+id/lastNameTitle"
+        style = "@style/TextRegular"
+        android:text="Last Name"/>
+ 	
+    	<EditText
+        android:id="@+id/lastNameData"      
+        android:inputType="textPersonName"/>
+    </TableRow>
+    
+    <TableRow>
+        <TextView
+        android:id="@+id/yobTitle"
+        style = "@style/TextRegular"
+        android:text="Birth Year"/>
+ 	
+    	<EditText
+        android:id="@+id/yobData"        
+        android:inputType="number"/>  
+     </TableRow>       
+    		
+      <TableRow>
+    	<TextView
+        android:id="@+id/sexTitle"
+        style = "@style/TextRegular"
         android:text="Sex"/>
  	
     	<Spinner
-        android:id="@+id/sexDetails_personalDetailsView"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:entries="@array/sex_array"
-        android:layout_toRightOf="@id/sex_personalDetailsView"
-        android:layout_below="@id/ageDetails_personalDetailsView"
-        />
-    
+        android:id="@+id/sexData"
+        android:entries="@array/sex_array" />
+     </TableRow>   
+       
+    <TableRow>       
     	<TextView
-        android:id="@+id/city_personalDetailsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/sexDetails_personalDetailsView"
+        android:id="@+id/cityTile"
+        style = "@style/TextRegular"
         android:text="City"/>
  	
     	<AutoCompleteTextView
-        android:id="@+id/cityDetails_personalDetailsView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/app_secondary_color"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"  
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_below="@id/sexDetails_personalDetailsView"
-        android:layout_toRightOf="@id/city_personalDetailsView"
-                
-  		/> 	
+        android:id="@+id/cityData"/> 	
+    </TableRow>  
   		
-    	<TextView
-        android:id="@+id/phone_personalDetailsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/cityDetails_personalDetailsView"
+    <TableRow>  
+       <TextView
+        android:id="@+id/phoneTitle"
+        style = "@style/TextRegular"
         android:text="Phone"/>
  	
     	<EditText
-        android:id="@+id/phoneDetails_personalDetailsView"
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:textColor="@color/app_secondary_color"
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"  
-        android:layout_marginLeft="10dip"
-        android:layout_marginRight="10dip"
-        android:layout_below="@id/cityDetails_personalDetailsView"
-        android:layout_toRightOf="@id/phone_personalDetailsView"
-        
-        android:inputType="phone"
-  		/> 	
-  		
-    	<TextView
-        android:id="@+id/email_personalDetailsView"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/phoneDetails_personalDetailsView"
-        android:text="email"/>
-
-  			
-    	<Button
-        android:id="@+id/DonePrivateDetailsButton" 
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Done"
-        android:layout_alignParentRight="true"
-        android:layout_alignParentBottom="true" 
-    	android:background="@null"/>
+        android:id="@+id/phoneData"        
+        android:inputType="phone"/> 
+    </TableRow> 	
 			
+</TableLayout>
+	<ImageView
+            android:id="@+id/speech_bubble_personal"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_alignParentRight="true"
+        	android:layout_alignParentBottom="true" 
+
+            android:src="@drawable/speech_bubble_personal" />
 </RelativeLayout>

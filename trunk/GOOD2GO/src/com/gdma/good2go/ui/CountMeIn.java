@@ -8,6 +8,7 @@ import java.util.Date;
 
 
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.facebook.DialogError;
 import com.gdma.good2go.facebook.Facebook;
@@ -41,19 +42,15 @@ public class CountMeIn extends ActionBarActivity {
     private String mEventDesc;
     private String mFbStatus;
     private String mFacebookToken;
-    private Long mEventId; 
+    private Long mEventId;
+    private String mOccurenceKey;
 	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
     RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
     private int mAuthAttempts = 0;
     ProgressDialog dialog;
     private String graph_or_fql;
     private String mUsername;
-    private String mAge;
-    private String mCity;
-    private String mPhone;
-    private String mEmail;
-    private String mSex;
-    private AppPreferencesPrivateDetails mUsersPrefs;    
+ 
     private RestClient mClient;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -68,13 +65,8 @@ public class CountMeIn extends ActionBarActivity {
 		    mEventDesc=extras.getString("desc");
 		    String EvenIdString=extras.getString("event_id");
 		    mEventId = Long.valueOf(EvenIdString);
-
+		    mOccurenceKey = extras.getString("occurence_key");
 		    mUsername=extras.getString("userName");
-		    mAge=extras.getString("userAge");
-		    mCity=extras.getString("userCity");
-		    mPhone=extras.getString("userPhone");
-		    mEmail=extras.getString("userEmail");
-		    mSex=extras.getString("userSex");
 		}
     
 	    
@@ -148,16 +140,22 @@ public class CountMeIn extends ActionBarActivity {
 	    		////setResult(Activity.RESULT_OK);
 	    		////finish();
 	        	
-	        	mUsersPrefs = new AppPreferencesPrivateDetails(view.getContext());
+
 //	        	if(!mUsersPrefs.isUsernameExists()){
 //	        		remote_registerUserForTheFirstTime(mUsername, mAge, mSex, mCity, mPhone, mEmail);
 //	        	}
-	        	remote_registerToOccurrence(mUsersPrefs.getUserName(), Long.toString(mEventId));
+	        	//remote_registerToOccurrence(mUsername, Long.toString(mEventId));
+	        	
+	        	/**TODO add async task*/	        	
+        		RemoteFunctions rf = RemoteFunctions.INSTANCE;
+        		rf.registerUserToEvent(RemoteFunctions.REGISTER_USER_TO_EVENT, mUsername, mOccurenceKey);
+	        	
 	        	Bundle extraInfo = new Bundle();
 	            extraInfo.putString("eventname", mEventName);
 	            extraInfo.putString("desc", mEventDesc);
 	            extraInfo.putString("event_id", mEventId.toString());
-	            extraInfo.putInt("points", 100);
+	            extraInfo.putInt("points", 100); 
+	            /*MOR - WHY are the point static? If you can't get from dana - use her classes to calculate how much!*/
 	            
 	            Intent newIntent = new Intent(view.getContext(), Confirmation.class);
 	            newIntent.putExtras(extraInfo);
@@ -219,38 +217,17 @@ public class CountMeIn extends ActionBarActivity {
     	
     	if(requestCode==ActivitysCodeUtil.GET_CONFIRMATION){
     		String sender= data.getStringExtra("sender");
-    		String key_eventId=data.getStringExtra(EventsDbAdapter.KEY_EVENTID);
-    		if(sender.compareTo("confirmation")==0){
+    		//String key_eventId=data.getStringExtra(EventsDbAdapter.KEY_EVENTID);
+    		if(sender.compareTo("Confirmation")==0){
     			Intent i = new Intent();
-                i.putExtra("sender", "confirmation");
+                i.putExtra("sender", "Confirmation");
                 i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
                 setResult(RESULT_OK, i);
     			finish();
              }
     
-    	}
-    	
-    	
+    	}   	
     }
-    
-    private void remote_registerToOccurrence(String username, String occurrenceKey) {
-		client.AddParam("action", "registerToOccurrence");
-		client.AddParam("username", username);
-		client.AddParam("occurrenceKey", occurrenceKey);
-		client.AddParam("userDate", (new Date()).toString());
-		
-		try{
-			client.Execute(1); //1 is HTTP GET
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server - faild", Toast.LENGTH_LONG);
-			debugging.show();
-		}
-
-    }
-    
-    
-    
     
 
 	/** FOR ACTION BAR MENUS **/
@@ -259,9 +236,6 @@ public class CountMeIn extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.empty, menu);
-
-        // Calling super after populating the menu is necessary here to ensure that the
-        // action bar helpers have a chance to handle this event.
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -325,26 +299,6 @@ public class CountMeIn extends ActionBarActivity {
     private void showToast(String message){
     	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
-
-    
-	private int remote_registerUserForTheFirstTime (String userName, String age, String sex, String city, String phone, String email){
-		
-		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "??????");
-		client.AddParam("userName", userName);
-		client.AddParam("age", age);
-		client.AddParam("sex", sex);
-		client.AddParam("city", city);
-		client.AddParam("phone", phone);
-		client.AddParam("email", email);
-		try{
-			client.Execute(1); 
-			return 1;
-		}
-		catch (Exception e){
-			return 0;
-		}
-	}
 
     
 }

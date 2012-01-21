@@ -2,6 +2,8 @@
 
 import android.content.Intent;
 import android.os.Bundle;
+import android.text.Html;
+import android.text.Spanned;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
@@ -17,6 +19,7 @@ import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.UsersUtil;
 
 public class Confirmation extends ActionBarActivity{
+	private static final String TAG = "Confirmation";
 		
 		private String mUserFirstName;
 		private String mUserName;
@@ -48,9 +51,9 @@ public class Confirmation extends ActionBarActivity{
 			ImageView badgePic = (ImageView)findViewById(R.id.badgeImage_confirmationView);
 			TextView badgeName= (TextView) findViewById(R.id.badgeName_confirmationView);
 
-		  	thanksUser.setText("Thanks for being awesome " + mUserFirstName +"!");
-		  	gotYou.setText(R.string.confirm_got_you + mEventName);
-		  	pointsNumber.setText(Integer.toString(mPoints));
+		  	thanksUser.setText("Thanks for being awesome " + mUserFirstName +"!");		  	
+		  	gotYou.setText(getResources().getString(R.string.confirm_got_you) + " " + mEventName);		  	
+		  	pointsNumber.setText(" " + Integer.toString(mPoints)+ " ");
 			
 		  	//badge message
 		    String currentBadge = Karma.Badge.getMyBadge(mPoints).getName();
@@ -63,21 +66,7 @@ public class Confirmation extends ActionBarActivity{
 		  	badgeName.setText(newBadge);
 		  	
 		  	int BadgeImage = getBadgeImage(newBadge);
-		  	badgePic.setImageResource(BadgeImage); 
-		    
-				
-//			Button buttonDone = (Button) findViewById(R.id.DoneConfirmationViewButton);
-//			buttonDone.setOnClickListener(new View.OnClickListener() {
-//	            public void onClick(View v) {
-//	            	Intent i = new Intent();
-//	                i.putExtra("sender", "confirmation");
-//	                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
-//	                setResult(RESULT_OK, i);
-//	    			finish();
-//	            }
-//	        });
-				    	
-		    
+		  	badgePic.setImageResource(BadgeImage); 		    
 		}
 		
 		private String getLocalUserFirstname() {
@@ -111,7 +100,7 @@ public class Confirmation extends ActionBarActivity{
 	    @Override
 	    public boolean onCreateOptionsMenu(Menu menu) {
 	        MenuInflater menuInflater = getMenuInflater();
-	        menuInflater.inflate(R.menu.confirm, menu);
+	        menuInflater.inflate(R.menu.done, menu);
 
 	        return super.onCreateOptionsMenu(menu);
 	    }
@@ -124,13 +113,14 @@ public class Confirmation extends ActionBarActivity{
 	        
 	        case android.R.id.home:	
 	        	newIntent = new Intent(this, MainActivity.class);
+	        	newIntent.putExtra("sender", TAG);
 	        	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
 	        	startActivity(newIntent);	
 	        	break;
 	        	
 	        case R.id.menu_done:	
             	Intent i = new Intent();
-                i.putExtra("sender", "confirmation");
+                i.putExtra("sender", TAG);
                 i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
                 setResult(RESULT_OK, i);
     			finish();

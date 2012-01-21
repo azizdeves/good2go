@@ -18,7 +18,6 @@ package com.gdma.good2go.ui;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -28,7 +27,6 @@ import android.app.Activity;
 import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
-import android.content.SharedPreferences;
 import android.location.Location;
 import android.location.LocationManager;
 import android.os.AsyncTask;
@@ -59,7 +57,7 @@ import flexjson.JSONDeserializer;
 
 public class MainActivity extends ActionBarActivity {
 	private static final String TAG = "Main";
-	private static final int FEEDBACK_REQUEST = 1;
+	
 	private static final int LOGIN_REQUEST = 7;
 	
 	private EventsDbAdapter mDbHelper;
@@ -76,7 +74,11 @@ public class MainActivity extends ActionBarActivity {
     public void onCreate(Bundle savedInstanceState) {
     	setTheme(R.style.AppTheme);    	
         super.onCreate(savedInstanceState); 
-                              
+               
+        Bundle extras = getIntent().getExtras();
+	    if(extras!=null){
+	    	mSender = extras.getString("sender");
+		}
     	/********************************************Remove this to work with Android Accounts**********************/
     	//saveLocalUsername("Bypass Account");
         /***********************************************************************************************************/             
@@ -120,8 +122,6 @@ public class MainActivity extends ActionBarActivity {
 	private String getLocalUsername(){
 		AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
 		return prefs.getUserName();
-		//SharedPreferences settings = getSharedPreferences("savedUsername", MODE_PRIVATE);
-		//return settings.getString("userNameVal", null);
 	}
 
 	
@@ -202,8 +202,6 @@ public class MainActivity extends ActionBarActivity {
 
 	
 	private void setDashboardView() {
-		
-        //setTheme(R.style.AppTheme);
 		setContentView(R.layout.main);  
 		
         //NEARBY
@@ -409,10 +407,12 @@ public class MainActivity extends ActionBarActivity {
 	        	String eventLon=Integer.toString(
 	        			event.getEventAddress().getGood2GoPoint().getLon());
 	        	    	        	
-	        	//calculate distance	
-	        	String distance=String.format("%.1f", 
-	        			(float)(event.getDistance(mMyGeoPoint.getLongitudeE6(),mMyGeoPoint.getLatitudeE6())))
-	        			+" km";
+	        	//calculate distance
+	        	String distance = (eventLat.compareTo("0")==0) || (eventLon.compareTo("0")==0)
+	        					? "-"
+	        					: String.format("%.1f", 
+	        			(float)(event.getDistance(mMyGeoPoint.getLongitudeE6(),mMyGeoPoint.getLatitudeE6())));
+	        	distance = distance + " km";
 	        	
 	        	//calculate duration
 	        	String duration = getDuration(event.getMinDuration());
@@ -445,6 +445,9 @@ public class MainActivity extends ActionBarActivity {
 	        	String env = isSetContains(vw, VolunteeringWith.ENVIRONMENT);
 	        	String special = isSetContains(vw, VolunteeringWith.SPECIAL);
 	        	
+	        	//get occurence key
+	        	String occKey = event.getOccurrences().get(0).getOccurrenceKey();
+	        	
 	        	//assign an image to event 
 	        	String eventImage = chooseImage (animals, children, disabled, elderly, env, special);	
 	        	
@@ -459,8 +462,11 @@ public class MainActivity extends ActionBarActivity {
 	        			animals, children,disabled,
 	        			elderly, env, special, eventImage, startTime, endTime,
 	        			preReq, npoName, groups, individ, kids, 
-	        			menial, mental);
+	        			menial, mental, occKey);
 	        }
+
+	        mDbHelper.close();
+	        
 	     }
         else
         	if (mEventsRetrievalDate.isFromToday() == false )
@@ -471,6 +477,7 @@ public class MainActivity extends ActionBarActivity {
         		mDbHelper.open();
         		createManualEventForDebug();
         		mEventsRetrievalDate.saveDate(new Date());
+        		mDbHelper.close();
         		//DEBUG
         	}
         }
@@ -500,7 +507,7 @@ public class MainActivity extends ActionBarActivity {
 	    			type,type,type,
 	    			image2,
 	    			"08:00", "22:00", eventTest, eventTest, type, type, type, 
-	    			type, type);
+	    			type, type, eventTest);
 	    	
 	}
 
@@ -512,6 +519,8 @@ public class MainActivity extends ActionBarActivity {
     	String duration = actualDurationMins!=0 ? actualDurationMins + "min" : "";
     	if (actualDurationHours!=0)
     		duration = actualDurationHours + "h " + duration;
+    	if (duration.length()==0)
+    		duration = "2h";
     	
     	return duration;
 	}
@@ -562,9 +571,6 @@ public class MainActivity extends ActionBarActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.main, menu);
-
-        // Calling super after populating the menu is necessary here to ensure that the
-        // action bar helpers have a chance to handle this event.
         return super.onCreateOptionsMenu(menu);
     }
 
