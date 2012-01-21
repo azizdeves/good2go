@@ -8,8 +8,8 @@ public class PointsUtil {
 	
 	public static final String OPEN_APP = "OPEN_APP";
 	public static final String INVITE_A_FRIEND = "INVITE_FRIEND";
-	public static final String POST_STATUS= "POST_STATUS"; //TODO TELL DANA TO ADD!!!	
-	
+	public static final String POST_STATUS= "POST_STATUS"; //TODO CHECK THAT DANA ADDED THIS EVENT!!!	
+	public static final String SEARCH_EVENT= "SEARCH_EVENT";	
 	/*NOT IN USE(AUTO IN THE SERVER)*/
 
 	public static final String EVENT_REGISTRATION = "REGISTER_TO_EVENT";	
@@ -17,7 +17,8 @@ public class PointsUtil {
 	public static final String GIVE_FEEDBACK= "RATE_AN_EVENT";
 	public static final String GIVE__NO_FEEDBACK= "NO_RATE";
 
-//	SEARCH_EVENT(10), //once a day
+	
+
 //	INVITE_FRIEND(50),
 //	FRIEND_REGISTERED(100),
 		
@@ -36,21 +37,23 @@ public class PointsUtil {
 		}		
 	}
 
-	public static int getNumOfPoints(String events){
-		if(events==OPEN_APP)
+	public static int getNumOfPoints(String event){
+		if(event==OPEN_APP)
 			return 10;
-		if(events==INVITE_A_FRIEND)
+		if(event==INVITE_A_FRIEND)
 			return 50;
-		if(events==POST_STATUS)
+		if(event==POST_STATUS)
 			return 10;
-		if(events==EVENT_REGISTRATION)
+		if(event==EVENT_REGISTRATION)
 			return 100;
-		if(events==APP_INSTALLATION)
+		if(event==APP_INSTALLATION)
 			return 10;
-		if(events==GIVE_FEEDBACK)
+		if(event==GIVE_FEEDBACK)
 			return 10;
-		if(events==GIVE__NO_FEEDBACK)
+		if(event==GIVE__NO_FEEDBACK)
 			return 0;
+		if(event==SEARCH_EVENT)
+			return 10;
 		return 0;
 		
 	}
