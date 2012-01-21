@@ -34,7 +34,7 @@ public class AppPreferencesEventsRetrievalDate {
      }
      
      public void saveDate(Date date) {
-    	 Long numOfSec = date.getTime();
+    	 long numOfSec = date.getTime();
          prefsEditor.putLong(DATE_PREF, numOfSec);
          prefsEditor.commit();
      }
