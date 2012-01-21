@@ -22,6 +22,8 @@ import com.gdma.good2go.utils.EventsDbAdapter;
 
 
 public class FeedbackTab extends ActionBarActivity  {
+	private static final String TAG = "Feedback";
+	
 	private String mUserName;
     private String mEventName;
     private String mOccurenceKey;
@@ -135,6 +137,7 @@ public class FeedbackTab extends ActionBarActivity  {
         
         case android.R.id.home:	
         	newIntent = new Intent(this, MainActivity.class);
+        	newIntent.putExtra("sender", TAG);
         	newIntent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP );
         	startActivity(newIntent);	
         	break;
