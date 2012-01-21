@@ -70,14 +70,14 @@
 	
 	<string name="confirm_good2go">You\'re GOOD2GO!</string>   	
 	<string name="confirm_thanks">Thanks for being awesome</string>
-	<string name="confirm_got_you">We\'ve got you for:  </string>
+	<string name="confirm_got_you">We\'ve got you for:\n</string>
 	<string name="confirm_points">POINTS</string>
 	<string name="confirm_points_win">Nice! You\'ve just earned</string>
 	<string name="confirm_badges">BADGES</string>
 	<string name="confirm_badge_win">Whoa! You just got yourself a new badge!</string>
 	<string name="confirm_badge_current">Your last badge:</string>
 	
-	<string name="personal_details_message">Please fill out the details required from us by the NPOs. No worries, this is a one time thing :)</string>
+	<string name="personal_details_message">Please fill out the details required from us by the NPOs.</string>
 
 
 	<string name="sending_user_details">"Please wait while sending details..."</string>

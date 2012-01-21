@@ -19,6 +19,7 @@ package com.gdma.good2go.ui;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 import java.util.Set;
 
 import android.accounts.Account;
@@ -445,6 +446,14 @@ public class MainActivity extends ActionBarActivity {
 	        	String env = isSetContains(vw, VolunteeringWith.ENVIRONMENT);
 	        	String special = isSetContains(vw, VolunteeringWith.SPECIAL);
 	        	
+	        	if (animals.contains("0")
+	        			 && children.contains("0")
+	        			 && disabled.contains("0")
+	        			 && elderly.contains("0")
+	        			 && env.contains("0") 
+	        			 && special.contains("0"))
+	        		special = "1";
+	        	
 	        	//get occurence key
 	        	String occKey = event.getOccurrences().get(0).getOccurrenceKey();
 	        	
@@ -552,18 +561,39 @@ public class MainActivity extends ActionBarActivity {
     		  imageId=R.drawable.event_elderly;
     	  
     	  if (environment=="1")
-    		  imageId=R.drawable.event_env;
+    		  imageId=randomizeInt(new int[] {R.drawable.event_env,
+    				  R.drawable.event_env1,
+    				  R.drawable.event_env2,
+    				  R.drawable.event_env3,
+    				  R.drawable.event_env4,
+    				  R.drawable.event_env5});
     	  
     	  if (special=="1")
-    		  imageId=R.drawable.event_special;
+    		  imageId=randomizeInt(new int[] {R.drawable.event_special,
+    				  R.drawable.event_default1,
+    				  R.drawable.event_default2,
+    				  R.drawable.event_default3,
+    				  R.drawable.event_default4,
+    				  R.drawable.event_default5});
     	  
     	  if (animals=="1")
-    		  imageId=R.drawable.event_animals;
+    		  imageId=randomizeInt(new int[] {R.drawable.event_animals,
+    				  R.drawable.event_animals1,
+    				  R.drawable.event_animals2,
+    				  R.drawable.event_animals3,
+    				  R.drawable.event_animals4,
+    				  R.drawable.event_animals5});
     	      	  
 		return Integer.toString(imageId);
 	}
 	
 	
+	private int randomizeInt(int [] eventImages) {
+		 Random randomGenerator = new Random();
+		 return eventImages[randomGenerator.nextInt(eventImages.length)];
+	}
+
+
 	/** FOR ACTION BAR MENUS **/
 	//TODO create settings menu for the main screen
 
