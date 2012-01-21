@@ -4,52 +4,28 @@ import java.io.IOException;
 import java.io.PrintWriter;
 import javax.servlet.http.*;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Set;
-import java.util.logging.Logger;
-import java.util.HashSet;
 
-import flexjson.JSONDeserializer;
 import flexjson.JSONSerializer;
-import flexjson.ObjectBinder;
 import flexjson.transformer.DateTransformer;
-import flexjson.ObjectFactory;
 
-
-import com.gdma.good2goserver.RestClient;
 import com.gdma.good2goserver.Occurrence;
-import com.gdma.good2goserver.DateParser;
+import com.gdma.good2goserver.SendEmail;
+
 import com.google.appengine.api.urlfetch.HTTPMethod;
 import com.google.appengine.api.urlfetch.HTTPRequest;
 import com.google.appengine.api.urlfetch.HTTPResponse;
 import com.google.appengine.api.urlfetch.URLFetchServiceFactory;
-import com.google.gson.Gson;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
-import java.lang.reflect.Type;
 import java.net.*;
 import java.io.*;
 
 @SuppressWarnings("serial")
 public class Good2GoServerServlet extends HttpServlet {
-	
-	private String getTime(Date dateFromEvent) {
- 		Calendar c = Calendar.getInstance();
- 		
-		c.setTime(dateFromEvent);
-		int eventHour = c.get(Calendar.HOUR_OF_DAY);
-		int eventMin = c.get(Calendar.MINUTE);
-		return eventHour + ":" + eventMin;
-	}
-	
-	private static final Logger log = Logger.getLogger(Good2GoServerServlet.class.getName());
 	
  	private Good2GoPoint getCoordinate(Event.Address address){
  		
@@ -120,9 +96,10 @@ public class Good2GoServerServlet extends HttpServlet {
 			Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
 			
 	        URL url = new URL("http://www.hevratova.org.il/share/");
-			
-			HTTPRequest req = new HTTPRequest(url,HTTPMethod.GET);
+
+			HTTPRequest req = new HTTPRequest(url,HTTPMethod.GET,com.google.appengine.api.urlfetch.FetchOptions.Builder.withDeadline(60));
 			HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
+			
 			byte[] bytes = res.getContent();
 			
 			String s = new String(bytes,"UTF-8");
@@ -153,7 +130,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	        	int start = 0;
 	        	int end = -1;
 	        	
-	        	for (int i=0;i<=33;i++){
+	        	for (int i=0;i<=40;i++){
 	        		end++;
 	        		start = end;
 	        		while (end<len && line.charAt(end)!='\t')
@@ -192,8 +169,14 @@ public class Good2GoServerServlet extends HttpServlet {
 		        				if (e != null){
 		        					if (isNewEvent)
 		        						newEvents.add(e);
-		        					else
-		        						dbm.editEvent(e);
+		        					else{
+		        						try{
+		        							dbm.editEvent(e);
+		        						}
+		        		        		catch(Exception ex){
+		        		        			pw.print(ex.getMessage());
+		        		        		}
+		        					}
 		        				}
 		        					
 	        					e = dbm.getEvent(eventKey);
@@ -268,6 +251,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	        					o.setStartTime(startTime);
 	        				}
 	        				catch(Exception ex){
+	        					pw.print(ex.getMessage());
 	        				}
 	        				break;
 	        			
@@ -292,6 +276,25 @@ public class Good2GoServerServlet extends HttpServlet {
 	        					o.setEndTime(endTime);
 	        				}
 	        				catch(Exception ex){
+	        					pw.print(ex.getMessage());
+	        				}
+	        				break;
+	        				
+	        			case 13:
+	        				if (part.equals(new String("לא")) && e.isArriveAnyTime() == false){
+	        					Calendar c = Calendar.getInstance();
+	        					c.setTime(o.getEndTime());
+	        					
+	        					Calendar startCal = Calendar.getInstance();
+	        					startCal.setTime(o.getStartTime());
+	        					
+	        					c.add(Calendar.HOUR_OF_DAY, -startCal.get(Calendar.HOUR_OF_DAY));
+	        					c.add(Calendar.MINUTE, -startCal.get(Calendar.MINUTE));
+	        					
+	        					e.setMinDuration(c.get(Calendar.HOUR_OF_DAY)*60 + c.get(Calendar.MINUTE));
+	        				}
+	        				else{
+	        					e.setMinDuration(60);
 	        				}
 	        				break;
 	        				
@@ -311,6 +314,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	        						address.setNumber(Short.parseShort(part));
 	        					}
 	        					catch (Exception ex){
+	        						pw.print(ex.getMessage());
 	        					}
 	        					
 	        					if (address.getGood2GoPoint() == null || address.getGood2GoPoint().getLat() == 0 || address.getGood2GoPoint().getLon() == 0){
@@ -350,6 +354,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	        							e.addSuitableFor(Event.SuitableFor.KIDS);
 	        					}
 	        					catch (Exception ex){
+	        						pw.print(ex.getMessage());
 	        					}
 	        				}
 	        				break;
@@ -367,7 +372,13 @@ public class Good2GoServerServlet extends HttpServlet {
 	        					e.setHowMany(Short.parseShort(part));
 	        				}
 	        				catch (Exception ex){
+	        					pw.print(ex.getMessage());
 	        				}
+	        				break;
+	        			
+	        			case 40:
+	        				if (!part.equals(new String("")))
+	        						o.setEmail(part);
 	        				break;
 	        		}
 	        		
@@ -375,22 +386,29 @@ public class Good2GoServerServlet extends HttpServlet {
 	        	
 	        	if (isNewOccurrence)
 	        		newOccurrences.add(o);
-	        	else
-	        		dbm.editOccurrence(o);
+	        	else{
+	        		try{
+	        			dbm.editOccurrence(o);
+	        		}
+	        		catch(Exception ex){
+	        			pw.print(ex.getMessage());
+	        		}
+	        	}
 	        	
 	        }
 	        in.close();
 	        
-	        dbm.addOccurrences(newOccurrences);
-	        dbm.addEvents(newEvents);
+	        try{
+	        	dbm.addOccurrences(newOccurrences);
+	        	dbm.addEvents(newEvents);
+	        }
+    		catch(Exception ex){
+    			pw.print(ex.getMessage());
+    		}
 		}
 		catch(IOException e){
-			
+			pw.print(e.getMessage());
 		}
-	}
-	
-	public void parseExcel(){
-		
 	}
 	
 	public void doGet(HttpServletRequest req, HttpServletResponse resp)
@@ -561,39 +579,46 @@ public class Good2GoServerServlet extends HttpServlet {
 		
 		}
 		
-		else if (action.compareToIgnoreCase("addUser")==0){
+		else if (action.compareToIgnoreCase("editUser")==0 || action.compareToIgnoreCase("addUser")==0){
 			String userName = req.getParameter(new String("userName"));
 			String firstName = req.getParameter(new String("firstName"));
 			String lastName = req.getParameter(new String("lastName"));
 			String email = req.getParameter(new String("email"));
-			String birthString = req.getParameter(new String("birthYear")); 
-			int birthYear=0;
+			String phone = req.getParameter(new String("phone"));
+			String city = req.getParameter(new String("city"));
+			String sexString = req.getParameter(new String("sex"));
+			String birthString = req.getParameter(new String("birthYear"));
 			
 			if (userName!=null){
+				User user = new User();
+				
+				user.setUserName(userName);
+				user.setBirthYear(0);
+				
+				if (firstName!=null)
+					user.setFirstName(firstName);
+				if (lastName!=null)
+					user.setLastName(lastName);
+				if (email!=null)
+					user.setEmail(email);
+				if (phone!=null)
+					user.setPhone(phone);
+				if (city!=null)
+					user.setCity(city);
+				if (sexString!=null)
+					user.setSex(User.Sex.getSex(sexString));
 				if (birthString!=null)
-					birthYear = Integer.parseInt(birthString);
-				User user = new User(userName, firstName, lastName, email, birthYear, new Date());
-				dbm.addUser(user);
-			}
-			else{
-				pw.print("Unspecified username");
-			}
-			
-		}
-		
-		else if (action.compareToIgnoreCase("editUser")==0){
-			String userName = req.getParameter(new String("userName"));
-			String firstName = req.getParameter(new String("firstName"));
-			String lastName = req.getParameter(new String("lastName"));
-			String email = req.getParameter(new String("email"));
-			String birthString = req.getParameter(new String("birthYear")); 
-			int birthYear=0;
-			
-			if (userName!=null){
-				if (birthString!=null)
-					birthYear = Integer.parseInt(birthString);
-				User user = new User(userName, firstName, lastName, email, birthYear, new Date());
-				dbm.editUser(user);
+					user.setBirthYear(Integer.parseInt(birthString));
+				
+				if (action.compareToIgnoreCase("editUser")==0){
+					dbm.editUser(user);
+				}
+				else{
+					Date now = new Date();
+					user.setRegistrationDate(now);
+					
+					dbm.addUser(user);
+				}
 			}
 			else{
 				pw.print("Unspecified username");
@@ -624,7 +649,9 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 				User user = dbm.getUserDetails(userName);
 				
-				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);				
+				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).exclude("registeredOccurrenceKeys").serialize(user);	
+				
+				pw.print(js);
 			}
 			else{
 				pw.print("Unspecified username");
@@ -634,11 +661,28 @@ public class Good2GoServerServlet extends HttpServlet {
 			String userName = req.getParameter(new String("userName"));
 			String occurrenceKey = req.getParameter(new String("occurrenceKey"));
 			
-			if (userName!=null && occurrenceKey!=null)
-				dbm.registerToOccurrence(userName, occurrenceKey);
-			else
+			if (userName!=null && occurrenceKey!=null){
+				if (dbm.registerToOccurrence(userName, occurrenceKey)){
+					Occurrence occurrence = dbm.getOccurrence(occurrenceKey);
+					User user = dbm.getUserDetails(userName);
+					
+					Calendar c = Calendar.getInstance();
+					Date now = new Date();
+					c.setTime(now);
+
+					try{
+						Integer age = new Integer(c.get(Calendar.YEAR) - user.getBirthYear());
+						SendEmail.ActSend(occurrence.getEmail(), user.getFirstName(), user.getLastName(), user.getEmail(), age.toString(), user.getSex().toString());
+					}
+					catch(Exception e){
+						pw.print(e.getMessage());
+						pw.print("Error sending Email");
+					}
+				}
+			}
+			else{
 				pw.print("Missing Parameters");
-		
+			}
 		}
 		
 		else if (action.compareToIgnoreCase("cancelRegistration")==0){

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appengine-web-app xmlns="http://appengine.google.com/ns/1.0">
   <application>good-2-go</application>
-  <version>6</version>
+  <version>9</version>
 
   <!--
     By default, App Engine sends requests serially to a given web server.
@@ -11,8 +11,10 @@
   -->
  
   <!-- Configure java.util.logging -->
-  <system-properties>
-    <property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
-  </system-properties>
- 
+  	<system-properties>
+		<property name="java.util.logging.config.file" value="WEB-INF/logging.properties"/>
+ 	</system-properties>
+	<inbound-services>
+  		<service>mail</service>
+	</inbound-services>
 </appengine-web-app>

@@ -128,14 +128,22 @@ public class Good2GoDatabaseManager {
 				throw new IOException("Username " + newUser.getUserName() + " doesn't exist in database.");
 			
 			user = pm.getObjectById(User.class, newUser.getUserName());
-			if (newUser.getFirstName()!=null)
+			if (!newUser.getFirstName().equals(new String("")))
 				user.setFirstName(newUser.getFirstName());
-			if (newUser.getLastName()!=null)
+			if (!newUser.getLastName().equals(new String("")))
 				user.setLastName(newUser.getLastName());
 			if (newUser.getBirthYear()!=0)
 				user.setBirthYear(newUser.getBirthYear());
-			if (newUser.getEmail()!=null)
+			if (!newUser.getEmail().equals(new String("")))
 				user.setEmail(newUser.getEmail());
+			if (!newUser.getPhone().equals(new String("")))
+				user.setPhone(newUser.getPhone());
+			if (!newUser.getCity().equals(new String("")))
+				user.setCity(newUser.getCity());
+			if (newUser.getSex()!=null)
+				user.setSex(newUser.getSex());
+			if (newUser.getRegistrationDate()!=null)
+				user.setRegistrationDate(newUser.getRegistrationDate());
 			
 			txn.commit();
 		}
@@ -173,7 +181,7 @@ public class Good2GoDatabaseManager {
 		return user;
 	}
 	
-	public void registerToOccurrence(String userName, String occurrenceKey){
+	public boolean registerToOccurrence(String userName, String occurrenceKey){
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		Karma karma = new Karma(userName, ActionType.REGISTER_TO_EVENT, new Date(), occurrenceKey);
@@ -189,9 +197,14 @@ public class Good2GoDatabaseManager {
 				user.addRegisteredOccurrenceKey(occurrenceKey);
 				occurrence.addRegisteredUser(userName);
 			}
-			
+		}
+		catch(Exception e){
+			pm.close();
+			return false;
+		}
+		
 			//Add Karma, if doesn't exist.
-			
+		try{	
 			Query query = pm.newQuery(Karma.class);
 			query.setFilter("userName == '" + userName + "' && occurrenceKey == '" + occurrenceKey + "'");
 			@SuppressWarnings("unchecked")
@@ -208,11 +221,12 @@ public class Good2GoDatabaseManager {
 			
 			if (!isFound)
 				pm.makePersistent(karma);
-
 		}
 		finally {
 			pm.close();
 		}
+		
+		return true;
 	}
 	
 	public void CancelRegistration(String userName, String occurrenceKey){
@@ -396,7 +410,7 @@ public class Good2GoDatabaseManager {
 	}
 	
 	//Dumb batch insert for events.
-	public void addEvents(Collection<Event> events){
+	public void addEvents(Collection<Event> events) throws Exception{
 		PersistenceManager pm = null;
 		
 		Collection<Event> put = new LinkedList<Event>();
@@ -413,6 +427,9 @@ public class Good2GoDatabaseManager {
 				try {
 					pm = PMF.get().getPersistenceManager();
 					pm.makePersistentAll(put);		
+				}
+				catch (Exception e){
+					throw e;
 				}
 				finally {
 					pm.close();
@@ -438,7 +455,7 @@ public class Good2GoDatabaseManager {
 		}
 	}
 	
-	public void editEvent(Event newEvent) throws IOException{
+	public void editEvent(Event newEvent) throws Exception{
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		try{
@@ -447,50 +464,53 @@ public class Good2GoDatabaseManager {
 			if (e==null)
 				throw new IOException("This event is not registered in the database.");
 			
-			if (!newEvent.getContent().equals(new String("")))
+			if (newEvent.getContent()!=null && !newEvent.getContent().equals(new String("")))
 				e.setContent(newEvent.getContent());
 			
-			if (!newEvent.getDescription().equals(new String("")))
+			if (newEvent.getDescription()!=null && !newEvent.getDescription().equals(new String("")))
 				e.setDescription(newEvent.getDescription());
 			
 			if (newEvent.getEventAddress() != null)
 				e.setEventAddress(newEvent.getEventAddress());
 			
-			if (!newEvent.getEventName().equals(new String("")))
+			if (newEvent.getEventName()!=null && !newEvent.getEventName().equals(new String("")))
 				e.setEventName(newEvent.getEventName());
 			
 			if (newEvent.getHowMany() != 0)
 				e.setHowMany(newEvent.getHowMany());
 			
-			if (!newEvent.getInfo().equals(new String("")))
+			if (newEvent.getInfo()!=null && !newEvent.getInfo().equals(new String("")))
 				e.setInfo(newEvent.getInfo());
 			
 			if (newEvent.getMinDuration() != 0)
 				e.setMinDuration(newEvent.getMinDuration());
 			
-			if (!newEvent.getNPOName().equals(new String("")))
+			if (newEvent.getNPOName()!=null && !newEvent.getNPOName().equals(new String("")))
 				e.setNPOName(newEvent.getNPOName());
 			
 			if (newEvent.getNumRaters() != 0)
 				e.setNumRaters(newEvent.getNumRaters());
 			
-			if (!newEvent.getOccurrenceKeys().isEmpty())
+			if (newEvent.getOccurrenceKeys()!=null && !newEvent.getOccurrenceKeys().isEmpty())
 				e.setOccurrenceKeys(newEvent.getOccurrenceKeys());
 			
-			if (!newEvent.getPrerequisites().equals(new String("")))
+			if (newEvent.getPrerequisites()!=null && !newEvent.getPrerequisites().equals(new String("")))
 				e.setPrerequisites(newEvent.getPrerequisites());
 			
-			if (!newEvent.getSuitableFor().isEmpty())
+			if (newEvent.getSuitableFor()!=null && !newEvent.getSuitableFor().isEmpty())
 				e.setSuitableFor(newEvent.getSuitableFor());
 			
 			if (newEvent.getSumRatings() != 0)
 				e.setSumRatings(newEvent.getSumRatings());
 
-			if (!newEvent.getVolunteeringWith().isEmpty())
+			if (newEvent.getVolunteeringWith()!=null && !newEvent.getVolunteeringWith().isEmpty())
 				e.setVolunteeringWith(newEvent.getVolunteeringWith());
 			
-			if (!newEvent.getWorkType().isEmpty())
+			if (newEvent.getWorkType()!=null && !newEvent.getWorkType().isEmpty())
 				e.setWorkType(newEvent.getWorkType());
+		}
+		catch (Exception e){
+			throw e;
 		}
 		finally{
 			pm.close();
@@ -498,7 +518,7 @@ public class Good2GoDatabaseManager {
 	}
 	
 	//Dumb batch insert for occurrences.
-	public void addOccurrences(Collection<Occurrence> occurrences){
+	public void addOccurrences(Collection<Occurrence> occurrences) throws Exception{
 		PersistenceManager pm = null;
 		
 		Collection<Occurrence> put = new LinkedList<Occurrence>();
@@ -515,6 +535,9 @@ public class Good2GoDatabaseManager {
 				try {
 					pm = PMF.get().getPersistenceManager();
 					pm.makePersistentAll(put);		
+				}
+				catch (Exception e){
+					throw e;
 				}
 				finally {
 					pm.close();
@@ -543,14 +566,17 @@ public class Good2GoDatabaseManager {
 		}
 	}
 	
-	public void editOccurrence(Occurrence newOccurrence){	
+	public void editOccurrence(Occurrence newOccurrence) throws Exception{	
 		PersistenceManager pm = PMF.get().getPersistenceManager();
 		
 		try {
 			Occurrence o = pm.getObjectById(Occurrence.class, newOccurrence.getOccurrenceKey());
 			
-			if (!newOccurrence.getContainingEventKey().equals(new String("")))
+			if (newOccurrence.getContainingEventKey()!=null && !newOccurrence.getContainingEventKey().equals(new String("")))
 				o.setContainingEventKey(newOccurrence.getContainingEventKey());
+			
+			if (newOccurrence.getEmail()!=null && !newOccurrence.getEmail().equals(new String("")))
+				o.setEmail(newOccurrence.getEmail());
 			
 			if (newOccurrence.getEndTime() != null)
 				o.setEndTime(newOccurrence.getEndTime());
@@ -558,11 +584,14 @@ public class Good2GoDatabaseManager {
 			if (newOccurrence.getOccurrenceDate() != null)
 				o.setOccurrenceDate(newOccurrence.getOccurrenceDate());
 			
-			if (!newOccurrence.getRegisteredUserNames().isEmpty())
+			if (newOccurrence.getRegisteredUserNames()!=null && !newOccurrence.getRegisteredUserNames().isEmpty())
 				o.setRegisteredUserNames(newOccurrence.getRegisteredUserNames());
 			
 			if (newOccurrence.getStartTime() != null)
 				o.setStartTime(newOccurrence.getStartTime());
+		}
+		catch (Exception e){
+			throw e;
 		}
 		finally {
 			pm.close();

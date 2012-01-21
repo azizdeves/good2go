@@ -23,31 +23,37 @@ public class Occurrence implements Comparable<Occurrence>{
 	private Date occurrenceDate;
 
 	@Persistent
-	@Extension(vendorName = "datanucleus", key = "gae.unindexed", value = "true")
+	@Extension(vendorName="datanucleus", key="gae.unindexed", value="true")
 	private Date startTime;
 
 	@Persistent
 	private Date endTime;
 
 	@Persistent
+	@Extension(vendorName="datanucleus", key="gae.unindexed", value="true")
+	private String email;
+	
+	@Persistent
 	private List<String> registeredUserNames;
 
 	public Occurrence() {
-		this.occurrenceKey = null;
+		this.occurrenceKey = "";
 		this.containingEventKey = "";
 		this.occurrenceDate = null;
 		this.startTime = null;
 		this.endTime = null;
+		this.email = "";
 		this.registeredUserNames = new LinkedList<String>();
 	}
 	
-	public Occurrence(String containingEventKey, Date occurrenceDate, Date startTime, Date endTime){
+	public Occurrence(String containingEventKey, Date occurrenceDate, Date startTime, Date endTime, String email){
 		this();
 		
 		this.setContainingEventKey(containingEventKey);
 		this.setOccurrenceDate(occurrenceDate);
 		this.setStartTime(startTime);
 		this.setEndTime(endTime);
+		this.setEmail(email);
 	}
 	
 	public String getOccurrenceKey() {
@@ -68,6 +74,10 @@ public class Occurrence implements Comparable<Occurrence>{
 
 	public Date getEndTime() {
 		return endTime;
+	}
+	
+	public String getEmail() {
+		return email;
 	}
 
 	public List<String> getRegisteredUserNames() {
@@ -116,6 +126,10 @@ public class Occurrence implements Comparable<Occurrence>{
 		calendar.set(1970, Calendar.JANUARY, 1, hour, minute, 0);
 		calendar.set(Calendar.MILLISECOND, 0);
 		this.endTime = calendar.getTime();
+	}
+	
+	public void setEmail(String email) {
+		this.email = email;
 	}
 
 	protected void setRegisteredUserNames(List<String> registeredUserNames) {
