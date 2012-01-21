@@ -61,7 +61,7 @@ public class Karma implements Comparable<Karma>{
 		return occurrenceKey;
 	}
 	
-	enum ActionType{
+	public enum ActionType{
 		OPEN_ACCOUNT(10),
 		OPEN_APP(10),
 		SEARCH_EVENT(10), //once a day

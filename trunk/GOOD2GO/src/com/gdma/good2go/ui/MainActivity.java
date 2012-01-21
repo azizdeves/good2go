@@ -44,9 +44,11 @@ import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.SuitableFor;
 import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.Event.WorkType;
+import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
@@ -156,8 +158,11 @@ public class MainActivity extends ActionBarActivity {
 	
 	
 	private void givePoints() {
-		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mRestClient);
-		showToast("You just earned"+ PointsUtil.getNumOfPoints(PointsUtil.OPEN_APP) +"points for checking out the app! You’re awesome!");		
+		RemoteFunctions rf = RemoteFunctions.INSTANCE;
+		/**TODO put in async*/
+		int res  = rf.addUserKarma(RemoteFunctions.ADD_USER_KARMA, mLocalUsername, 
+				Karma.ActionType.OPEN_APP.name());
+		//showToast("Thanks for cheking out the app, you get " + " +10 " +"point bonus.");		
 	}
 
 	private boolean areEventsFromToday() {
@@ -258,6 +263,7 @@ public class MainActivity extends ActionBarActivity {
         if (requestCode == LOGIN_REQUEST) {
         	if (resultCode==Activity.RESULT_OK)
         	{
+        		mLocalUsername=getLocalUsername();
         		continueActivityStart();
         	}
         }
@@ -317,7 +323,7 @@ public class MainActivity extends ActionBarActivity {
 			JSONResponse = client.getResponse();
 			if (JSONResponse=="")
 			{
-				//handle alerting the user that there are no events for today
+				/**TODO handle alerting the user that there are no events for today*/
 				Log.i(TAG, "No events for today");
 				return null;
 			}
@@ -330,8 +336,11 @@ public class MainActivity extends ActionBarActivity {
 				List<Event> events = new JSONDeserializer<List<Event>>()
 							.use(Date.class, new DateParser()).deserialize(JSONResponse);
 				
-				mEventsRetrievalDate.saveDate(new Date());
-				return events;
+				if (events!=null && events.size()>0)
+				{
+					mEventsRetrievalDate.saveDate(new Date());
+					return events;
+					}
 			}
 		}
 		catch (Exception e)
