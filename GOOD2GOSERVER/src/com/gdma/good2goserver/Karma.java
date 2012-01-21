@@ -91,7 +91,7 @@ public class Karma implements Comparable<Karma>{
 		}
 	}
 	
-	enum Badge{
+	public enum Badge{
 		MR_NICE_GUY(0,"Mr. Nice Guy"),
 		ANGEL(3000,"Angel"),
 		SAINT(5000,"Saint"),
