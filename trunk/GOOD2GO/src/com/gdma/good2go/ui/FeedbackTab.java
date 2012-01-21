@@ -1,8 +1,10 @@
 package com.gdma.good2go.ui;
 
-import java.util.Date;
+import java.text.DecimalFormat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -11,99 +13,109 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.RatingBar;
 import android.widget.TextView;
-import android.widget.Toast;
-import android.widget.RatingBar.OnRatingBarChangeListener;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.RemoteFunctions;
-import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
 
 public class FeedbackTab extends ActionBarActivity  {
-	private RatingBar mRating;
-	private RestClient client = null;
-	private String mOccurrenceKey="0";
 	private String mUserName;
-	private Button mnoThankYouButton;
-	private Button sendFeedBackButton;
     private String mEventName;
-    private String mEventDesc;
-    private String mEventKey;
-    private TextView mTextEventDesc;
-    private TextView mFeedBackValue;
+    private String mOccurenceKey;
+    private String mEventDate;
+    private String mPoints;
+
+	private RatingBar mRating;
+	private Button mNoThankYouButton;
+	private Button mSendFeedBackButton;
+
+    private TextView mFeedbackEvent;
+    private Button mFeedbackPoints;
+    private TextView mFeedbackTime;
+    
+    
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.feedback);
-		Bundle extras = getIntent().getExtras();
-		if(extras!=null){
-			mEventName=extras.getString("mEventName");
-			mEventDesc=extras.getString("mEventDesc");
-			mEventKey=extras.getString("mEventKey");
-		}
-
-		mTextEventDesc = (TextView) findViewById(R.id.eventDetails_FeedbackView);
-		mTextEventDesc.setText("Thank you for being AWESOME and volunteering for "+ mEventDesc);
-
-		mRating=(RatingBar)findViewById(R.id.ratingBar_FeedbackView);// create RatingBar object
-		mRating.setOnRatingBarChangeListener(new OnRatingBarChangeListener() {			
-			@Override
-			public void onRatingChanged(RatingBar rBar, float fRating, boolean fromUser) {
-				mFeedBackValue = (TextView)findViewById(R.id.feedBackValue_FeedbackView);
-				mFeedBackValue.setText(Float.toString(mRating.getRating()));
-				
-//				setResult(RESULT_OK);
-//				finish();
-			}
-		});
 		
-		sendFeedBackButton= (Button) findViewById(R.id.sendFeedBackButton_FeedbackView);
-		sendFeedBackButton.setText("Send");
-		sendFeedBackButton.setOnClickListener(new View.OnClickListener() {
+		Bundle extras = getIntent().getExtras();		
+		if(extras!=null){		
+			mEventName = extras.getString(EventsDbAdapter.KEY_EVENTNAME);
+			mOccurenceKey = extras.getString(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY);
+			mEventDate = extras.getString("VOLUNTEER_DATE");
+			mPoints = extras.getString("POINTS");
+		}
+		
+		mUserName = getLocalUsername();
+
+		mFeedbackEvent = (TextView) findViewById (R.id.feedback_event);
+		mFeedbackPoints = (Button) findViewById (R.id.feedback_pointsvalue);
+		mFeedbackTime = (TextView) findViewById (R.id.feedback_time);
+		mRating=(RatingBar)findViewById(R.id.ratingBar_FeedbackView);
+		mSendFeedBackButton= (Button) findViewById(R.id.sendFeedBackButton_FeedbackView);
+		mNoThankYouButton= (Button) findViewById(R.id.noThankYouButton_FeedbackView);
+		
+		mFeedbackEvent.setText(getResources().getString(R.string.feedback_event) + mEventName);
+		mFeedbackPoints.setText(mPoints);
+		mFeedbackTime.setText("on " + mEventDate);
+
+		mSendFeedBackButton.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
+            	String rating = new DecimalFormat("#").format(
+            			mRating.getRating());
             	
-            	//MOR - I suggest you use the new remoteFuncs singleton like below*/
-        		/**
-        		 * RemoteFunctions rf = RemoteFunctions.INSTANCE;
-        		 * 
-        		 * rf.addFeedback(RemoteFunctions.ADD_USER_EVENT_FEEDBACK, 
-        				userName, occurrenceKey, rating);
-        				*/
-        		/*also - i see that you're using eventKey which is incorrect
-        		 * since it should be occurenceKey.
-        		 * Please fix this - i already added this in the internal DB.
-        		 */
-            	remote_setFeedback(mUserName, mEventKey, mRating.getRating());
-                setResult(RESULT_OK);
-    			finish();
-             
-	            //startActivity(i);
+            	new sendUserFeedbackTask().execute(
+        				 mUserName, mOccurenceKey, rating);
             }
         });		
-		
-		
-		mnoThankYouButton= (Button) findViewById(R.id.noThankYouButton_FeedbackView);
-		mnoThankYouButton.setText("No thanks");
-		mnoThankYouButton.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	remote_setFeedback(mUserName, mEventKey, null);
-                setResult(RESULT_OK);
-    			finish();
-             
-	            //startActivity(i);
+				
+		mNoThankYouButton.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {           	
+            	new sendUserFeedbackTask().execute(
+        				 mUserName, mOccurenceKey, "0");
             }
-        });
-
-			
-
-
-	
+		});
 	}
 
+	private String getLocalUsername(){
+		AppPreferencesPrivateDetails prefs = new AppPreferencesPrivateDetails(this);
+		return prefs.getUserName();
+	}
+
+    /**THREADS*/		
+    private class sendUserFeedbackTask extends AsyncTask<String, Void, Integer> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(FeedbackTab.this);
+    		dialog.setMessage(getString(R.string.feedback_sendingFeedback));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(Integer execResult) {
+    		dialog.dismiss();
+    		
+            setResult(RESULT_OK);
+			finish();
+    	}
+			
+		@Override
+		protected Integer doInBackground(String... feedbackDetails) {
+    		RemoteFunctions rf = RemoteFunctions.INSTANCE;
+    		return 
+    				rf.addFeedback(RemoteFunctions.ADD_USER_EVENT_FEEDBACK,
+    						feedbackDetails[0], 
+    						feedbackDetails[1], feedbackDetails[2]);
+			}
 	
+    }
 
 	/** FOR ACTION BAR MENUS **/
 	
@@ -130,26 +142,4 @@ public class FeedbackTab extends ActionBarActivity  {
         
         return super.onOptionsItemSelected(item);
     }
-   
-
-    public int remote_setFeedback(String userName, String occurrenceKey,Float rating){
-		client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "addFeedback");
-		client.AddParam("userName", userName);
-		client.AddParam("occurrenceKey", occurrenceKey);
-		if(rating!=null)
-			client.AddParam("rating",Float.toString(rating));
-		
-		try{
-			client.Execute(1); //1 is HTTP GET
-			return 1;
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server -remote_setFeedback- failed", Toast.LENGTH_LONG);
-			debugging.show();
-			return -1;   	
-		}
-    }
-
-
 }
