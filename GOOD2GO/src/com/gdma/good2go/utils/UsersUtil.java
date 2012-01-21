@@ -1,9 +1,12 @@
 package com.gdma.good2go.utils;
 import java.util.Date;
+import java.util.List;
 
 import android.widget.Toast;
 
+import com.gdma.good2go.Event;
 import com.gdma.good2go.User;
+import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
 
 
@@ -107,4 +110,35 @@ public class UsersUtil {
 			return 0;
 		}
 	}
+	
+	
+	
+	
+	public static List<Event> remote_getEventsForFeedback(String userName){
+    	String JSONResponse = null;
+    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    	client.AddParam("action", "addUser");
+    	client.AddParam("userName", userName);
+		Date myDate = new Date();
+		String dateToSend = Long.toString(myDate.getTime());
+		client.AddParam("userDate", dateToSend);
+		try{
+			client.Execute(1); //1 is HTTP GET
+			
+			JSONResponse = client.getResponse();
+			if (JSONResponse!=null)
+			{
+				JSONResponse = JSONResponse.trim();
+				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
+				
+				List<Event> events = new JSONDeserializer<List<Event>>().
+						use(Date.class, new DateParser()).deserialize(JSONResponse);
+				return events;
+			}
+		}
+		catch (Exception e){
+			return null;
+		}
+		return null;
+    }
 }

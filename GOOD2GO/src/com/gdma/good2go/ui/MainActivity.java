@@ -146,7 +146,6 @@ public class MainActivity extends ActionBarActivity {
     			setDashboardView();
     		}
     		
-        	checkFeedback();
         	givePoints();
 		}
     	else
@@ -158,29 +157,8 @@ public class MainActivity extends ActionBarActivity {
 	
 	private void givePoints() {
 		PointsUtil.remote_addKarma(mLocalUsername, PointsUtil.OPEN_APP, mRestClient);
-		showToast("You just earned"+" 10 " +"points for checking out the app! You’re awesome!");		
+		showToast("You just earned"+ PointsUtil.getNumOfPoints(PointsUtil.OPEN_APP) +"points for checking out the app! You’re awesome!");		
 	}
-
-
-	private void checkFeedback() {
-        List<Event> feedbackList = remote_getEventsForFeedback();  
-        if (feedbackList!=null){
-        	for (Event event : feedbackList) {
-        		mEventDesc = event.getDescription();
-        		mEventName=event.getEventName();
-        		mEventKey=event.getEventKey();
-        		Bundle extraInfo = new Bundle();        		
-                extraInfo.putString("mEventDesc", mEventDesc);
-                extraInfo.putString("mEventName", mEventName);
-                extraInfo.putString("mEventKey", mEventKey);
-                Intent newIntent = new Intent(this, FeedbackTab.class);
-                newIntent.putExtras(extraInfo);
-                startActivity(newIntent);
-			}
-        }
-		
-	}
-
 
 	private boolean areEventsFromToday() {
 		mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
@@ -284,35 +262,7 @@ public class MainActivity extends ActionBarActivity {
         	}
         }
 	}	
-	
-	
-    public List<Event> remote_getEventsForFeedback(){
-    	String JSONResponse = null;
-		mRestClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		mRestClient.AddParam("action", "addUser");
-		mRestClient.AddParam("userName", mLocalUsername);
-		Date myDate = new Date();
-		String dateToSend = Long.toString(myDate.getTime());
-		mRestClient.AddParam("userDate", dateToSend);
-		try{
-			mRestClient.Execute(1); //1 is HTTP GET
-			
-			JSONResponse = mRestClient.getResponse();
-			if (JSONResponse!=null)
-			{
-				JSONResponse = JSONResponse.trim();
-				JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-				
-				List<Event> events = new JSONDeserializer<List<Event>>().
-						use(Date.class, new DateParser()).deserialize(JSONResponse);
-				return events;
-			}
-		}
-		catch (Exception e){
-			return null;
-		}
-		return null;
-    }
+
 	
 	
     /**THREADS*/		
