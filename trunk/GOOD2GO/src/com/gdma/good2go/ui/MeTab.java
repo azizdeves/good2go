@@ -3,6 +3,7 @@ package com.gdma.good2go.ui;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.Set;
 
 
 import android.R.drawable;
@@ -26,6 +27,10 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Karma;
 import com.gdma.good2go.User;
+import com.gdma.good2go.Event.Address;
+import com.gdma.good2go.Event.SuitableFor;
+import com.gdma.good2go.Event.VolunteeringWith;
+import com.gdma.good2go.Event.WorkType;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
@@ -41,22 +46,24 @@ import flexjson.transformer.DateTransformer;
 
 public class MeTab extends ActionBarListActivity {
 	private static final String TAG = "Me";
-    drawable myPic;
-    long points;
-    String badge;
-    String userId;
-    String userName="496351";
-    String userNiceName="";
-    String userFirstName="Mor";
-    String userLastName="Cohen";
-    List<Event> usersEvents;
-    RestClient client = null;
+	private drawable myPic;
+	private long mPoints;
+	private String mBadge;
+	private String mUserId;
+	private String mUserName="";
+	private String mUserNiceName="";
+	private String mUserFirstName="";
+	private String mUserLastName="";
+	private List<Event> usersEvents;
+	private RestClient nClient = null;
     private UsersHistoryDbAdapter mDbHelper;
-	Cursor mEventsCursor;
+    private Cursor mEventsCursor;
 	private String[] mColumns;
-	PopupWindow pw;
-	 
-	 
+	private PopupWindow pw;
+	private AppPreferencesPrivateDetails mUsersPref; 
+    private String mEventName;
+    private String mEventDesc;
+    private String mEventKey;	 
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -65,47 +72,41 @@ public class MeTab extends ActionBarListActivity {
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
         
 //("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
-       // points=7200;
-       // badge="BUDDHIST_MONK";
-        points=UsersUtil.remote_getUsersKarma(userName);
- 		badge=Karma.Badge.getMyBadge(points).getName();
-//        User u = UsersUtil.remote_getUsersDetails(userName);
-//        if (u!=null){
-//        	userFirstName=u.getFirstName();
-//        	userLastName=u.getLastName();
-//        }
- 		
- 		
- 		AppPreferencesPrivateDetails userPrefs = new AppPreferencesPrivateDetails(this);
- 		String userName = userPrefs.getUserName();
-
-		userFirstName = userPrefs.doPrivateDetailsExist() ?
-				userPrefs.getUserFirstName()
-				: userName.substring(0,userName.indexOf('@'));				
-	
-		userLastName  = userPrefs.doPrivateDetailsExist() ?
-				userPrefs.getUserLastName()
-				: "";
+        mUsersPref = new AppPreferencesPrivateDetails(this) ;
+        mUserName = mUsersPref.getUserName();
+        mPoints=UsersUtil.remote_getUsersKarma(mUserName);
+ 		mBadge=Karma.Badge.getMyBadge(mPoints).getName();
+        User u = UsersUtil.remote_getUsersDetails(mUserName);
+        if (u!=null){
+        	mUserFirstName=u.getFirstName();
+        	mUserLastName=u.getLastName();
+        }
+        
+//       mUserFirstName = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserFirstName() : mUsersPref.substring(0,mUsersPref.indexOf('@'));				
+ 		mUserFirstName = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserFirstName() : mUserFirstName;
+		mUserLastName  = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserLastName(): mUserLastName;
 
  		
-        userNiceName=userFirstName+" "+ userLastName;
+        mUserNiceName=mUserFirstName+" "+ mUserLastName;
         TextView tvName = (TextView) findViewById(R.id.userNameMeView);
         TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);
         SeekBar pointsProg = (SeekBar)findViewById(R.id.pointSeekMeView);
-        setBadgesPictures(badge);
+        setBadgesPictures(mBadge);
         
         //TEST - ADI - THIS IS JUST SO SOME BADGES SHOW UP
-		setPicture1();
-		setPicture2();
+//		setPicture1();
+//		setPicture2();
         //TEST - ADI
         
-        tvName.setText(userNiceName);
-        tvPoints.setText(Integer.toString((int)points));
-        pointsProg.setProgress((int)points);
+        tvName.setText(mUserNiceName);
+        tvPoints.setText(Integer.toString((int)mPoints));
+        pointsProg.setProgress((int)mPoints);
         pointsProg.setEnabled(false);        
  
-        int status = remote_getUsersHistory(userName);
-        if (status==-1){} //TODO ADD HANDLER
+        int status = remote_getUsersHistory(mUserName);
+        if (status==-1){
+        	//TODO write to log(?)
+        } 
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
 		mEventsCursor = mDbHelper.fetchAllUsersHistory();
@@ -127,75 +128,18 @@ public class MeTab extends ActionBarListActivity {
       
 /**********************************/
 /*******END OF DEBUG AREA**********/
-/**********************************/      
+/**********************************/   
+  	  checkFeedback();
       
     }
-    
-//    private long remote_getUsersKarma(String username){
-//    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-//		client.AddParam("action", "getKarma");
-//		client.AddParam("userName", username);
-//
-//		try{
-//			client.Execute(1); //1 is HTTP GET
-//		}
-//		catch (Exception e){
-//			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersKarma- failed", Toast.LENGTH_LONG);
-//			debugging.show();
-//			return -1;
-//		}
-//		String JSONResponse = client.getResponse();
-//		JSONResponse = JSONResponse.trim();
-//		
-//		//Parse the response from server
-//		long p=0;
-//		if(JSONResponse!=null){
-//			try{
-//				p = Long.parseLong(JSONResponse);
-//			}
-//			catch(NumberFormatException nfe){
-//				p=0;
-//			}
-//		}
-//		return p;
-//	}
 
-//    private User remote_getUsersDetails(String username){
-//    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-//    	client.AddParam("action", "getUserDetails");
-//		client.AddParam("userName", username);
-//		
-//		try{
-//			client.Execute(1); //1 is HTTP GET
-//		}
-//		catch (Exception e){
-//			Toast debugging=Toast.makeText(this,"Connection to server - remote_getUsersDetails - failed", Toast.LENGTH_LONG);
-//			debugging.show();
-//			return null;
-//		}
-//				
-//		String JSONResponse = client.getResponse();
-//		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-//		JSONResponse = JSONResponse.trim();
-//		
-//		//Parse the response from server
-//		User u=null;
-//		try{
-//			 u= new JSONDeserializer<User>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
-//		}
-//		catch(Exception e){
-//			u=null;
-//		}
-//		return u;
-//    	
-//    }
    private int remote_getUsersHistory(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
-		client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "getUserHistory");
-		client.AddParam("userName", username);
-		client.AddParam("userDate", dateToSend);
+		nClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		nClient.AddParam("action", "getUserHistory");
+		nClient.AddParam("userName", username);
+		nClient.AddParam("userDate", dateToSend);
 		
 		/* - Gil - added test print to find out the correct time format sent to the server 
 		Toast test=Toast.makeText(this,dateToSend, Toast.LENGTH_LONG);
@@ -204,7 +148,7 @@ public class MeTab extends ActionBarListActivity {
 		*/
 		
 		try{
-			client.Execute(1); //1 is HTTP GET
+			nClient.Execute(1); //1 is HTTP GET
 			/* - Gil - added test print to make sure we entered this part 
 			Toast test=Toast.makeText(this,"Connection to server -remote_getUsersHistory- succeded", Toast.LENGTH_LONG);
 			test.show();
@@ -223,7 +167,7 @@ public class MeTab extends ActionBarListActivity {
 	      
 	      
 		List<Event> history = new ArrayList<Event>();
-		String json = client.getResponse();
+		String json = nClient.getResponse();
 		json = json.trim();
 		
 		JsonArray jsonArray = new JsonArray();
@@ -248,13 +192,13 @@ public class MeTab extends ActionBarListActivity {
     private List<Event> remote_getUsersFutureEvents(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
-    	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "getRegisteredFutureEvents");
-		client.AddParam("userName", username);
-		client.AddParam("userDate", dateToSend);
+    	nClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		nClient.AddParam("action", "getRegisteredFutureEvents");
+		nClient.AddParam("userName", username);
+		nClient.AddParam("userDate", dateToSend);
 		
 		try{
-			client.Execute(1); //1 is HTTP GET
+			nClient.Execute(1); //1 is HTTP GET
 		}
 		catch (Exception e){
 			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersFutureEvents- failed", Toast.LENGTH_LONG);
@@ -262,7 +206,7 @@ public class MeTab extends ActionBarListActivity {
 			return null;
 		}
 
-		String JSONResponse = client.getResponse();
+		String JSONResponse = nClient.getResponse();
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		JSONResponse = JSONResponse.trim();
 		
@@ -399,4 +343,25 @@ public class MeTab extends ActionBarListActivity {
         
         return super.onOptionsItemSelected(item);
     }
+    
+	private void checkFeedback() {
+        List<Event> feedbackList = UsersUtil.remote_getEventsForFeedback(mUserName);
+        feedbackList = new ArrayList<Event>();
+        feedbackList.add(new Event());
+        if (feedbackList!=null){
+        	for (Event event : feedbackList) {
+        		mEventDesc = event.getDescription();
+        		mEventName=event.getEventName();
+        		mEventKey=event.getEventKey();
+        		Bundle extraInfo = new Bundle();        		
+                extraInfo.putString("mEventDesc", mEventDesc);
+                extraInfo.putString("mEventName", mEventName);
+                extraInfo.putString("mEventKey", mEventKey);
+                Intent newIntent = new Intent(this, FeedbackTab.class);
+                newIntent.putExtras(extraInfo);
+                startActivity(newIntent);
+			}
+        }
+		
+	}
 }
