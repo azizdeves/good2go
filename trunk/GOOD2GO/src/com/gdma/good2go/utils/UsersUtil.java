@@ -60,11 +60,10 @@ public class UsersUtil {
 			return -1;
 		}
 		String JSONResponse = client.getResponse();
-		JSONResponse = JSONResponse.trim();
-		
 		//Parse the response from server
 		long p=0;
 		if(JSONResponse!=null){
+			JSONResponse = JSONResponse.trim();
 			try{
 				p = Long.parseLong(JSONResponse);
 			}
@@ -117,7 +116,7 @@ public class UsersUtil {
 	public static List<Event> remote_getEventsForFeedback(String userName){
     	String JSONResponse = null;
     	client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-    	client.AddParam("action", "addUser");
+    	client.AddParam("action", "getEventsToFeedback");
     	client.AddParam("userName", userName);
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());

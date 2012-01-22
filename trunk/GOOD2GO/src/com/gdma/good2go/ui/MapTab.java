@@ -308,6 +308,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         mapOverlays.add(itemizedoverlay);
         
         setChangeFilterButton();
+        mDbHelper.close();
    	
     }
 
