@@ -69,7 +69,8 @@ public class Karma implements Comparable<Karma>{
 		INVITE_FRIEND(50),
 		FRIEND_REGISTERED(100),
 		RATE_AN_EVENT(10),
-		NO_RATE(0);
+		NO_RATE(0),
+		POST_STATUS(50);
 		
 		private final long points;
 		
