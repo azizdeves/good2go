@@ -665,14 +665,15 @@ public class Good2GoServerServlet extends HttpServlet {
 				if (dbm.registerToOccurrence(userName, occurrenceKey)){
 					Occurrence occurrence = dbm.getOccurrence(occurrenceKey);
 					User user = dbm.getUserDetails(userName);
+					Event event = dbm.getEvent(occurrence.getContainingEventKey());
 					
 					Calendar c = Calendar.getInstance();
 					Date now = new Date();
 					c.setTime(now);
-
+					String age = new Integer(c.get(Calendar.YEAR) - user.getBirthYear()).toString();
+					
 					try{
-						Integer age = new Integer(c.get(Calendar.YEAR) - user.getBirthYear());
-						SendEmail.ActSend(occurrence.getEmail(), user.getFirstName(), user.getLastName(), user.getEmail(), age.toString(), user.getSex().toString());
+						SendEmail.ActSend(/*occurrence.getEmail()*/"GOOD2GO.israel@gmail.com", event.getEventName(), occurrence.getOccurrenceDate(), user.getFirstName(), user.getLastName(), user.getUserName(), age.toString(), user.getSex().toString(), user.getPhone(), user.getCity());
 					}
 					catch(Exception e){
 						pw.print(e.getMessage());
