@@ -65,6 +65,7 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_WORK_MENIAL = "menial";
 	public static final String KEY_EVENT_WORK_MENTAL = "mental";
 	public static final String KEY_EVENT_OCCURENCE_KEY = "occkey";
+	public static final String KEY_EVENT_GROUP_HOW_MANY = "how_many";
 
 	public static final String KEY_EVENTID = "_id";
 	
@@ -110,6 +111,7 @@ public class EventsDbAdapter {
 		    + KEY_EVENT_WORK_MENIAL + " text not null, "
 		    + KEY_EVENT_WORK_MENTAL + " text not null, "
 		    + KEY_EVENT_OCCURENCE_KEY + " text not null, "
+		    + KEY_EVENT_GROUP_HOW_MANY + " text not null, "		    
 	        + "UNIQUE ("
 	        + KEY_EVENT_KEY
 	        + "));";
@@ -117,7 +119,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 19;
+    private static final int DATABASE_VERSION = 20;
 
     private final Context mCtx;
 
@@ -197,7 +199,7 @@ public class EventsDbAdapter {
     		String typeElderly,String typeEnvironment,String typeSpecial, 
     		String eventImage, String startTime, String endTime, 
     		String preReq, String npoName, String groups, String individ, String kids, 
-    		String menial, String mental, String occurenceKey) 
+    		String menial, String mental, String occurenceKey, String howMany) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -229,6 +231,8 @@ public class EventsDbAdapter {
         initialValues.put(KEY_EVENT_WORK_MENIAL, menial);
 	    initialValues.put(KEY_EVENT_WORK_MENTAL, mental);
 	    initialValues.put(KEY_EVENT_OCCURENCE_KEY, occurenceKey);
+	    initialValues.put(KEY_EVENT_GROUP_HOW_MANY, howMany);
+	    
         
 
         long result=mDb.insert(DATABASE_TABLE, null, initialValues);

@@ -11,20 +11,17 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.TabHost;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gdma.good2go.R;
-import com.gdma.good2go.actionbarcompat.ActionBarTabActivity;
+import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
-import com.gdma.good2go.utils.EventDetailsUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
 
-public class EventDetails extends ActionBarTabActivity {
+public class EventDetails extends ActionBarActivity {
 	private static final String TAG = "EventDetails";
-    TabHost mTabHost;
+    //TabHost mTabHost;
     
     private Long mRowId;
     private String mEventName;
@@ -37,8 +34,18 @@ public class EventDetails extends ActionBarTabActivity {
     private String mEventDuration;
     private String mEventNPO;
     private int mEventImage;
+    private String mEventPrereq;
+    private boolean mPhysical;
+    private boolean mMental;
+    private boolean mForKids;
+    private boolean mForGroups;
+    private boolean mForIndivid;
+    private int mForGroupsHowMany;
+    
     private String mOccurenceKey;
+    
     private String mSender;    
+   
     private EventsDbAdapter mDbHelper;
     private AppPreferencesPrivateDetails mUsersPrefs;
     private String mUserName;
@@ -54,7 +61,7 @@ public class EventDetails extends ActionBarTabActivity {
 	    super.onCreate(savedInstanceState);
 	    setContentView(R.layout.event_details);
 
-	    mTabHost = getTabHost();
+	    //mTabHost = getTabHost();
 	    
 	    
 	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
@@ -74,12 +81,20 @@ public class EventDetails extends ActionBarTabActivity {
 	    /**POPULATE VIEWS FROM DB*/   
 	    TextView eventTitle = (TextView) findViewById(R.id.eventTitle);
 	    TextView eventDescription = (TextView) findViewById(R.id.eventDescription);
-	    TextView eventDetails = (TextView) findViewById(R.id.event_details);
+	    TextView eventDetails = (TextView) findViewById(R.id.detailsData);
 	    TextView eventDuration = (TextView) findViewById(R.id.howlong);
 	    TextView eventWhen = (TextView) findViewById(R.id.when);
 	    TextView eventWhere = (TextView) findViewById(R.id.where);
 	    ImageView eventImage = (ImageView) findViewById(R.id.eventPic);
-	    TextView eventNPO = (TextView) findViewById(R.id.npo_view);
+	    TextView eventNPO = (TextView) findViewById(R.id.eventNPO);
+	    TextView eventPrereq = (TextView) findViewById(R.id.notesData);
+	    ImageView typeMenial = (ImageView) findViewById(R.id.typeMenial);
+	    ImageView typeMental = (ImageView) findViewById(R.id.typeMental);
+	    ImageView forKids = (ImageView) findViewById(R.id.suitKids);
+	    ImageView forIndivid = (ImageView) findViewById(R.id.suitIndivid);
+	    ImageView forGroups = (ImageView) findViewById(R.id.suitGroup);
+	    TextView textGroup = (TextView) findViewById(R.id.textGroup);
+	    
 
 	    
 	    mEventName = event.getString(event.getColumnIndexOrThrow
@@ -88,6 +103,15 @@ public class EventDetails extends ActionBarTabActivity {
 	    		EventsDbAdapter.KEY_EVENT_SHORT_INFO));
 	    mEventDetails = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DETAILS));
+	    
+	    //DEBUG
+	    mEventDetails = eventDetails.getText().toString();
+	    //DEBUG
+	    
+	    mEventDetails = mEventDetails.replace(". ", "\n");
+	    mEventDetails = mEventDetails.replace("? ", "\n");
+	    mEventDetails = mEventDetails.replace("! ", "\n");
+	    
 	    mEventDistance = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
 	    mEventCity = event.getString(event.getColumnIndexOrThrow
@@ -106,6 +130,32 @@ public class EventDetails extends ActionBarTabActivity {
 	    
 	    mOccurenceKey = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY));
+	    
+	    mEventPrereq = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_PRE_REQ));
+	    
+	    mPhysical = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_WORK_MENIAL)) 
+	    		 == 1 ? true : false;
+	    
+	    mMental = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_WORK_MENTAL)) 
+	    		 == 1 ? true : false;
+	    
+	    mForKids = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_IS_FOR_KIDS)) 
+	    		 == 1 ? true : false;
+	    
+	    mForGroups = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_IS_FOR_GROUPS)) 
+	    		 == 1 ? true : false;
+	    
+	    mForIndivid = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_IS_FOR_INDIVID)) 
+	    		 == 1 ? true : false;
+	    
+	    mForGroupsHowMany = event.getInt(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_WORK_MENIAL));
 	    	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
@@ -115,25 +165,33 @@ public class EventDetails extends ActionBarTabActivity {
 	    eventWhen.setText(mEventWhen);	    
 	    eventImage.setImageResource(mEventImage);
 	    eventNPO.setText(mEventNPO);
+	    eventPrereq.setText(mEventPrereq);
 	    
-	    /**TODO: add distance*/
+	    
+	    if (mPhysical){
+	    	typeMenial.setImageResource(R.drawable.worktype_menial_on);
+	    }
+	    
+	    if (mMental){
+	    	typeMental.setImageResource(R.drawable.worktype_mental_on);
+	    }
+	    
+	    if (mForKids){
+	    	forKids.setImageResource(R.drawable.suitfor_kid_on);
+	    }
+	    
+	    if (mForGroups){
+	    	forGroups.setImageResource(R.drawable.suitfor_group_on);
+	    	textGroup.setText(textGroup.getText() + " (" + mForGroupsHowMany + ")");
+	    }
+	    
+	    if (mForIndivid){
+	    	forIndivid.setImageResource(R.drawable.suitfor_individ_on);
+	    }
 
 	    if(event!=null&&!event.isClosed()){
         	mDbHelper.close();
         }
-	    
-	    
-	    /**SHOW TABS AND LAYOUT*/
-	    mTabHost.addTab(mTabHost.newTabSpec("tab_about_event").setIndicator
-	    		("About").setContent(R.id.event_details));
-	    mTabHost.addTab(mTabHost.newTabSpec("tab_map_event").setIndicator(
-	    		"Map").setContent(R.id.map_view));
-	    mTabHost.addTab(mTabHost.newTabSpec("tab_npo").setIndicator
-	    		("Who").setContent(R.id.npo_view));
-	    
-	    mTabHost.setCurrentTab(0);
-
-	    EventDetailsUtil.initTabsAppearance(mTabHost);
 	    
 
 	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn);
@@ -171,9 +229,7 @@ public class EventDetails extends ActionBarTabActivity {
 				buttonCountMeIn.setClickable(false);			
 			}
 		}
-	}
-
-    
+	}    
     
 	/** FOR ACTION BAR MENUS **/
 	
@@ -181,9 +237,6 @@ public class EventDetails extends ActionBarTabActivity {
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.empty, menu);
-
-        // Calling super after populating the menu is necessary here to ensure that the
-        // action bar helpers have a chance to handle this event.
         return super.onCreateOptionsMenu(menu);
     }
     
