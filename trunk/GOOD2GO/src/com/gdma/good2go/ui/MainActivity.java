@@ -51,6 +51,7 @@ import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
+import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.GeoPoint;
@@ -248,6 +249,9 @@ public class MainActivity extends ActionBarActivity {
 	            startActivity(newIntent);
             }
         });
+        
+        AppPreferencesFilterDetails m = new AppPreferencesFilterDetails(this);
+        m.saveDefaultFilterPrefs();
 	}
 	
 	

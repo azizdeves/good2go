@@ -1,0 +1,54 @@
+<RelativeLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent">
+
+	    
+	<TextView
+		android:id="@+id/futureEventDate_entry"
+		style="@style/HistoryListText"
+		 
+		android:layout_width="60dip"
+		android:layout_height="wrap_content"
+        android:layout_below="@id/userFutureEventsMeView"
+        android:textSize="10dip"
+        android:layout_marginLeft="5dip"
+		
+		android:text="01/01/2012"/>
+	
+     <TextView
+		android:id="@+id/futureEventInfo_entry"
+		android:layout_width="180dip"
+		android:layout_height="wrap_content"
+		android:layout_toRightOf="@id/futureEventDate_entry"
+		android:textSize="10dip"
+		android:text="Help someone"
+		
+		style="@style/HistoryListText"
+		android:textStyle="bold"/>
+
+     <TextView
+         android:id="@+id/futureEventDuration_entry"
+         android:layout_width="50dip"
+         android:layout_height="wrap_content"
+         android:layout_toRightOf="@id/futureEventInfo_entry"
+         android:text="10h"
+         android:textSize="10dip" 
+         
+         style="@style/HistoryListText"/>
+     
+     <TextView
+         android:id="@+id/futureEventPoints_entry"
+         android:layout_width="50dip"
+         android:layout_height="wrap_content"
+         android:layout_toRightOf="@id/futureEventDuration_entry"
+         android:text="100"
+         android:textSize="10dip" 
+         
+         android:layout_marginRight="5dip"
+         
+         style="@style/HistoryListText"/>
+ 
+     
+     
+</RelativeLayout>
