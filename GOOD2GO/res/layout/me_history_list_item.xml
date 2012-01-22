@@ -48,7 +48,6 @@
          android:layout_marginRight="5dip"
          
          style="@style/HistoryListText"/>
- 
-     
+  
      
 </RelativeLayout>

@@ -6,9 +6,11 @@ import java.util.Date;
 import java.util.List;
 
 import android.R.drawable;
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.database.DataSetObserver;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -32,6 +34,7 @@ import com.gdma.good2go.R;
 import com.gdma.good2go.User;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
@@ -56,7 +59,7 @@ public class MeTab extends ActionBarActivity {
 	private String mUserFirstName="";
 	private String mUserLastName="";
 	private List<Event> usersEvents;
-	private RestClient nClient = null;
+	private RestClient mClient = null;
     private UsersHistoryDbAdapter mDbHelper;
     private Cursor mEventsCursor;
 	private String[] mColumns;
@@ -72,6 +75,9 @@ public class MeTab extends ActionBarActivity {
         super.onCreate(savedInstanceState);
  
         setContentView(R.layout.me);
+        //check for unrated events async              
+        new checkForUsersUnRatedEventsTask().execute(	);
+        
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
         ListView l = (ListView)findViewById(R.id.historyListMeView);
         mUsersPref = new AppPreferencesPrivateDetails(this) ;
@@ -116,23 +122,22 @@ public class MeTab extends ActionBarActivity {
         
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
-		mEventsCursor = mDbHelper.fetchAllUsersHistory();
-
 /**********************************/
 /***********DEBUG AREA*************/
 /**********************************/
-        
-      mDbHelper = new UsersHistoryDbAdapter(this);
-      mDbHelper.open();
-      mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "01/02/12", "40", "2h");
-      mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/02/12", "200", "2h") ; 
-      mEventsCursor=mDbHelper.fetchAllUsersHistory();
+
+        mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "01/02/12", "40", "2h");
+        mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/02/12", "200", "2h") ; 
+      
       
       
 /**********************************/
 /*******END OF DEBUG AREA**********/
 /**********************************/   
-//  	  checkFeedback();
+    
+
+      mEventsCursor=mDbHelper.fetchAllUsersHistory();
+      mDbHelper.close();
       startManagingCursor(mEventsCursor);
       showHistoryInList();
       showFutureInList();
@@ -141,10 +146,10 @@ public class MeTab extends ActionBarActivity {
    private int remote_getUsersHistory(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
-		nClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		nClient.AddParam("action", "getUserHistory");
-		nClient.AddParam("userName", username);
-		nClient.AddParam("userDate", dateToSend);
+		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		mClient.AddParam("action", "getUserHistory");
+		mClient.AddParam("userName", username);
+		mClient.AddParam("userDate", dateToSend);
 		
 		/* - Gil - added test print to find out the correct time format sent to the server 
 		Toast test=Toast.makeText(this,dateToSend, Toast.LENGTH_LONG);
@@ -153,7 +158,7 @@ public class MeTab extends ActionBarActivity {
 		*/
 		
 		try{
-			nClient.Execute(1); //1 is HTTP GET
+			mClient.Execute(1); //1 is HTTP GET
 			/* - Gil - added test print to make sure we entered this part 
 			Toast test=Toast.makeText(this,"Connection to server -remote_getUsersHistory- succeded", Toast.LENGTH_LONG);
 			test.show();
@@ -172,7 +177,7 @@ public class MeTab extends ActionBarActivity {
 	      
 	      
 		List<Event> history = new ArrayList<Event>();
-		String json = nClient.getResponse();
+		String json = mClient.getResponse();
 		json = json.trim();
 		
 		JsonArray jsonArray = new JsonArray();
@@ -187,7 +192,7 @@ public class MeTab extends ActionBarActivity {
 			long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
 			mDbHelper.createUsersHistory(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h");
 		}
-		
+		mDbHelper.close();
 		return 1;
 	
 
@@ -197,13 +202,13 @@ public class MeTab extends ActionBarActivity {
     private List<Event> remote_getUsersFutureEvents(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
-    	nClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		nClient.AddParam("action", "getRegisteredFutureEvents");
-		nClient.AddParam("userName", username);
-		nClient.AddParam("userDate", dateToSend);
+    	mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
+		mClient.AddParam("action", "getRegisteredFutureEvents");
+		mClient.AddParam("userName", username);
+		mClient.AddParam("userDate", dateToSend);
 		
 		try{
-			nClient.Execute(1); //1 is HTTP GET
+			mClient.Execute(1); //1 is HTTP GET
 		}
 		catch (Exception e){
 			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersFutureEvents- failed", Toast.LENGTH_LONG);
@@ -211,7 +216,7 @@ public class MeTab extends ActionBarActivity {
 			return null;
 		}
 
-		String JSONResponse = nClient.getResponse();
+		String JSONResponse = mClient.getResponse();
 		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
 		JSONResponse = JSONResponse.trim();
 		
@@ -359,10 +364,36 @@ public class MeTab extends ActionBarActivity {
         return super.onOptionsItemSelected(item);
     }
     
-	private void checkFeedback() {
+    
+    private class checkForUsersUnRatedEventsTask extends AsyncTask<String, Void, Integer> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.sending_user_details));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(Integer execResult) {
+    		dialog.dismiss();
+    	}
+			
+		@Override
+		protected Integer doInBackground(String... userDetails) {
+			return checkFeedback();
+			
+		}
+	
+    }
+    
+    
+    
+    //asyn
+	private int checkFeedback() {
         List<Event> feedbackList = UsersUtil.remote_getEventsForFeedback(mUserName);
-        feedbackList = new ArrayList<Event>();
-        feedbackList.add(new Event());
         if (feedbackList!=null){
         	for (Event event : feedbackList) {
         		mEventName=event.getEventName();
@@ -383,7 +414,9 @@ public class MeTab extends ActionBarActivity {
                 newIntent.putExtras(extraInfo);
                 startActivity(newIntent);
 			}
+        	return 1;
         }
+        return 0;
 		
 	}
 }

@@ -70,7 +70,10 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 	  mDurationTrackingText = (TextView)findViewById(R.id.durationSeekVal);
 	  mRadiusTrackingText = (TextView)findViewById(R.id.radiusSeekVal);
 
-	  mDurationTrackingText.setText("0:"+Integer.toString(mDurationSeekBar.getProgress())+"h");
+	  mDuration = mDurationSeekBar.getProgress();
+	  int hours=mDuration/60;
+	  int min = mDuration%60;
+	  mDurationTrackingText.setText(Integer.toString(hours)+":"+Integer.toString(min)+"h");
  	  mRadiusTrackingText.setText(Integer.toString(mRadiusSeekBar.getProgress())+"km");
 
   	

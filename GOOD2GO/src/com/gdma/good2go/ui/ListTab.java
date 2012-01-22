@@ -126,6 +126,7 @@ public class ListTab extends ActionBarListActivity {
 	
 		showPointsInList();
         setContentView(R.layout.list);
+        mDbHelper.close();
         getFilteredEventsButton();
 		
 
