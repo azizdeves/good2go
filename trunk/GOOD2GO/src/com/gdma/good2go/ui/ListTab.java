@@ -1,9 +1,13 @@
 package com.gdma.good2go.ui;
 
 
+import java.util.List;
+
 import android.content.Intent;
 import android.database.Cursor;
+import android.graphics.drawable.Drawable;
 import android.location.Location;
+import android.location.LocationManager;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -16,10 +20,14 @@ import android.widget.SimpleCursorAdapter;
 
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
+import com.gdma.good2go.ui.maputils.EventOverlayItem;
+import com.gdma.good2go.ui.maputils.EventsItemizedOverlay;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
+import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
+import com.google.android.maps.Overlay;
 
 
 //import android.support.v4.app.Fragment;
@@ -39,7 +47,7 @@ public class ListTab extends ActionBarListActivity {
 	
 	private String[] mColumns;
 	private Button buttonFilterEvents;
-	
+	private AppPreferencesFilterDetails mFilterPrefs;	
 	
 	private class EventsViewBinder implements SimpleCursorAdapter.ViewBinder 
 	{    
@@ -71,12 +79,9 @@ public class ListTab extends ActionBarListActivity {
 			mLongitude = extras.getInt("lon");
 		}
     	
-		// filter
-        Bundle bundleResult = FilterTab.getFilterBundle();
-		if (bundleResult!=null)
-			showFilteredEventsOnList(bundleResult);
-		else
-			onCreateHelper();
+	      mFilterPrefs = new AppPreferencesFilterDetails(this);
+	      showFilteredEventsOnList();
+
 
     }
 
@@ -87,8 +92,7 @@ public class ListTab extends ActionBarListActivity {
  		super.onActivityResult(requestCode, resultCode, data);
 		 if (requestCode == ActivitysCodeUtil.GET_FILTERED_EVENTS) {
 			if(resultCode==RESULT_OK){
-				Bundle bundleResult = data.getExtras();
-				showFilteredEventsOnList(bundleResult);
+				showFilteredEventsOnList();
  			}
  			if(resultCode==RESULT_CANCELED){
 			
@@ -122,14 +126,9 @@ public class ListTab extends ActionBarListActivity {
 	
 		showPointsInList();
         setContentView(R.layout.list);
+        getFilteredEventsButton();
 		
-        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
-        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
-        buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	getFilterScreen(v);
-            }
-        });
+
 		
 	}
 	
@@ -169,54 +168,21 @@ public class ListTab extends ActionBarListActivity {
     }
     
     
-    private void showFilteredEventsOnList(Bundle bundleResult){
-		int i=0;
-		int arrSize=0;
-		int duration=-1;
-		int radius=-1;
-		String[] types= new String[bundleResult.size()-2];
-		for (int j = 0; j < types.length; j++) {
-			types[i]="";
-		}
-		
-		if(bundleResult!=null){
-			types = FiltersUtil.getArrayOfFiltersParams(bundleResult);
-			if( bundleResult.getInt("durationInMinutes")>-1)
-				duration= bundleResult.getInt("durationInMinutes");
-			if( bundleResult.getInt("radius")>-1)
-				radius =  bundleResult.getInt("radius");
-		
-		}
-		/******DEBUGGING AREA******/
-//		Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
-//		debugging.show();	
-//		debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
-//		debugging.show();	
-//		for (int j = 0; j < arrSize; j++) {
-//			debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
-//			debugging.show();					
-//		}
+    private void showFilteredEventsOnList(){
 
-		/***END OF DEBUGGING AREA***/	
+
+		mDbHelper = new EventsDbAdapter(this);
+	    mDbHelper.open();
+	    mEventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), mFilterPrefs.getRadius(), mFilterPrefs.getDuration());
+//				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
+//				debugging.show();
+
 		
-    	mDbHelper = new EventsDbAdapter(this);
-		mDbHelper.open(); //TODO CLOSE WHEN THE APP IS CLOSED
-		mEventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
 		startManagingCursor(mEventsCursor);
 		showPointsInList();
         setContentView(R.layout.list);			
-			
-		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);	
-		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
-		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	Bundle b = null;
-            	FilterTab.setFilterBundle(b);
-            	onCreateHelper();
-            }
-        }); 
-		
 
+        getUnFilteredEventsButton();
     	
     }
     
@@ -283,5 +249,27 @@ public class ListTab extends ActionBarListActivity {
         adapter.setViewBinder(new EventsViewBinder());
         setListAdapter(adapter);
         
+    }
+
+    private void getUnFilteredEventsButton(){
+		
+		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);	
+		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
+		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	mFilterPrefs.saveDefaultFilterPrefs();
+            	onCreateHelper();
+            }
+        }); 
+    }
+    
+    private void getFilteredEventsButton(){
+        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
+        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
+        buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	getFilterScreen(v);
+            }
+        });	
     }
 }

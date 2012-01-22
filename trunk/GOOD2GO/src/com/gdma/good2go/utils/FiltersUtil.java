@@ -1,65 +1,43 @@
 package com.gdma.good2go.utils;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import android.os.Bundle;
 
 public class FiltersUtil {
 
-	public static Bundle getDefaultFiltersBundle(){
-    	Bundle b = new Bundle();
-		b.putString("animals","1");			
-		b.putString("children","1");
-	 	b.putString("environment","1");
-		b.putString("elderly","1");
-		b.putString("disabled","1");	
-		b.putString("special","1");	
-		
-		b.putInt("durationInMinutes", 1000);
-		b.putInt("radius", 30);
-		
-		return b;
-	}
-	
-	public static String[] getArrayOfFiltersParams(Bundle bundleResult){
-		
+
+    public static String[] getArrayOfFilteredTypes(AppPreferencesFilterDetails mFilterPrefs){
+    	List<String> types = new ArrayList<String>();
+    	
 		int i=0;
-		String[] types= new String[bundleResult.size()-2];
-		for (int j = 0; j < types.length; j++) {
-			types[j]="";
+		if(mFilterPrefs.getAnimal()){
+			types.add("animals");
+			
+		}
+		if(mFilterPrefs.getChildren()){
+			types.add("children");
+			
+		}
+		if(mFilterPrefs.getDisabled()){
+			types.add("disabled");
+			
+		}
+		if(mFilterPrefs.getEnv()){
+			types.add("environment");
+			
+		}
+		if(mFilterPrefs.getElderly()){
+			types.add("elderly");
+			
+		}
+
+		if(mFilterPrefs.getSpecial()){
+			types.add("special");
+			
 		}
 		
-		if(bundleResult!=null){
-			if(bundleResult.getString("animals").compareTo("1")==0){
-				types[i]="animals";
-				i++;
-			}	
-			if(bundleResult.getString("children")=="1"){
-				types[i]="children";
-				i++;
-
-			}
-			if(bundleResult.getString("disabled")=="1"){
-				types[i]="disabled";
-				i++;
-
-			}
-			if(bundleResult.getString("elderly")=="1"){
-				types[i]="elderly";
-				i++;
-
-			}
-			if(bundleResult.getString("environment")=="1"){
-				types[i]="environment";
-				i++;
-
-			}
-			if(bundleResult.getString("special")=="1"){
-				types[i]="special";
-				i++;
-
-			}
-
-		
-		}
-		return types;
-	}
+		return (String[]) types.toArray(new String[types.size()]);
+    }
 }

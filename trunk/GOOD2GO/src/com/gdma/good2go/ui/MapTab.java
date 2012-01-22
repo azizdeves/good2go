@@ -1,5 +1,6 @@
 package com.gdma.good2go.ui;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import android.content.Intent;
@@ -22,6 +23,7 @@ import com.gdma.good2go.ui.maputils.EventOverlayItem;
 import com.gdma.good2go.ui.maputils.EventsItemizedOverlay;
 import com.gdma.good2go.ui.maputils.UserItemizedOverlay;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
+import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
@@ -47,6 +49,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	private  GeoPoint mUserGeoLocation = new GeoPoint((int)(32.067228*1E6),(int)(34.777650*1E6));
 	private  UserItemizedOverlay mUserLocationOverlay;
 	private Location mUserLocation;
+	private AppPreferencesFilterDetails mFilterPrefs;
 	
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -54,13 +57,9 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         setContentView(R.layout.map);
         
         initMapFields();
-                             
-        Bundle bundleResult = FilterTab.getFilterBundle();
-		if (bundleResult!=null)
-			showFilteredEventsOnMap(bundleResult);
-		else
-			onCreateHelper();
-		
+
+        mFilterPrefs = new AppPreferencesFilterDetails(this);
+        showFilteredEventsOnMap();
 		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
 		mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 				
@@ -173,11 +172,11 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	protected void onActivityResult(int requestCode, int resultCode, Intent data)
 	{
 		super.onActivityResult(requestCode, resultCode, data);
+		if (requestCode == ActivitysCodeUtil.GET_FILTERED_EVENTS) {
+			showFilteredEventsOnMap();
+			setUserLocation();
 		
-//		Bundle bundleResult = data.getExtras();
-		Bundle bundleResult = FilterTab.getFilterBundle();
-		showFilteredEventsOnMap(bundleResult);
-		setUserLocation();
+		}
 	
 	}
 
@@ -278,94 +277,17 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	
 	private void onCreateHelper(){
 		
-		Bundle bundleResult = getIntent().getExtras();
-	    String action=(bundleResult!=null)?bundleResult.getString("action"):null;
-	    
-	    if (action!=null && action.compareTo("MainTab")==0){
-	    	showFilteredEventsOnMap(bundleResult);
-	    }
-	    else{
-	        
-	        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
-	        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
-	        buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
-	            public void onClick(View v) {
-	            	getFilterScreen(v);
-	            }
-	        });
-	
-	        /**OVERLAY*/ 
-	        
-	        //All overlay elements on a map are held by the MapView, so when you want to add some, you have to get a list from the getOverlays() method.
-	        List<Overlay> mapOverlays = mMap.getOverlays();
-	        //instantiate the Drawable used for the map marker
-	        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_maps_event_default);
-	        //The constructor for G2GItemizedOverlay (your custom ItemizedOverlay) takes the Drawable in order to set the default marker for all overlay items
-	        EventsItemizedOverlay itemizedoverlay = new EventsItemizedOverlay(drawable,mMap);
-	        
-	          
-	        /**ADDING DB POINTS TO THE MAP OVERLAY*/
-	        
-		    mDbHelper = new EventsDbAdapter(this);
-		    mDbHelper.open();
-		    
-	    	Cursor eventsCursor = mDbHelper.fetchAllEvents();
-	        startManagingCursor(eventsCursor);
-	        
-	        int cnt=0;//BUG IN CURSOR
-	        if(eventsCursor.moveToFirst()){
-	        	do{
-	        		EventOverlayItem point=MakeEventPoint(eventsCursor);
-	        		itemizedoverlay.addOverlay(point);
-	        		cnt++;//BUG IN CURSOR
-	        		}
-	        	while(eventsCursor.moveToNext()&& cnt!=eventsCursor.getCount());
-	        }
-	        
-	        /**SHOW ON MAP*/ 
-	        mapOverlays.add(itemizedoverlay);
-	    }
-	        
+		showFilteredEventsOnMap();
 	}
 	
         
-    private void showFilteredEventsOnMap(Bundle bundleResult){
-		int i=0;
-		int arrSize=0;
-		int duration=-1;
-		int radius=-1;
-		String[] types= new String[bundleResult.size()-2];
-		for (int j = 0; j < types.length; j++) {
-			types[i]="";
-		}
-		
-		if(bundleResult!=null){
-			types = FiltersUtil.getArrayOfFiltersParams(bundleResult);
-			if( bundleResult.getInt("durationInMinutes")>-1)
-				duration= bundleResult.getInt("durationInMinutes");
-			if( bundleResult.getInt("radius")>-1)
-				radius =  bundleResult.getInt("radius");
-		
-		}
-		/******DEBUGGING AREA******/
-//				Toast debugging=Toast.makeText(this, Integer.toString(duration), Toast.LENGTH_SHORT);
-//				debugging.show();	
-//				debugging=Toast.makeText(this, Integer.toString(radius), Toast.LENGTH_SHORT);
-//				debugging.show();	
-//				for (int j = 0; j < arrSize; j++) {
-//					debugging=Toast.makeText(this, types[j], Toast.LENGTH_SHORT);
-//					debugging.show();					
-//				}
-
-		/***END OF DEBUGGING AREA***/	
-		
-		//Cursor eventsCursor = mDbHelper.fetchAllEvents();
+    private void showFilteredEventsOnMap(){
 		mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
-		Cursor eventsCursor = mDbHelper.fetchEventByFilters(types, radius, duration);
+		Cursor eventsCursor = mDbHelper.fetchEventByFilters(getArrayOfFilteredTypes(), mFilterPrefs.getRadius(), mFilterPrefs.getDuration());
 //				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
 //				debugging.show();
-		//MapView mapView = (MapView) findViewById(R.id.mapview);
+
         List<Overlay> mapOverlays = mMap.getOverlays();
         mapOverlays.clear();
         Drawable drawable = this.getResources().getDrawable(R.drawable.ic_maps_event_default);
@@ -385,17 +307,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 
         mapOverlays.add(itemizedoverlay);
         
-		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
-		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
-		
-		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-            	Bundle b = null;
-            	FilterTab.setFilterBundle(b);
-            	onCreateHelper();
-            	setUserLocation();
-            }
-        });
+        setChangeFilterButton();
    	
     }
 
@@ -436,6 +348,69 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         }
         
         return super.onOptionsItemSelected(item);
+    }
+    
+    private String[] getArrayOfFilteredTypes(){
+    	List<String> types = new ArrayList<String>();
+    	
+		int i=0;
+		if(mFilterPrefs.getAnimal()){
+			types.add("animals");
+			
+		}
+		if(mFilterPrefs.getChildren()){
+			types.add("children");
+			
+		}
+		if(mFilterPrefs.getDisabled()){
+			types.add("disabled");
+			
+		}
+		if(mFilterPrefs.getEnv()){
+			types.add("environment");
+			
+		}
+		if(mFilterPrefs.getElderly()){
+			types.add("elderly");
+			
+		}
+
+		if(mFilterPrefs.getSpecial()){
+			types.add("special");
+			
+		}
+		
+		return (String[]) types.toArray(new String[types.size()]);
+    }
+    
+    
+    private void setChangeFilterButton(){
+    	if (mFilterPrefs.isDefaultFiltersOn())
+    		getFilteredEventsButton();
+    	else 
+    		getUnFilteredEventsButton();
+    }
+    
+    private void getUnFilteredEventsButton(){
+		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
+		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
+		
+		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	mFilterPrefs.saveDefaultFilterPrefs();
+            	onCreateHelper();
+            	setUserLocation();
+            }
+        });
+    }
+    private void getFilteredEventsButton(){
+        buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
+        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
+        buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+            	getFilterScreen(v);
+            }
+        });  	
     }
 }
 
