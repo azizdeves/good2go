@@ -16,7 +16,6 @@
 
 package com.gdma.good2go.ui;
 
-import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -374,8 +373,7 @@ public class MainActivity extends ActionBarActivity {
 	        /**POPULATE DB**/
         	
 	        mDbHelper.open();
-	        boolean res = mDbHelper.deleteAllEvents();
-	        
+	        	        
 	        for(Event event : eventList)
 	        {
 	        	String eventLat=Integer.toString(
@@ -405,7 +403,9 @@ public class MainActivity extends ActionBarActivity {
 	        	Set<SuitableFor> sf = event.getSuitableFor();
 	        	String groups = isSetContains(sf, SuitableFor.GROUPS);
 	        	String individ = isSetContains(sf, SuitableFor.INDIVIDUALS);
-	        	String kids = isSetContains(sf, SuitableFor.KIDS); 
+	        	String kids = isSetContains(sf, SuitableFor.KIDS);
+	        	
+	        	String groupsHowMany = String.valueOf(event.getHowMany()); 
 	        	
 	        	//get work type
 	        	Set<WorkType> wt = event.getWorkType();
@@ -420,6 +420,7 @@ public class MainActivity extends ActionBarActivity {
 	        	String elderly = isSetContains(vw, VolunteeringWith.ELDERLY);
 	        	String env = isSetContains(vw, VolunteeringWith.ENVIRONMENT);
 	        	String special = isSetContains(vw, VolunteeringWith.SPECIAL);
+	        	//String disadvant = isSetContains(vw, VolunteeringWith.DISADVANTAGED);
 	        	
 	        	if (animals.contains("0")
 	        			 && children.contains("0")
@@ -446,7 +447,7 @@ public class MainActivity extends ActionBarActivity {
 	        			animals, children,disabled,
 	        			elderly, env, special, eventImage, startTime, endTime,
 	        			preReq, npoName, groups, individ, kids, 
-	        			menial, mental, occKey);
+	        			menial, mental, occKey, groupsHowMany);
 	        }
 
 	        mDbHelper.close();
@@ -491,7 +492,7 @@ public class MainActivity extends ActionBarActivity {
 	    			type,type,type,
 	    			image2,
 	    			"08:00", "22:00", eventTest, eventTest, type, type, type, 
-	    			type, type, eventTest);
+	    			type, type, eventTest, type);
 	    	
 	}
 
