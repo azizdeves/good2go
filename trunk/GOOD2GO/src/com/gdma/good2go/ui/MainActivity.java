@@ -308,7 +308,7 @@ public class MainActivity extends ActionBarActivity {
 		
 		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
-		c.set(2012,Calendar.JANUARY,23,0,0,0);
+		c.set(2012,Calendar.JANUARY,30,0,0,0);
 		c.set(Calendar.HOUR_OF_DAY,8);
 		Date myDate = new Date();
 		myDate = c.getTime();
@@ -420,7 +420,7 @@ public class MainActivity extends ActionBarActivity {
 	        	String elderly = isSetContains(vw, VolunteeringWith.ELDERLY);
 	        	String env = isSetContains(vw, VolunteeringWith.ENVIRONMENT);
 	        	String special = isSetContains(vw, VolunteeringWith.SPECIAL);
-	        	//String disadvant = isSetContains(vw, VolunteeringWith.DISADVANTAGED);
+	        	String disadvant = isSetContains(vw, VolunteeringWith.DISADVANTAGED);
 	        	
 	        	if (animals.contains("0")
 	        			 && children.contains("0")

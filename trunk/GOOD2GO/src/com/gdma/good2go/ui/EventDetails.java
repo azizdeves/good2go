@@ -30,6 +30,7 @@ public class EventDetails extends ActionBarActivity {
     private String mEventDistance;
     private String mEventCity;
     private String mEventSreet;
+    private String mEventSreetNum;
     private String mEventWhen;
     private String mEventDuration;
     private String mEventNPO;
@@ -59,10 +60,7 @@ public class EventDetails extends ActionBarActivity {
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
 	    super.onCreate(savedInstanceState);
-	    setContentView(R.layout.event_details);
-
-	    //mTabHost = getTabHost();
-	    
+	    setContentView(R.layout.event_details);    
 	    
 	    /**GET EVENT ID PASSED FROM CALLING ACTIVITY*/
 		Bundle extras = getIntent().getExtras();
@@ -104,18 +102,21 @@ public class EventDetails extends ActionBarActivity {
 	    mEventDetails = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DETAILS));
 	    
-	    //DEBUG
-	    mEventDetails = eventDetails.getText().toString();
-	    //DEBUG
 	    
-	    mEventDetails = mEventDetails.replace(". ", "\n");
-	    mEventDetails = mEventDetails.replace("? ", "\n");
-	    mEventDetails = mEventDetails.replace("! ", "\n");
+	    mEventDetails = mEventDetails.replace(". ", ".\n");
+	    mEventDetails = mEventDetails.replace("? ", "?\n");
+	    mEventDetails = mEventDetails.replace("! ", "!\n");
 	    
 	    mEventDistance = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
 	    mEventCity = event.getString(event.getColumnIndexOrThrow
-	    		(EventsDbAdapter.KEY_EVENT_CITY));	   
+	    		(EventsDbAdapter.KEY_EVENT_CITY));
+	    
+	    mEventSreet = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_STREET));
+	    mEventSreetNum = event.getString(event.getColumnIndexOrThrow
+	    		(EventsDbAdapter.KEY_EVENT_STREET_NUMBER));
+	    
 	    mEventDuration = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_DURATION));	    
 	    mEventImage = event.getInt(event.getColumnIndexOrThrow
@@ -133,6 +134,20 @@ public class EventDetails extends ActionBarActivity {
 	    
 	    mEventPrereq = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_PRE_REQ));
+	    
+	    mEventPrereq = mEventDetails.replace("(", " ");
+	    mEventPrereq = mEventDetails.replace(")", " ");
+	    mEventPrereq = mEventPrereq + " " + mEventSreet + " " + mEventSreetNum;
+	    
+	    if (mEventSreet.length()!=0)
+	    {
+	    	mEventSreet = "\n" + mEventSreet;
+		 
+		    if (mEventSreetNum.length()!=0){
+		    	mEventSreetNum = " " + mEventSreetNum;}
+		    
+		    mEventPrereq = mEventPrereq + mEventSreet + mEventSreetNum;
+	    }
 	    
 	    mPhysical = event.getInt(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_WORK_MENIAL)) 
