@@ -121,19 +121,36 @@
 	<TextView
 	        android:id="@+id/userHistoryMeView"
 	        style="@style/TextBody"
-	        
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
 	        android:layout_below="@id/mrNiceGuy_PicMeView"
 	        android:text="History"
-	        
 	        android:layout_marginTop="10dip"
 	        android:layout_marginBottom="4dip"/>
 
-	<ListView android:id="@android:id/list"
+	
+	
+	<ListView android:id="@+id/historyListMeView"
                android:layout_width="fill_parent"
                android:layout_height="fill_parent"
                 android:layout_below="@id/userHistoryMeView"
+               android:drawSelectorOnTop="false"/>
+	
+	
+	<TextView
+	        android:id="@+id/userFutureEventsMeView"
+	        style="@style/TextBody"
+	        android:layout_width="wrap_content"
+	        android:layout_height="wrap_content"
+	        android:layout_below="@id/historyListMeView"
+	        android:text="Future events"
+	        android:layout_marginTop="10dip"
+	        android:layout_marginBottom="4dip"/>
+		
+		<ListView android:id="@+id/futureListMeView"
+               android:layout_width="fill_parent"
+               android:layout_height="fill_parent"
+                android:layout_below="@id/userFutureEventsMeView"
                android:drawSelectorOnTop="false"/>
 
 

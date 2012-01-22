@@ -8,13 +8,18 @@ import java.util.List;
 import android.R.drawable;
 import android.content.Intent;
 import android.database.Cursor;
+import android.database.DataSetObserver;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
@@ -25,6 +30,7 @@ import com.gdma.good2go.Event;
 import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.User;
+import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
@@ -39,7 +45,7 @@ import com.google.gson.JsonParser;
 import flexjson.JSONDeserializer;
 import flexjson.transformer.DateTransformer;
 
-public class MeTab extends ActionBarListActivity {
+public class MeTab extends ActionBarActivity {
 	private static final String TAG = "Me";
 	private drawable myPic;
 	private long mPoints;
@@ -67,24 +73,29 @@ public class MeTab extends ActionBarListActivity {
  
         setContentView(R.layout.me);
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
-        //ADI - DEBUG
-        checkFeedback();
-        //adi - debUG
-//("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");
+        ListView l = (ListView)findViewById(R.id.historyListMeView);
         mUsersPref = new AppPreferencesPrivateDetails(this) ;
         mUserName = mUsersPref.getUserName();
         mPoints=UsersUtil.remote_getUsersKarma(mUserName);
  		mBadge=Karma.Badge.getMyBadge(mPoints).getName();
-        User u = UsersUtil.remote_getUsersDetails(mUserName);
-        if (u!=null){
-        	mUserFirstName=u.getFirstName();
-        	mUserLastName=u.getLastName();
-        }
+
         
 //       mUserFirstName = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserFirstName() : mUsersPref.substring(0,mUsersPref.indexOf('@'));				
- 		mUserFirstName = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserFirstName() : mUserFirstName;
-		mUserLastName  = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserLastName(): mUserLastName;
-
+ 		if(mUsersPref.doPrivateDetailsExist()){
+ 			mUserFirstName = mUsersPref.getUserFirstName();
+ 			mUserLastName = mUsersPref.getUserLastName();
+ 		}
+ 		else{
+ 	        User u = UsersUtil.remote_getUsersDetails(mUserName);
+ 	        if (u!=null){
+ 	        	mUserFirstName=u.getFirstName();
+ 	        	mUserLastName=u.getLastName();
+ 	        }
+ 	        else{
+ 	        	mUserFirstName=mUserName.substring(0, mUserName.indexOf("@"));
+ 	        }
+ 	       
+ 		}
  		
         mUserNiceName=mUserFirstName+" "+ mUserLastName;
         TextView tvName = (TextView) findViewById(R.id.userNameMeView);
@@ -92,10 +103,6 @@ public class MeTab extends ActionBarListActivity {
         SeekBar pointsProg = (SeekBar)findViewById(R.id.pointSeekMeView);
         setBadgesPictures(mBadge);
         
-        //TEST - ADI - THIS IS JUST SO SOME BADGES SHOW UP
-//		setPicture1();
-//		setPicture2();
-        //TEST - ADI
         
         tvName.setText(mUserNiceName);
         tvPoints.setText(Integer.toString((int)mPoints));
@@ -105,14 +112,12 @@ public class MeTab extends ActionBarListActivity {
         int status = remote_getUsersHistory(mUserName);
         if (status==-1){
         	//TODO write to log(?)
-        } 
+        }
+        
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
 		mEventsCursor = mDbHelper.fetchAllUsersHistory();
-		startManagingCursor(mEventsCursor);
-		showHistoryInList();
 
-        
 /**********************************/
 /***********DEBUG AREA*************/
 /**********************************/
@@ -122,14 +127,15 @@ public class MeTab extends ActionBarListActivity {
       mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "01/02/12", "40", "2h");
       mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/02/12", "200", "2h") ; 
       mEventsCursor=mDbHelper.fetchAllUsersHistory();
-      startManagingCursor(mEventsCursor);
-      showHistoryInList();
+      
       
 /**********************************/
 /*******END OF DEBUG AREA**********/
 /**********************************/   
-  	  checkFeedback();
-      
+//  	  checkFeedback();
+      startManagingCursor(mEventsCursor);
+      showHistoryInList();
+      showFutureInList();
     }
 
    private int remote_getUsersHistory(String username){
@@ -217,12 +223,22 @@ public class MeTab extends ActionBarListActivity {
 
     
     private void showHistoryInList(){
-	
-        mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME,UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
-        int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
+    	ListView l1 = (ListView)findViewById(R.id.historyListMeView);
+    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME,UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
+    	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
+    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_history_list_item,mEventsCursor, mColumns, to);
-        setListAdapter(mAdapter);
-        
+        l1.setAdapter(mAdapter);
+    }
+  
+    
+    private void showFutureInList(){
+//    	ListView l1 = (ListView)findViewById(R.id.futureListMeView);
+//    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME, UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
+//    	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
+//    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
+//        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_future_list_item,mEventsCursor, mColumns, to);
+//        l1.setAdapter(mAdapter);
     }
     
 //	public void getUsersFutureEvents(View view){
