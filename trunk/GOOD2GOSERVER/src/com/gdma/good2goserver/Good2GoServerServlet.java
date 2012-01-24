@@ -569,8 +569,6 @@ public class Good2GoServerServlet extends HttpServlet {
 				
 				String js = new JSONSerializer().transform(new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS"), Date.class).include("address", "occurrences", "volunteeringWith", "suitableFor", "workType").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(results);
 				
-				resp.setContentType("text/plain");
-				
 				pw.print(js);
 			}
 			
@@ -673,7 +671,8 @@ public class Good2GoServerServlet extends HttpServlet {
 					String age = new Integer(c.get(Calendar.YEAR) - user.getBirthYear()).toString();
 					
 					try{
-						SendEmail.ActSend(/*occurrence.getEmail()*/"GOOD2GO.israel@gmail.com", event.getEventName(), occurrence.getOccurrenceDate(), user.getFirstName(), user.getLastName(), user.getUserName(), age.toString(), user.getSex().toString(), user.getPhone(), user.getCity());
+						SendEmail.ActSendToNPO(/*occurrence.getEmail()*/"GOOD2GO.israel@gmail.com", event.getEventName(), occurrence.getOccurrenceDate(), user.getFirstName(), user.getLastName(), user.getUserName(), age.toString(), user.getSex().toString(), user.getPhone(), user.getCity());
+						SendEmail.ActSendToUser(user.getUserName(), event.getEventName(), occurrence.getOccurrenceDate(), user.getFirstName(), user.getLastName());
 					}
 					catch(Exception e){
 						pw.print(e.getMessage());

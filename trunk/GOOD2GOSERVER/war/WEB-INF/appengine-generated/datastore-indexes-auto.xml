@@ -1,12 +1,17 @@
-<!-- Indices written at Sat, 21 Jan 2012 11:19:36 UTC -->
+<!-- Indices written at Sun, 22 Jan 2012 15:40:07 UTC -->
 
 <datastore-indexes>
 
-    <!-- Used 1 time in query history -->
+    <!-- Used 3 times in query history -->
     <datastore-index kind="Occurrence" ancestor="false" source="auto">
+        <property name="registeredUserNames" direction="asc"/>
         <property name="occurrenceDate" direction="asc"/>
-        <property name="endTime" direction="asc"/>
-        <property name="containingEventKey" direction="asc"/>
+    </datastore-index>
+
+    <!-- Used 3 times in query history -->
+    <datastore-index kind="Karma" ancestor="false" source="auto">
+        <property name="userName" direction="asc"/>
+        <property name="occurrenceKey" direction="asc"/>
     </datastore-index>
 
 </datastore-indexes>
