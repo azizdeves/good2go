@@ -51,6 +51,7 @@ public class CountMeIn extends ActionBarActivity {
     ProgressDialog dialog;
     private String graph_or_fql;
     private String mUsername;
+    private Boolean shareToggleBool = true;
  
     private RestClient mClient;
 	@Override
@@ -81,6 +82,19 @@ public class CountMeIn extends ActionBarActivity {
 	          
 	    eventName.setText(mEventName);
 	    fbStatus.setText(mFbStatus);
+	    
+	    
+	    final Button buttonFBToggle = (Button) findViewById(R.id.fbposttoggleBtn);
+	    buttonFBToggle.setOnClickListener(new View.OnClickListener() {
+			
+			@Override
+			public void onClick(View v) {
+				shareToggleBool = !shareToggleBool;
+				//showToast("share = " + shareToggleBool.toString());
+			}
+		});
+	    
+	    
 	    
 	    
 /**************************************************************/	    
@@ -145,6 +159,11 @@ public class CountMeIn extends ActionBarActivity {
 	        	
 	        	SharedPreferences prefs = PreferenceManager.getDefaultSharedPreferences(CountMeIn.this);
 	        	mFacebookToken = prefs.getString("FacebookToken", "");
+	        	/*if (mFacebookToken.equals("")){
+	        		showToast("trying to get FB access token via getAccessToken");
+	        		mFacebookToken = facebook.getAccessToken();
+	        		showToast(mFacebookToken);
+	        	}*/
 	        	
 	        	//ADI - added this to get new status in case user changed it
 	    
@@ -154,11 +173,13 @@ public class CountMeIn extends ActionBarActivity {
 	    	    //ADI - added this to get new status in case user changed it
 	        	
 	        	
-	        	if(mFacebookToken.equals("")){
+	        	if((mFacebookToken.equals("")) && shareToggleBool){
 	        		fbAuthAndPost(mFbStatus, view.getContext(), extraInfo);
 	        	}
 	        	else{
-	        		updateStatus(mFacebookToken);
+	        		if (!mFacebookToken.equals("") && shareToggleBool){
+	        			updateStatus(mFacebookToken);
+	        		}
 	        		Intent newIntent = new Intent(view.getContext(), Confirmation.class);
 		            newIntent.putExtras(extraInfo);
 		            startActivityForResult(newIntent, ActivitysCodeUtil.GET_CONFIRMATION);
