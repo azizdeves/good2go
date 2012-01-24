@@ -18,12 +18,9 @@ public class AppPreferencesEventsRetrievalDate {
      private static final int MIN_IN_HOUR = MEASUREMENT_UNIT;
      private static final int HOUR_IN_DAY = 24;
      
-//     private enum TimeMeasurements{
-//    	 HOUR,
-//    	 DAY,
-//    	 HALF_HOUR,
-//    	 HALF_DAY;
-//     }
+     public static final long HOUR = MIN_IN_HOUR * SEC_IN_MIN * MILISEC_IN_SEC;
+     public static final long DAY = HOUR_IN_DAY * HOUR;
+     public static final long  HALF_HOUR = HOUR / 2;
      
      
      
@@ -55,23 +52,11 @@ public class AppPreferencesEventsRetrievalDate {
          prefsEditor.commit();
      }
      
-     public boolean isFromToday() {
+     public boolean isFromLast(long oneUnitOfTimeMeasurement) {
     	 if (isDateExists())
     	 {
-    		long oneDay = HOUR_IN_DAY * MIN_IN_HOUR * SEC_IN_MIN * MILISEC_IN_SEC;
-    		long lastWriteDate = getDate() / oneDay;
-    		long nowDate = new Date().getTime() / oneDay;
-    		return lastWriteDate == nowDate;
-    	 }
-    	 return false;
-     }
-     
-     public boolean isFromLastHour() {
-    	 if (isDateExists())
-    	 {
-    		long oneHour = MIN_IN_HOUR * SEC_IN_MIN * MILISEC_IN_SEC;
-    		long lastWriteDate = getDate() / oneHour;
-    		long nowDate = new Date().getTime() / oneHour;
+    		long lastWriteDate = getDate() / oneUnitOfTimeMeasurement;
+    		long nowDate = new Date().getTime() / oneUnitOfTimeMeasurement;
     		return lastWriteDate == nowDate;
     	 }
     	 return false;

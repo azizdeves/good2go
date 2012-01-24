@@ -31,6 +31,7 @@
 	        android:layout_toRightOf="@id/eventPic"
 	        android:layout_marginBottom="10dip"
 	        android:layout_marginTop="10dip"
+	        android:layout_marginRight="10dip"
 	        android:layout_alignTop="@id/eventPic"
 	        	
 	        android:text="Playing with autistic young kids"/>
@@ -60,6 +61,7 @@
 	        android:layout_below="@id/eventPic"
 	        android:layout_marginTop="10dip"
 	        android:layout_marginBottom="10dip"
+	        android:layout_marginRight="10dip"
 	        android:text="Help young children learn new skills board games"/>
 	        
 	    
@@ -342,7 +344,7 @@
 		        
 		        android:layout_marginRight="10dip"
 		        android:layout_marginLeft="10dip"
-		        
+		        		        
 		        android:text="Work type"/>
 			
 			<TextView
@@ -367,6 +369,7 @@
 		        
 		        android:layout_marginRight="10dip"
 		        android:layout_marginLeft="10dip"
+		        android:layout_marginBottom="15dip"
 		        
 		        android:text="יש לך שעתיים פנויות השבוע? רוצה להתנדב מתי שנוח לך? ארגון לקט ישראל, בנק המזון הלאומי, הינו ארגון גג המספק מענה מקיף לכ- 300 עמותות לנזקקים-רעבים בכל רחבי הארץ. אנו מחפשים מתנדבים נוספים לסיוע באיסוף עודפי מזון ממסעדות, מאפיות ועוד, באזור ירושלים. המזון נאסף ממקומות קבועים התורמים את עודפיהם בשעות הערב לצורך העברתו לנזקקים. הבחירה מתי להתנדב היא שלך! פעילות קצרה אחת של שעתיים=עוד ארוחות מבושלות עבור משפחות נזקקות"/>
 		        
