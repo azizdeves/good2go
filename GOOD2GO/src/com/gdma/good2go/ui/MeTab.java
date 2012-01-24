@@ -39,6 +39,7 @@ import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.KeyManager;
+import com.gdma.good2go.utils.UsersFutureEventsDbAdapter;
 import com.gdma.good2go.utils.UsersHistoryDbAdapter;
 import com.gdma.good2go.utils.UsersUtil;
 import com.google.gson.JsonArray;
@@ -61,7 +62,9 @@ public class MeTab extends ActionBarActivity {
 	private List<Event> usersEvents;
 	private RestClient mClient = null;
     private UsersHistoryDbAdapter mDbHelper;
-    private Cursor mEventsCursor;
+    private UsersFutureEventsDbAdapter mDbHelperFutureEvents;
+    private Cursor mHistoryEventsCursor;
+    private Cursor mFutureEventsCursor;
 	private String[] mColumns;
 	private PopupWindow pw;
 	private AppPreferencesPrivateDetails mUsersPref; 
@@ -115,10 +118,14 @@ public class MeTab extends ActionBarActivity {
         pointsProg.setProgress((int)mPoints);
         pointsProg.setEnabled(false);        
  
-        int status = remote_getUsersHistory(mUserName);
+//        int status = remote_getUsersHistory(mUserName);
+//        if (status==-1){
+//        	//TODO write to log(?)
+//        }
+        int status = remote_getUsersFutureEvents(mUserName);
         if (status==-1){
         	//TODO write to log(?)
-        }
+        }   
         
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
@@ -136,9 +143,16 @@ public class MeTab extends ActionBarActivity {
 /**********************************/   
     
 
-      mEventsCursor=mDbHelper.fetchAllUsersHistory();
+      mHistoryEventsCursor=mDbHelper.fetchAllUsersHistory();
       mDbHelper.close();
-      startManagingCursor(mEventsCursor);
+      
+      mDbHelperFutureEvents = new UsersFutureEventsDbAdapter(this);
+      mDbHelperFutureEvents.open();
+      mFutureEventsCursor=mDbHelperFutureEvents.fetchAllUsersFutureEvents();
+      mDbHelperFutureEvents.close();
+      
+      startManagingCursor(mHistoryEventsCursor);
+      startManagingCursor(mFutureEventsCursor);
       showHistoryInList();
       showFutureInList();
     }
@@ -199,7 +213,7 @@ public class MeTab extends ActionBarActivity {
 		
 	}
 
-    private List<Event> remote_getUsersFutureEvents(String username){
+    private int remote_getUsersFutureEvents(String username){
 		Date myDate = new Date();
 		String dateToSend = Long.toString(myDate.getTime());
     	mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
@@ -213,17 +227,31 @@ public class MeTab extends ActionBarActivity {
 		catch (Exception e){
 			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersFutureEvents- failed", Toast.LENGTH_LONG);
 			debugging.show();
-			return null;
+			return -1;
 		}
-
-		String JSONResponse = mClient.getResponse();
-		JSONResponse = JSONResponse.replaceAll("good2goserver", "good2go");
-		JSONResponse = JSONResponse.trim();
 		
-		//Parse the response from server
+		mDbHelperFutureEvents= new UsersFutureEventsDbAdapter(this);
+		mDbHelperFutureEvents.open();
+		mDbHelperFutureEvents.createUsersFutureEvent("mor1", "Feed the hungry in Even Gvirol", "01/03/12", "200", "2h");
+	      
+	    String json = mClient.getResponse();
+		json = json.trim();
+		
+		JsonArray jsonArray = new JsonArray();
+		JsonParser parser = new JsonParser();
+		
+		KeyManager key = KeyManager.init();
+		jsonArray = parser.parse(json).getAsJsonArray();
+		for (int i=0;i<jsonArray.size();i++){
+			JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
+			String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
+			String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
+			long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
+			mDbHelperFutureEvents.createUsersFutureEvent(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h"); // change last var
+		}
+		mDbHelperFutureEvents.close();
+		return 1;
 
-		List<Event> eventList = new JSONDeserializer<List<Event>>().use(Date.class, new DateTransformer("yyyy.MM.dd.HH.aa.mm.ss.SSS")).deserialize(JSONResponse);
-		return eventList;
 	}
 
     
@@ -232,18 +260,18 @@ public class MeTab extends ActionBarActivity {
     	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME,UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
     	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
     	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_history_list_item,mEventsCursor, mColumns, to);
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_history_list_item,mHistoryEventsCursor, mColumns, to);
         l1.setAdapter(mAdapter);
     }
   
     
     private void showFutureInList(){
-//    	ListView l1 = (ListView)findViewById(R.id.futureListMeView);
-//    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME, UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
-//    	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
-//    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
-//        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_future_list_item,mEventsCursor, mColumns, to);
-//        l1.setAdapter(mAdapter);
+    	ListView l1 = (ListView)findViewById(R.id.futureListMeView);
+    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME, UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
+    	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
+    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_future_list_item,mFutureEventsCursor, mColumns, to);
+        l1.setAdapter(mAdapter);
     }
     
 //	public void getUsersFutureEvents(View view){
