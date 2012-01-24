@@ -74,7 +74,7 @@ public class CountMeIn extends ActionBarActivity {
 	    
 	    
 	    /**POPULATE VIEWS FROM EXTRAS*/
-	    mFbStatus="This is awesome! I'm going to " + mEventDesc.toLowerCase() + ".";
+	    mFbStatus="This is awesome! I'm going to " + mEventName.toLowerCase() + ".";
 	    
 	    TextView eventName = (TextView) findViewById(R.id.eventname);
 	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
@@ -159,6 +159,9 @@ public class CountMeIn extends ActionBarActivity {
 	        	}
 	        	else{
 	        		updateStatus(mFacebookToken);
+	        		Intent newIntent = new Intent(view.getContext(), Confirmation.class);
+		            newIntent.putExtras(extraInfo);
+		            startActivityForResult(newIntent, ActivitysCodeUtil.GET_CONFIRMATION);
 	        	}
 	            
 	            
