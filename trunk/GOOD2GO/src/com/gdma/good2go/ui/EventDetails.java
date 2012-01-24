@@ -135,9 +135,9 @@ public class EventDetails extends ActionBarActivity {
 	    mEventPrereq = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_PRE_REQ));
 	    
-	    mEventPrereq = mEventDetails.replace("(", " ");
-	    mEventPrereq = mEventDetails.replace(")", " ");
-	    mEventPrereq = mEventPrereq + " " + mEventSreet + " " + mEventSreetNum;
+	    mEventNPO = mEventNPO.replace("(", " ");
+	    mEventNPO = mEventNPO.replace(")", " ");
+	    //mEventPrereq = mEventPrereq + " " + mEventSreet + " " + mEventSreetNum;
 	    
 	    if (mEventSreet.length()!=0)
 	    {
@@ -146,7 +146,7 @@ public class EventDetails extends ActionBarActivity {
 		    if (mEventSreetNum.length()!=0){
 		    	mEventSreetNum = " " + mEventSreetNum;}
 		    
-		    mEventPrereq = mEventPrereq + mEventSreet + mEventSreetNum;
+		    mEventNPO = mEventNPO + mEventSreet + mEventSreetNum;
 	    }
 	    
 	    mPhysical = event.getInt(event.getColumnIndexOrThrow

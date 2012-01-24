@@ -128,7 +128,7 @@ public class MainActivity extends ActionBarActivity {
     private void continueActivityStart() {   	
     	if (mSender==null)
 		{
-    		if (areEventsFromLastHour()==false)
+    		if (areEventsFromLastHalfHour()==false)
     		{
 		    	/**GET MY LOCATION**/       
 		        mMyGeoPoint = getUserLocation();
@@ -162,14 +162,10 @@ public class MainActivity extends ActionBarActivity {
 		//showToast("Thanks for cheking out the app, you get " + " +10 " +"point bonus.");		
 	}
 
-	private boolean areEventsFromToday() {
-		mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
-		return (mEventsRetrievalDate.isFromToday());
-	}
 	
-	private boolean areEventsFromLastHour() {
+	private boolean areEventsFromLastHalfHour() {
 		mEventsRetrievalDate = new AppPreferencesEventsRetrievalDate(getApplicationContext());
-		return (mEventsRetrievalDate.isFromLastHour());
+		return (mEventsRetrievalDate.isFromLast(AppPreferencesEventsRetrievalDate.HALF_HOUR));
 	}
 
 
@@ -194,7 +190,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromToday()==false)
+            	if (areEventsFromLastHalfHour()==false)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -210,7 +206,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromToday()==false)
+            	if (areEventsFromLastHalfHour()==false)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -229,7 +225,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromToday()==false)
+            	if (areEventsFromLastHalfHour()==false)
             	{
             		showToast("No server communication. Please try again later.");
             	}
@@ -458,7 +454,7 @@ public class MainActivity extends ActionBarActivity {
 	        
 	     }
         else
-        	if (mEventsRetrievalDate.isFromToday() == false )
+        	if (mEventsRetrievalDate.isFromLast(AppPreferencesEventsRetrievalDate.HALF_HOUR) == false )
         	{
         		showToast ("Couldn't connect to the server");
         		
