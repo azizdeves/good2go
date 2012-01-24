@@ -285,10 +285,25 @@ public class Good2GoDatabaseManager {
 			}
 			
 			if (!isFound){
+				Occurrence occurrence = pm.getObjectById(Occurrence.class, occurrenceKey);
+				
+				//calculate duration of event (number of hours)
+				Calendar start = Calendar.getInstance();
+				Calendar end = Calendar.getInstance();
+				
+				start.setTime(occurrence.getStartTime());
+				end.setTime(occurrence.getEndTime());
+				
+				int numHours=end.get(Calendar.HOUR_OF_DAY)-start.get(Calendar.HOUR_OF_DAY);
+				
+				int points=1000*numHours; // points for participating in the event
+				
+				Karma karmap = new Karma(userName, ActionType.PARTICIPATE, new Date(),occurrenceKey, points);
+				pm.makePersistent(karmap);
+				
 				if (rating!=-1){
 					Karma karma = new Karma(userName, ActionType.RATE_AN_EVENT, new Date(),occurrenceKey);
 						
-						Occurrence occurrence = pm.getObjectById(Occurrence.class, occurrenceKey);
 						String eventKey = occurrence.getContainingEventKey();
 						
 						Event event = pm.getObjectById(Event.class, eventKey);
@@ -399,7 +414,7 @@ public class Good2GoDatabaseManager {
 			@SuppressWarnings("unchecked")
 			List<Karma> results = (List<Karma>) query.execute();
 			for (Karma k : results){
-				points+=k.getActionType().getPoints();
+				points+=k.getPoints();
 			}
 		}
 		finally {
@@ -625,7 +640,7 @@ public class Good2GoDatabaseManager {
 			Collections.sort(karmas);
 			
 			for (Karma karma : karmas){
-				if (!karma.getActionType().equals(Karma.ActionType.REGISTER_TO_EVENT))
+				if (!karma.getActionType().equals(Karma.ActionType.PARTICIPATE))
 					continue;
 				
 				Occurrence occurrence = pm.getObjectById(Occurrence.class, karma.getOccurrenceKey());
@@ -640,7 +655,7 @@ public class Good2GoDatabaseManager {
 				jsonKarma = new JsonObject();
 				jsonKarma.addProperty("Date", dateString);
 				jsonKarma.addProperty("Event", event.getEventName());
-				jsonKarma.addProperty("Points", karma.getActionType().getPoints());
+				jsonKarma.addProperty("Points", karma.getPoints());
 				
 				jsonArray.add(jsonKarma);
 			}

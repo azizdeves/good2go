@@ -30,11 +30,23 @@ public class Karma implements Comparable<Karma>{
 	@Persistent
 	private String occurrenceKey;
 	
+	@Persistent
+	private long participatePoints;
+	
 	public Karma(String userName, ActionType actionType, Date actionTime, String occurrenceKey){
 		this.userName = userName;
 		this.actionType = actionType;
 		this.actionTime = actionTime;
 		this.occurrenceKey = occurrenceKey;
+		this.participatePoints = 0;
+	}
+	
+	public Karma(String userName, ActionType actionType, Date actionTime, String occurrenceKey, long participatePoints){
+		this.userName = userName;
+		this.actionType = actionType;
+		this.actionTime = actionTime;
+		this.occurrenceKey = occurrenceKey;
+		this.participatePoints = participatePoints;
 	}
 	
 	public Karma(String userID, ActionType actionType, Date actionTime){
@@ -61,7 +73,7 @@ public class Karma implements Comparable<Karma>{
 		return occurrenceKey;
 	}
 	
-	enum ActionType{
+	public enum ActionType{
 		OPEN_ACCOUNT(10),
 		OPEN_APP(10),
 		SEARCH_EVENT(10), //once a day
@@ -70,7 +82,8 @@ public class Karma implements Comparable<Karma>{
 		FRIEND_REGISTERED(100),
 		RATE_AN_EVENT(10),
 		NO_RATE(0),
-		POST_STATUS(50);
+		POST_STATUS(50),
+		PARTICIPATE(0);
 		
 		private final long points;
 		
@@ -154,6 +167,20 @@ public class Karma implements Comparable<Karma>{
 	@Override
 	public int compareTo(Karma other) {
 		return this.getActionTime().compareTo(other.getActionTime());
+	}
+
+	public long getParticipatePoints() {
+		return participatePoints;
+	}
+	
+	public long getPoints() {
+		if (this.getActionType().equals(Karma.ActionType.PARTICIPATE))
+			return this.participatePoints;
+		return this.getActionType().getPoints();
+	}
+
+	private void setParticipatePoints(long participatePoints) {
+		this.participatePoints = participatePoints;
 	}
 
 }
