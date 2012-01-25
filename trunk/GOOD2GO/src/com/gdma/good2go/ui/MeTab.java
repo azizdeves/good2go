@@ -91,18 +91,10 @@ public class MeTab extends ActionBarActivity {
  			mUserFirstName = mUsersPref.getUserFirstName();
  			mUserLastName = mUsersPref.getUserLastName();
  		}
- 		else{
- 	        User u = UsersUtil.remote_getUsersDetails(mUserName);
- 	        if (u!=null){
- 	        	mUserFirstName=u.getFirstName();
- 	        	mUserLastName=u.getLastName();
- 	        }
- 	        else{
- 	        	mUserFirstName=mUserName.substring(0, mUserName.indexOf("@"));
- 	        }
- 	       
- 		}
- 		
+ 		else
+ 	       	mUserFirstName=mUserName.substring(0, mUserName.indexOf("@"));
+
+ 	        		
         mUserNiceName=mUserFirstName+" "+ mUserLastName;
         TextView tvName = (TextView) findViewById(R.id.userNameMeView);
         TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);
@@ -115,14 +107,8 @@ public class MeTab extends ActionBarActivity {
         pointsProg.setProgress((int)mPoints);
         pointsProg.setEnabled(false);        
  
-//        int status = remote_getUsersHistory(mUserName);
-//        if (status==-1){
-//        	//TODO write to log(?)
-//        }
-        int status = remote_getUsersFutureEvents(mUserName);
-        if (status==-1){
-        	//TODO write to log(?)
-        }   
+        new getUsersHistoryTask().execute(mUserName);
+        new getUsersFutureEventsTask().execute(mUserName);
         
         mDbHelper = new UsersHistoryDbAdapter(this);
         mDbHelper.open();
@@ -141,7 +127,7 @@ public class MeTab extends ActionBarActivity {
     
 
       mHistoryEventsCursor=mDbHelper.fetchAllUsersHistory();
-     // mDbHelper.close();
+      mDbHelper.close();
       
       mDbHelperFutureEvents = new UsersFutureEventsDbAdapter(this);
       mDbHelperFutureEvents.open();
@@ -158,7 +144,7 @@ public class MeTab extends ActionBarActivity {
       /*******END OF DEBUG AREA**********/
       /**********************************/   
       mFutureEventsCursor=mDbHelperFutureEvents.fetchAllUsersFutureEvents();
-     // mDbHelperFutureEvents.close();
+      mDbHelperFutureEvents.close();
       
       startManagingCursor(mHistoryEventsCursor);
       startManagingCursor(mFutureEventsCursor);
@@ -174,19 +160,10 @@ public class MeTab extends ActionBarActivity {
 		mClient.AddParam("action", "getUserHistory");
 		mClient.AddParam("userName", username);
 		mClient.AddParam("userDate", dateToSend);
-		
-		/* - Gil - added test print to find out the correct time format sent to the server 
-		Toast test=Toast.makeText(this,dateToSend, Toast.LENGTH_LONG);
-		test.show();
-		// this is the actual get request sent:  http://good-2-go.appspot.com/good2goserver?action=getUserHistory&userName=596351&userDate=1325455552537
-		*/
+
 		
 		try{
 			mClient.Execute(1); //1 is HTTP GET
-			/* - Gil - added test print to make sure we entered this part 
-			Toast test=Toast.makeText(this,"Connection to server -remote_getUsersHistory- succeded", Toast.LENGTH_LONG);
-			test.show();
-			*/
 		}
 		catch (Exception e){
 			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
@@ -293,13 +270,6 @@ public class MeTab extends ActionBarActivity {
         		R.layout.me_future_list_item, mFutureEventsCursor, mColumns, to);
         l1.setAdapter(mAdapter);
     }
-    
-//	public void getUsersFutureEvents(View view){
-//    	Intent myIntent = new Intent(view.getContext(),FutureEventsTab.class);
-//    	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
-//	}
-
-
 
 	
 	private void setBadgesPictures(String s){
@@ -436,7 +406,56 @@ public class MeTab extends ActionBarActivity {
 	
     }
     
+    private class getUsersHistoryTask extends AsyncTask<String, Void, Integer> {
+    	ProgressDialog dialog;
 
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.loading));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(Integer status) {
+    		dialog.dismiss();
+    	}
+			
+		@Override
+		protected Integer doInBackground(String... userDetails) {
+			return remote_getUsersHistory(userDetails[0]);
+			
+		}
+	
+    }
+        
+  
+    private class getUsersFutureEventsTask extends AsyncTask<String, Void, Integer> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.loading));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(Integer status) {
+    		dialog.dismiss();
+    	}
+			
+		@Override
+		protected Integer doInBackground(String... userDetails) {
+			return remote_getUsersFutureEvents(userDetails[0]);
+			
+		}
+	
+    }
+       
+    
 	private void getUserFeedback(List <Event> feedbackList) {
         	for (Event event : feedbackList) {
         		mEventName=event.getEventName();
