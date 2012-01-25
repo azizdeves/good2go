@@ -27,7 +27,7 @@ public class EventDetails extends ActionBarActivity {
     private String mEventName;
     private String mEventDesc;
     private String mEventDetails;
-    private String mEventDistance;
+    //private String mEventDistance;
     private String mEventCity;
     private String mEventSreet;
     private String mEventSreetNum;
@@ -107,8 +107,8 @@ public class EventDetails extends ActionBarActivity {
 	    mEventDetails = mEventDetails.replace("? ", "?\n");
 	    mEventDetails = mEventDetails.replace("! ", "!\n");
 	    
-	    mEventDistance = event.getString(event.getColumnIndexOrThrow
-	    		(EventsDbAdapter.KEY_EVENT_DISTANCE));
+	    //mEventDistance = event.getString(event.getColumnIndexOrThrow
+	    		//(EventsDbAdapter.KEY_EVENT_DISTANCE));
 	    mEventCity = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_CITY));
 	    
@@ -135,15 +135,13 @@ public class EventDetails extends ActionBarActivity {
 	    mEventPrereq = event.getString(event.getColumnIndexOrThrow
 	    		(EventsDbAdapter.KEY_EVENT_PRE_REQ));
 	    
-	    mEventNPO = mEventNPO.replace("(", " ");
-	    mEventNPO = mEventNPO.replace(")", " ");
 	    //mEventPrereq = mEventPrereq + " " + mEventSreet + " " + mEventSreetNum;
 	    
 	    if (mEventSreet.length()!=0)
 	    {
 	    	mEventSreet = "\n" + mEventSreet;
 		 
-		    if (mEventSreetNum.length()!=0){
+		    if (mEventSreetNum.length()!=0 && mEventSreetNum.compareTo("0")!=0){
 		    	mEventSreetNum = " " + mEventSreetNum;}
 		    
 		    mEventNPO = mEventNPO + mEventSreet + mEventSreetNum;
@@ -170,7 +168,7 @@ public class EventDetails extends ActionBarActivity {
 	    		 == 1 ? true : false;
 	    
 	    mForGroupsHowMany = event.getInt(event.getColumnIndexOrThrow
-	    		(EventsDbAdapter.KEY_EVENT_WORK_MENIAL));
+	    		(EventsDbAdapter.KEY_EVENT_GROUP_HOW_MANY));
 	    	    
 	    eventTitle.setText(mEventName);
 	    eventDescription.setText(mEventDesc);
@@ -197,7 +195,11 @@ public class EventDetails extends ActionBarActivity {
 	    
 	    if (mForGroups){
 	    	forGroups.setImageResource(R.drawable.suitfor_group_on);
-	    	textGroup.setText(textGroup.getText() + " (" + mForGroupsHowMany + ")");
+	    	if (mForGroupsHowMany!=0)
+	    	{
+	    		textGroup.setText(textGroup.getText() 
+	    				+ " (" + mForGroupsHowMany + ")");
+	    	}
 	    }
 	    
 	    if (mForIndivid){

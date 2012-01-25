@@ -399,6 +399,9 @@ public class MainActivity extends ActionBarActivity {
 	        	//get eventAdditionalDetails
 	        	String preReq = event.getPrerequisites();
 	        	String npoName = event.getNPOName();
+	        	npoName = npoName.replace("(", "\'");
+	        	npoName = npoName.replace(")", "\'");
+	        	npoName = npoName.replace("&quot;", "\"");
 	        	
 	        	//get suitable for	        	
 	        	Set<SuitableFor> sf = event.getSuitableFor();
@@ -443,7 +446,7 @@ public class MainActivity extends ActionBarActivity {
 	        			event.getContent(),
 	        			eventLat, eventLon,distance,duration,
 	        			event.getEventAddress().getCity(),
-	        			event.getEventAddress().getStreet(),
+	        			event.getEventAddress().getStreet().replace("&quot;", "\""),
 	        			String.valueOf(event.getEventAddress().getNumber()),
 	        			animals, children,disabled,
 	        			elderly, env, special, eventImage, startTime, endTime,
