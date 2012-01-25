@@ -247,8 +247,7 @@ public class MainActivity extends ActionBarActivity {
             }
         });
         
-        AppPreferencesFilterDetails m = new AppPreferencesFilterDetails(this);
-        m.saveDefaultFilterPrefs();
+
 	}
 	
 	
