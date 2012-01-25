@@ -18,7 +18,8 @@ public class AppPreferencesEventsRetrievalDate {
      private static final int MIN_IN_HOUR = MEASUREMENT_UNIT;
      private static final int HOUR_IN_DAY = 24;
      
-     public static final long HOUR = MIN_IN_HOUR * SEC_IN_MIN * MILISEC_IN_SEC;
+     public static final long MINUTE = SEC_IN_MIN * MILISEC_IN_SEC;
+     public static final long HOUR = MIN_IN_HOUR * MINUTE;
      public static final long DAY = HOUR_IN_DAY * HOUR;
      public static final long  HALF_HOUR = HOUR / 2;
      

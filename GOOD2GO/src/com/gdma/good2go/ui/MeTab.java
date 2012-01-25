@@ -2,6 +2,7 @@ package com.gdma.good2go.ui;
 
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
@@ -9,18 +10,14 @@ import android.R.drawable;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
-import android.database.DataSetObserver;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.ViewGroup;
-import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.ImageView;
-import android.widget.ListAdapter;
 import android.widget.ListView;
 import android.widget.PopupWindow;
 import android.widget.SeekBar;
@@ -30,12 +27,12 @@ import android.widget.Toast;
 
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Karma;
+import com.gdma.good2go.Karma.Badge;
 import com.gdma.good2go.R;
 import com.gdma.good2go.User;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
-import com.gdma.good2go.actionbarcompat.ActionBarListActivity;
-import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.KeyManager;
@@ -46,11 +43,10 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 
-import flexjson.JSONDeserializer;
-import flexjson.transformer.DateTransformer;
-
 public class MeTab extends ActionBarActivity {
 	private static final String TAG = "Me";
+	private static final int POINTS_PER_HOUR = 1000;	
+	
 	private drawable myPic;
 	private long mPoints;
 	private String mBadge;
@@ -76,14 +72,15 @@ public class MeTab extends ActionBarActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
- 
         setContentView(R.layout.me);
+        mUsersPref = new AppPreferencesPrivateDetails(this) ;
         //check for unrated events async              
-        new checkForUsersUnRatedEventsTask().execute(	);
+        new checkForUsersUnRatedEventsTask().execute(mUsersPref.getUserName());
         
         final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
         ListView l = (ListView)findViewById(R.id.historyListMeView);
-        mUsersPref = new AppPreferencesPrivateDetails(this) ;
+
+        
         mUserName = mUsersPref.getUserName();
         mPoints=UsersUtil.remote_getUsersKarma(mUserName);
  		mBadge=Karma.Badge.getMyBadge(mPoints).getName();
@@ -137,24 +134,37 @@ public class MeTab extends ActionBarActivity {
         mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/02/12", "200", "2h") ; 
       
       
-      
+      boolean isEmpty = mDbHelper.isUserHistoryEmpty();
 /**********************************/
 /*******END OF DEBUG AREA**********/
 /**********************************/   
     
 
       mHistoryEventsCursor=mDbHelper.fetchAllUsersHistory();
-      mDbHelper.close();
+     // mDbHelper.close();
       
       mDbHelperFutureEvents = new UsersFutureEventsDbAdapter(this);
       mDbHelperFutureEvents.open();
+      /**********************************/
+      /***********DEBUG AREA*************/
+      /**********************************/
+
+      mDbHelperFutureEvents.createUsersFutureEvent("adi1", "Testing many things", "25/01/12", "3000", "3h");
+      mDbHelperFutureEvents.createUsersFutureEvent("adi2", "Not doing DB project at all", "25/01/12", "2500", "2h 30m") ; 
+            
+            
+      boolean isEmpty2 = mDbHelperFutureEvents.isUserFutureEventsEmpty();
+      /**********************************/
+      /*******END OF DEBUG AREA**********/
+      /**********************************/   
       mFutureEventsCursor=mDbHelperFutureEvents.fetchAllUsersFutureEvents();
-      mDbHelperFutureEvents.close();
+     // mDbHelperFutureEvents.close();
       
       startManagingCursor(mHistoryEventsCursor);
       startManagingCursor(mFutureEventsCursor);
-      showHistoryInList();
       showFutureInList();
+      showHistoryInList();
+      
     }
 
    private int remote_getUsersHistory(String username){
@@ -241,13 +251,18 @@ public class MeTab extends ActionBarActivity {
 		JsonParser parser = new JsonParser();
 		
 		KeyManager key = KeyManager.init();
-		jsonArray = parser.parse(json).getAsJsonArray();
-		for (int i=0;i<jsonArray.size();i++){
-			JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
-			String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
-			String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
-			long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
-			mDbHelperFutureEvents.createUsersFutureEvent(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h"); // change last var
+		try{
+			jsonArray = parser.parse(json).getAsJsonArray();
+			for (int i=0;i<jsonArray.size();i++){
+				JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
+				String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
+				String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
+				long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
+				mDbHelperFutureEvents.createUsersFutureEvent(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h"); // change last var
+			}
+		}catch (Exception e){
+			//MOR - HANDLE THIS.
+			return 1;
 		}
 		mDbHelperFutureEvents.close();
 		return 1;
@@ -267,10 +282,15 @@ public class MeTab extends ActionBarActivity {
     
     private void showFutureInList(){
     	ListView l1 = (ListView)findViewById(R.id.futureListMeView);
-    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME, UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
+    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, 
+    			UsersHistoryDbAdapter.KEY_EVENTNAME, 
+    			UsersHistoryDbAdapter.KEY_EVENT_DURATION, 
+    			UsersHistoryDbAdapter.KEY_EVENPOINTS};
     	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
-    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_future_list_item,mFutureEventsCursor, mColumns, to);
+    	int[] to = new int[] {R.id.futureEventDate_entry, R.id.futureEventInfo_entry, 
+    			R.id.futureEventDuration_entry, R.id.futureEventPoints_entry};
+        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,
+        		R.layout.me_future_list_item, mFutureEventsCursor, mColumns, to);
         l1.setAdapter(mAdapter);
     }
     
@@ -279,34 +299,29 @@ public class MeTab extends ActionBarActivity {
 //    	startActivityForResult(myIntent, GET_FILTERED_EVENTS);		
 //	}
 
-	
-	public void closeFutureEvents(View view){
 
-		pw.dismiss();
 
-	}
-	//("MR_NICE_GUY","ANGEL","MOTHER_TERESA","BUDDHIST_MONK","DALAI_LAMA","GOD");	
 	
 	private void setBadgesPictures(String s){
-		if(s.compareTo("MR_NICE_GUY")==0){
+		if(s.compareTo(Badge.MR_NICE_GUY.getName())==0){
 			setPicture1();
 		}
-		if(s.compareTo("ANGEL")==0){
+		if(s.compareTo(Badge.ANGEL.getName())==0){
 			setPicture1();
 			setPicture2();
 		}
-		if(s.compareTo("MOTHER_TERESA")==0){
+		if(s.compareTo(Badge.MOTHER_TERESA.getName())==0){
 			setPicture1();
 			setPicture2();
 			setPicture3();
 		}
-		if(s.compareTo("BUDDHIST_MONK")==0){
+		if(s.compareTo(Badge.BUDDHIST_MONK.getName())==0){
 			setPicture1();
 			setPicture2();
 			setPicture3();
 			setPicture4();
 		}
-		if(s.compareTo("DALAI_LAMA")==0){
+		if(s.compareTo(Badge.DALAI_LAMA.getName())==0){
 			setPicture1();
 			setPicture2();
 			setPicture3();
@@ -314,7 +329,7 @@ public class MeTab extends ActionBarActivity {
 			setPicture5();
 			
 		}
-		if(s.compareTo("GOD")==0){
+		if(s.compareTo(Badge.GOD.getName())==0){
 			setPicture1();
 			setPicture2();
 			setPicture3();
@@ -393,36 +408,34 @@ public class MeTab extends ActionBarActivity {
     }
     
     
-    private class checkForUsersUnRatedEventsTask extends AsyncTask<String, Void, Integer> {
+    private class checkForUsersUnRatedEventsTask extends AsyncTask<String, Void, List<Event>> {
     	ProgressDialog dialog;
 
     	@Override
     	protected void onPreExecute(){
     		dialog = new ProgressDialog(MeTab.this);
-    		dialog.setMessage(getString(R.string.sending_user_details));
+    		dialog.setMessage(getString(R.string.loading));
     		dialog.setIndeterminate(true);
     		dialog.setCancelable(false);
     		dialog.show();
 	    }
 
-    	protected void onPostExecute(Integer execResult) {
+    	protected void onPostExecute(List<Event> feedbackList) {
     		dialog.dismiss();
+    		if (feedbackList!=null)
+    			getUserFeedback(feedbackList);
     	}
 			
 		@Override
-		protected Integer doInBackground(String... userDetails) {
-			return checkFeedback();
+		protected List<Event> doInBackground(String... userDetails) {
+			return UsersUtil.remote_getEventsForFeedback(userDetails[0]);
 			
 		}
 	
     }
     
-    
-    
-    //asyn
-	private int checkFeedback() {
-        List<Event> feedbackList = UsersUtil.remote_getEventsForFeedback(mUserName);
-        if (feedbackList!=null){
+
+	private void getUserFeedback(List <Event> feedbackList) {
         	for (Event event : feedbackList) {
         		mEventName=event.getEventName();
         		mOccurenceKey=event.getOccurrences().get(0).getOccurrenceKey();
@@ -430,21 +443,28 @@ public class MeTab extends ActionBarActivity {
         		Date occDate = event.getOccurrences().get(0).getOccurrenceDate();
         		SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM");
         		mEventDate = sdf.format(occDate);
+        		        		
+        		int unfeedbackedPoints = getDeservedPoints(event.getOccurrences().get(0).getStartTime(),
+        				event.getOccurrences().get(0).getEndTime());
+        		String ufPoints = Integer.toString(unfeedbackedPoints);
         		
         		Bundle extraInfo = new Bundle();        		
                 extraInfo.putString(EventsDbAdapter.KEY_EVENTNAME, mEventName);
                 extraInfo.putString(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY, mOccurenceKey);
                 extraInfo.putString("VOLUNTEER_DATE", mEventDate);
-                //TODO add points
-                extraInfo.putString("POINTS", "3200");
+                extraInfo.putString("POINTS", ufPoints);
                 
                 Intent newIntent = new Intent(this, FeedbackTab.class);
                 newIntent.putExtras(extraInfo);
                 startActivity(newIntent);
 			}
-        	return 1;
         }
-        return 0;
-		
+
+	private int getDeservedPoints(Date startTime, Date endTime) {
+		long min = AppPreferencesEventsRetrievalDate.MINUTE;
+		long diff = endTime.getTime() - startTime.getTime();
+		int mins = (int) (diff / min);
+		int pointsInMin = POINTS_PER_HOUR / 60;
+		return mins * pointsInMin;
 	}
 }

@@ -67,6 +67,7 @@ public class MainActivity extends ActionBarActivity {
 	private GeoPoint mMyGeoPoint;
 	private String mSender;
 	private String mLocalUsername;
+	private boolean serverOKNoEvents=false;
 	
     private AppPreferencesEventsRetrievalDate mEventsRetrievalDate;
     
@@ -225,14 +226,14 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromLastHalfHour()==false)
-            	{
-            		showToast("No server communication. Please try again later.");
-            	}
-            	else
+            	if (serverOKNoEvents==true || areEventsFromLastHalfHour()==true)
             	{
 		            Intent newIntent = new Intent(view.getContext(), MeTab.class);
 		            startActivity(newIntent);
+            	}
+            	else
+            	{
+                	showToast("No server communication. Please try again later.");
             	}
             }
         });
@@ -337,7 +338,7 @@ public class MainActivity extends ActionBarActivity {
 				List<Event> events = new JSONDeserializer<List<Event>>()
 							.use(Date.class, new DateParser()).deserialize(JSONResponse);
 				
-				if (events!=null && events.size()>0)
+ 				if (events!=null && events.size()>0)
 				{
 					mEventsRetrievalDate.saveDate(new Date());
 					return events;
@@ -346,7 +347,7 @@ public class MainActivity extends ActionBarActivity {
 				{
 					//no events from today - json is  []
 					Log.i(TAG, "No events for today, response is empty");
-					//mEventsRetrievalDate.removeDate();
+					serverOKNoEvents=true;
 				}
 			}
 		}
