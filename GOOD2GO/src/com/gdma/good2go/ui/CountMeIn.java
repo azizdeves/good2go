@@ -1,32 +1,16 @@
 package com.gdma.good2go.ui;
 
-import com.gdma.good2go.R;
-
 import java.io.IOException;
 import java.net.MalformedURLException;
-import java.util.Date;
-
-
-import com.gdma.good2go.actionbarcompat.ActionBarActivity;
-import com.gdma.good2go.communication.RemoteFunctions;
-import com.gdma.good2go.communication.RestClient;
-import com.gdma.good2go.facebook.DialogError;
-import com.gdma.good2go.facebook.Facebook;
-import com.gdma.good2go.facebook.FacebookError;
-import com.gdma.good2go.facebook.Facebook.DialogListener;
-import com.gdma.good2go.utils.ActivitysCodeUtil;
-import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
-import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.PointsUtil;
 
 import android.app.Activity;
 import android.app.ProgressDialog;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.preference.PreferenceManager;
-import android.provider.ContactsContract.CommonDataKinds.Event;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
@@ -36,8 +20,22 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.gdma.good2go.R;
+import com.gdma.good2go.actionbarcompat.ActionBarActivity;
+import com.gdma.good2go.communication.RemoteFunctions;
+import com.gdma.good2go.communication.RestClient;
+import com.gdma.good2go.facebook.DialogError;
+import com.gdma.good2go.facebook.Facebook;
+import com.gdma.good2go.facebook.Facebook.DialogListener;
+import com.gdma.good2go.facebook.FacebookError;
+import com.gdma.good2go.utils.ActivitysCodeUtil;
+import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.PointsUtil;
+
 public class CountMeIn extends ActionBarActivity {
 	private static final String TAG = "CountMeIn";
+	
+	private static final int POINTS_PER_HOUR = 1000;
 
 	private String mEventName;
     private String mEventDesc;
@@ -45,8 +43,9 @@ public class CountMeIn extends ActionBarActivity {
     private String mFacebookToken;
     private Long mEventId;
     private String mOccurenceKey;
+    private String mEventDuration;
 	Facebook facebook = new Facebook("327638170583802"); //new facebook app instance;
-    RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+    //RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
     private int mAuthAttempts = 0;
     ProgressDialog dialog;
     private String graph_or_fql;
@@ -56,7 +55,6 @@ public class CountMeIn extends ActionBarActivity {
     private RestClient mClient;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
-		// TODO Auto-generated method stub
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.count_me_in);
 		
@@ -69,6 +67,7 @@ public class CountMeIn extends ActionBarActivity {
 		    mEventId = Long.valueOf(EvenIdString);
 		    mOccurenceKey = extras.getString("occurence_key");
 		    mUsername=extras.getString("userName");
+		    mEventDuration = extras.getString(EventsDbAdapter.KEY_EVENT_DURATION);
 		}
     
 	    
@@ -124,36 +123,15 @@ public class CountMeIn extends ActionBarActivity {
 		   
 	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
 	        public void onClick(View view) {
-	        	
-	        	
-
-	           // mSoundManager.playSound(3);
-	            /*Intent newIntent = new Intent(view.getContext(), 
-	                            CountMeIn.class);
-	            startActivityForResult(newIntent, 1);*/
-	    		//Toast.makeText(view.getContext(), "Thanks for being awesome! We'll love to see you at: " +mEventName+ ".",
-				//Toast.LENGTH_LONG).show();
-	    		
-	    		////setResult(Activity.RESULT_OK);
-	    		////finish();
-	        	
-
-//	        	if(!mUsersPrefs.isUsernameExists()){
-//	        		remote_registerUserForTheFirstTime(mUsername, mAge, mSex, mCity, mPhone, mEmail);
-//	        	}
-	        	//remote_registerToOccurrence(mUsername, Long.toString(mEventId));
-	        	
-	        	/**TODO add async task*/	        	
-        		RemoteFunctions rf = RemoteFunctions.INSTANCE;
-        		rf.registerUserToEvent(RemoteFunctions.REGISTER_USER_TO_EVENT, mUsername, mOccurenceKey);
+	        	//async register to event
+	        	new registerUserToEvent().execute(mUsername,mOccurenceKey);
 	        	
 	        	Bundle extraInfo = new Bundle();
 	            extraInfo.putString("eventname", mEventName);
 	            extraInfo.putString("desc", mEventDesc);
 	            extraInfo.putString("event_id", mEventId.toString());
-	            extraInfo.putInt("points", 100); 
-	            /*MOR - WHY are the point static? If you can't get from dana - use her classes to calculate how much!*/
-	            
+	            int points = getDeservedPoints(); 
+	            extraInfo.putInt("points", points); 
 	            
 	            mAuthAttempts = 0;
 	        	
@@ -164,16 +142,10 @@ public class CountMeIn extends ActionBarActivity {
 	        		mFacebookToken = facebook.getAccessToken();
 	        		showToast(mFacebookToken);
 	        	}*/
-	        	
-	        	//ADI - added this to get new status in case user changed it
-	    
-	    	    TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
+	        	TextView fbStatus = (TextView) findViewById(R.id.fbstatus);
 	    	    mFbStatus=fbStatus.getText().toString();
-	    	    
-	    	    //ADI - added this to get new status in case user changed it
-	        	
-	        	
-	        	if((mFacebookToken.equals("")) && shareToggleBool){
+
+	    	    if((mFacebookToken.equals("")) && shareToggleBool){
 	        		fbAuthAndPost(mFbStatus, view.getContext(), extraInfo);
 	        	}
 	        	else{
@@ -206,6 +178,8 @@ public class CountMeIn extends ActionBarActivity {
         					Log.d(this.getClass().getName(), "Facebook.authorize Complete: ");
         					saveFBToken(facebook.getAccessToken(), facebook.getAccessExpires());
         					updateStatus(values.getString(facebook.getAccessToken()));
+        					
+        					/** TODO add karma async*/
         					mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
         					PointsUtil.remote_addKarma(mUsername, PointsUtil.POST_STATUS, mClient);
         					
@@ -323,15 +297,12 @@ public class CountMeIn extends ActionBarActivity {
     
     
     private void updateStatus(String accessToken) {
- 	   // TODO Auto-generated method stub
  	   try{
  		   Bundle bundle = new Bundle();
  		   bundle.putString("message", mFbStatus);
      	   bundle.putString(Facebook.TOKEN, accessToken);
      	   String response = facebook.request("me/feed",bundle,"POST");
      	   Log.d("UPDATE RESPONSE", ""+response);
-     	   //ADI - put the below in comment so it wont show in recording
-     	   //showToast("Update process complete. Response:"+response);
      	   if(response.indexOf("OAuthException")>-1){
      		   if (mAuthAttempts==0){
      			   mAuthAttempts++;
@@ -364,6 +335,75 @@ public class CountMeIn extends ActionBarActivity {
     private void showToast(String message){
     	Toast.makeText(getApplicationContext(), message, Toast.LENGTH_LONG).show();
     }
+    
+    
+	private int getDeservedPoints() {
+		String hour_s=null,min_s=null;
+		int hour=0, min=0;
+		
+		if (mEventDuration.contains(" min"))
+		{
+			String[] time = mEventDuration.split(" ");
+			hour_s = time[0].replace("h", "");
+			min_s = time [1].replace("min", "");
+		}
+		else
+		{
+			if (mEventDuration.contains("h"))
+			{
+				hour_s = mEventDuration.replace("h ", "");
+			}
+			
+			if (mEventDuration.contains("min"))
+			{
+				hour_s = mEventDuration.replace("min", "");
+			}
+		}
+		
+		if (hour_s!=null)
+		{
+			hour = Integer.parseInt(hour_s);
+		}
+		
+		if (min_s!=null)
+		{
+			min = Integer.parseInt(hour_s);
+		}
+		
+		float totalHourDur = hour + min / 60;
+		
+		return (int) totalHourDur * POINTS_PER_HOUR;
+	}
+    
+    
+    
+    /**THREADS*/		
+    private class registerUserToEvent extends AsyncTask<String, Void, Integer> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(CountMeIn.this);
+    		dialog.setMessage(getString(R.string.count_me_in_registering));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(Integer execResult) {
+    		dialog.dismiss();
+    	}
+			
+		@Override
+		protected Integer doInBackground(String... userAndOccDetails) {
+    		RemoteFunctions rf = RemoteFunctions.INSTANCE;
+    		
+    		return rf.registerUserToEvent(RemoteFunctions.REGISTER_USER_TO_EVENT, 
+    				userAndOccDetails[0], userAndOccDetails[1]);
+			}
+	
+    }
+    
 
     
 }

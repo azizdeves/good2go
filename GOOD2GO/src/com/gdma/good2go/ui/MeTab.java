@@ -388,11 +388,13 @@ public class MeTab extends ActionBarActivity {
 
         case R.id.menu_map:
         	newIntent = new Intent(this, MapTab.class);
+        	newIntent.putExtra("sender", TAG);
         	startActivity(newIntent);
             break;
 
         case R.id.menu_list:
         	newIntent = new Intent(this, ListTab.class);
+        	newIntent.putExtra("sender", TAG);
         	startActivity(newIntent);
             break;
             
@@ -444,8 +446,7 @@ public class MeTab extends ActionBarActivity {
         		SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM");
         		mEventDate = sdf.format(occDate);
         		        		
-        		int unfeedbackedPoints = getDeservedPoints(event.getOccurrences().get(0).getStartTime(),
-        				event.getOccurrences().get(0).getEndTime());
+        		int unfeedbackedPoints = getDeservedPoints(event.getMinDuration());
         		String ufPoints = Integer.toString(unfeedbackedPoints);
         		
         		Bundle extraInfo = new Bundle();        		
@@ -460,11 +461,8 @@ public class MeTab extends ActionBarActivity {
 			}
         }
 
-	private int getDeservedPoints(Date startTime, Date endTime) {
-		long min = AppPreferencesEventsRetrievalDate.MINUTE;
-		long diff = endTime.getTime() - startTime.getTime();
-		int mins = (int) (diff / min);
-		int pointsInMin = POINTS_PER_HOUR / 60;
-		return mins * pointsInMin;
+	private int getDeservedPoints(int totalDurationInMins) {
+		int hour = totalDurationInMins / 60;
+		return hour * POINTS_PER_HOUR;
 	}
 }

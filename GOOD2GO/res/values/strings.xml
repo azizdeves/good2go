@@ -68,6 +68,8 @@
 	<string name="server_communication">Communicating with the server...</string>
 	<string name="account_prompt">Choose an account</string>
 	
+	<string name="count_me_in_registering">Sending details...</string> 
+	    
 	<string name="confirm_good2go">You\'re GOOD2GO!</string>   	
 	<string name="confirm_thanks">Thanks for being awesome</string>
 	<string name="confirm_got_you">We\'ve got you for:\n</string>

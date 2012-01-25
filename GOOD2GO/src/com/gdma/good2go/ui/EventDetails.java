@@ -282,6 +282,7 @@ public class EventDetails extends ActionBarActivity {
         extraInfo.putString("desc", mEventDesc);
         extraInfo.putString("occurence_key", mOccurenceKey);       
         extraInfo.putString("event_id", Long.toString(mRowId));
+        extraInfo.putString(EventsDbAdapter.KEY_EVENT_DURATION, mEventDuration);
         Intent newIntent = new Intent(c, CountMeIn.class);
         newIntent.putExtras(extraInfo);
         startActivityForResult(newIntent, ActivitysCodeUtil.GET_COUNT_ME_IN_TAB);
