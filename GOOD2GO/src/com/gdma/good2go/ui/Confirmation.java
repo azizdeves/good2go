@@ -12,9 +12,9 @@ import android.widget.TextView;
 import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.UsersUtil;
 
 public class Confirmation extends ActionBarActivity{
 	private static final String TAG = "Confirmation";
@@ -54,7 +54,7 @@ public class Confirmation extends ActionBarActivity{
 			
 		  	//badge message
 		    String currentBadge = Karma.Badge.getMyBadge(mPoints).getName();
-		  	long newPoints = UsersUtil.remote_getUsersKarma(mUserName) + mPoints;
+		  	long newPoints = RemoteFunctions.INSTANCE.getUserKarma(mUserName) + mPoints;
 		  	String newBadge = Karma.Badge.getMyBadge(newPoints).getName();
 		  	if(newBadge.compareTo(currentBadge)!=0){
 		  		badgeMessage.setText(R.string.confirm_badge_win);
@@ -79,7 +79,8 @@ public class Confirmation extends ActionBarActivity{
 		private int getBadgeImage(String badge) {
 			if (badge.compareTo(Karma.Badge.ANGEL.getName())==0)
 				return R.drawable.badge_angel;
-			if (badge.compareTo(Karma.Badge.BUDDHIST_MONK.getName())==0)
+			if (badge.compareTo(Karma.Badge.BUDDHIST_MONK.getName())==0
+					|| badge.compareTo(Karma.Badge.SAINT.getName())==0)
 				return R.drawable.badge_buddhistmonk;
 			if (badge.compareTo(Karma.Badge.DALAI_LAMA.getName())==0)
 				return R.drawable.badge_dalailama;

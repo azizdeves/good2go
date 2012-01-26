@@ -79,6 +79,12 @@
 	<string name="confirm_badge_win">Whoa! You just got yourself a new badge!</string>
 	<string name="confirm_badge_current">Your last badge:</string>
 	
+	<string name="me_no_events">Soon enough you\'ll have many events here..</string>
+	<string name="me_load_future_events">Getting future events...</string>
+	<string name="me_load_history_events">Getting history events...</string>
+	<string name="me_load_feedback">Checking events that need feedback...</string>
+	<string name="me_load_karma">Checking karma points...</string>
+	
 	<string name="feedback_deserve">You deserve some points!</string>
 	<string name="feedback_event">Thanks for being AWESOME and volunteering at\n</string>
 	<string name="feedback_all_urs">These points are all yours after answering this simple question:</string>

@@ -112,8 +112,7 @@ public class FeedbackTab extends ActionBarActivity  {
 		protected Integer doInBackground(String... feedbackDetails) {
     		RemoteFunctions rf = RemoteFunctions.INSTANCE;
     		return 
-    				rf.addFeedback(RemoteFunctions.ADD_USER_EVENT_FEEDBACK,
-    						feedbackDetails[0], 
+    				rf.addFeedback(feedbackDetails[0], 
     						feedbackDetails[1], feedbackDetails[2]);
 			}
 	

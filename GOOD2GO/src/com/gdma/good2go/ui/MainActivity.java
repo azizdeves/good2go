@@ -44,14 +44,11 @@ import com.gdma.good2go.Event;
 import com.gdma.good2go.Event.SuitableFor;
 import com.gdma.good2go.Event.VolunteeringWith;
 import com.gdma.good2go.Event.WorkType;
-import com.gdma.good2go.Karma;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
-import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
-import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.GeoPoint;
@@ -85,7 +82,7 @@ public class MainActivity extends ActionBarActivity {
         /***********************************************************************************************************/             
                
         /*check accounts*/
-        String mLocalUsername = getLocalUsername();
+        mLocalUsername = getLocalUsername();
         if (mLocalUsername == null){
         	
         	Account[] accounts = getAccounts(this);
@@ -146,7 +143,7 @@ public class MainActivity extends ActionBarActivity {
     			setDashboardView();
     		}
     		
-        	givePoints();
+//        	givePoints();
 		}
     	else
     	{
@@ -155,13 +152,13 @@ public class MainActivity extends ActionBarActivity {
 	}
 	
 	
-	private void givePoints() {
-		RemoteFunctions rf = RemoteFunctions.INSTANCE;
-		/**TODO put in async*/
-		int res  = rf.addUserKarma(RemoteFunctions.ADD_USER_KARMA, mLocalUsername, 
-				Karma.ActionType.OPEN_APP.name());
-		//showToast("Thanks for cheking out the app, you get " + " +10 " +"point bonus.");		
-	}
+//	private void givePoints() {
+//		RemoteFunctions rf = RemoteFunctions.INSTANCE;
+//		/**TODO put in async*/
+//		int res  = rf.addUserKarma(RemoteFunctions.ADD_USER_KARMA, mLocalUsername, 
+//				Karma.ActionType.OPEN_APP.name());
+//		//showToast("Thanks for cheking out the app, you get " + " +10 " +"point bonus.");		
+//	}
 
 	
 	private boolean areEventsFromLastHalfHour() {
@@ -373,6 +370,7 @@ public class MainActivity extends ActionBarActivity {
 	        /**POPULATE DB**/
         	
 	        mDbHelper.open();
+	        mDbHelper.deleteAllEvents();
 	        	        
 	        for(Event event : eventList)
 	        {
@@ -419,7 +417,7 @@ public class MainActivity extends ActionBarActivity {
 	        	Set<VolunteeringWith> vw = event.getVolunteeringWith();
 	        	String animals = isSetContains(vw, VolunteeringWith.ANIMALS);
 	        	String children = isSetContains(vw, VolunteeringWith.CHILDREN); 
-	        	String disabled = isSetContains(vw, VolunteeringWith.DISABLED);
+	        	//String disabled = isSetContains(vw, VolunteeringWith.DISABLED);
 	        	String elderly = isSetContains(vw, VolunteeringWith.ELDERLY);
 	        	String env = isSetContains(vw, VolunteeringWith.ENVIRONMENT);
 	        	String special = isSetContains(vw, VolunteeringWith.SPECIAL);
@@ -427,7 +425,7 @@ public class MainActivity extends ActionBarActivity {
 	        	
 	        	if (animals.contains("0")
 	        			 && children.contains("0")
-	        			 && disabled.contains("0")
+	        			 && disadvant.contains("0")
 	        			 && elderly.contains("0")
 	        			 && env.contains("0") 
 	        			 && special.contains("0"))
@@ -437,7 +435,7 @@ public class MainActivity extends ActionBarActivity {
 	        	String occKey = event.getOccurrences().get(0).getOccurrenceKey();
 	        	
 	        	//assign an image to event 
-	        	String eventImage = chooseImage (animals, children, disabled, elderly, env, special);	
+	        	String eventImage = chooseImage (animals, children, disadvant, elderly, env, special);	
 	        	
 	        	//populate db
 	        	mDbHelper.createEvent(event.getEventKey(),event.getInfo(),
@@ -447,7 +445,7 @@ public class MainActivity extends ActionBarActivity {
 	        			event.getEventAddress().getCity(),
 	        			event.getEventAddress().getStreet().replace("&quot;", "\""),
 	        			String.valueOf(event.getEventAddress().getNumber()),
-	        			animals, children,disabled,
+	        			animals, children,disadvant,
 	        			elderly, env, special, eventImage, startTime, endTime,
 	        			preReq, npoName, groups, individ, kids, 
 	        			menial, mental, occKey, groupsHowMany);
@@ -459,7 +457,7 @@ public class MainActivity extends ActionBarActivity {
         else
         	if (mEventsRetrievalDate.isFromLast(AppPreferencesEventsRetrievalDate.HALF_HOUR) == false )
         	{
-        		showToast ("Couldn't connect to the server");
+        		showToast ("Couldn't connect to the server or no events for today");
         		
         		//DEBUG
         		mDbHelper.open();
@@ -525,7 +523,7 @@ public class MainActivity extends ActionBarActivity {
 	}
 
 
-	private String chooseImage(String animals, String children, String disabled, 
+	private String chooseImage(String animals, String children, String disadvant, 
     		String elderly, String environment, String special) 
     {
     	  int imageId=R.drawable.event_paint;
@@ -533,8 +531,13 @@ public class MainActivity extends ActionBarActivity {
     	  if (children=="1")
     		  imageId=R.drawable.event_children;
     	  
-    	  if (disabled=="1")
-    		  imageId=R.drawable.event_handicapped;
+    	  if (disadvant=="1")
+    		  imageId=randomizeInt(new int[] {R.drawable.event_disadvantaged1,
+    				  R.drawable.event_disadvantaged2,
+    				  R.drawable.event_disadvantaged3,
+    				  R.drawable.event_disadvantaged4,
+    				  R.drawable.event_disadvantaged5,
+    				  R.drawable.event_disadvantaged1});
     	  
     	  if (elderly=="1")
     		  imageId=R.drawable.event_elderly;
@@ -548,7 +551,7 @@ public class MainActivity extends ActionBarActivity {
     				  R.drawable.event_env5});
     	  
     	  if (special=="1")
-    		  imageId=randomizeInt(new int[] {R.drawable.event_special,
+    		  imageId=randomizeInt(new int[] {R.drawable.event_default1,
     				  R.drawable.event_default1,
     				  R.drawable.event_default2,
     				  R.drawable.event_default3,

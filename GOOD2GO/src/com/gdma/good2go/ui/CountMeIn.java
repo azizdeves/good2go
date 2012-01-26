@@ -23,19 +23,18 @@ import android.widget.Toast;
 import com.gdma.good2go.R;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.RemoteFunctions;
-import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.facebook.DialogError;
 import com.gdma.good2go.facebook.Facebook;
 import com.gdma.good2go.facebook.Facebook.DialogListener;
 import com.gdma.good2go.facebook.FacebookError;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.PointsUtil;
 
 public class CountMeIn extends ActionBarActivity {
 	private static final String TAG = "CountMeIn";
 	
 	private static final int POINTS_PER_HOUR = 1000;
+	private static final String POST_STATUS = "POST_STATUS";
 
 	private String mEventName;
     private String mEventDesc;
@@ -52,7 +51,6 @@ public class CountMeIn extends ActionBarActivity {
     private String mUsername;
     private Boolean shareToggleBool = true;
  
-    private RestClient mClient;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -180,8 +178,7 @@ public class CountMeIn extends ActionBarActivity {
         					updateStatus(values.getString(facebook.getAccessToken()));
         					
         					/** TODO add karma async*/
-        					mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-        					PointsUtil.remote_addKarma(mUsername, PointsUtil.POST_STATUS, mClient);
+        					RemoteFunctions.INSTANCE.addUserKarma(mUsername, POST_STATUS);
         					
         					
         					Intent newIntent = new Intent(view, Confirmation.class);
@@ -219,8 +216,8 @@ public class CountMeIn extends ActionBarActivity {
         					Log.d(this.getClass().getName(), "Facebook.authorize Complete: ");
         					saveFBToken(facebook.getAccessToken(), facebook.getAccessExpires());
         					updateStatus(values.getString(facebook.getAccessToken()));
-        					mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-        					PointsUtil.remote_addKarma(mUsername, PointsUtil.POST_STATUS, mClient);
+        					/** TODO add karma async*/
+        					RemoteFunctions.INSTANCE.addUserKarma(mUsername, POST_STATUS);
         				}
 
         				@Override
@@ -253,18 +250,18 @@ public class CountMeIn extends ActionBarActivity {
     	super.onActivityResult(requestCode, resultCode, data);	
 
     	facebook.authorizeCallback(requestCode, resultCode, data);
-    	
-    	if(requestCode==ActivitysCodeUtil.GET_CONFIRMATION){
-    		String sender= data.getStringExtra("sender");
-    		//String key_eventId=data.getStringExtra(EventsDbAdapter.KEY_EVENTID);
-    		if(sender.compareTo("Confirmation")==0){
-    			Intent i = new Intent();
-                i.putExtra("sender", "Confirmation");
-                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
-                setResult(RESULT_OK, i);
-    			finish();
-             }
-    
+		if (resultCode==Activity.RESULT_OK)
+		{
+	    	if(requestCode==ActivitysCodeUtil.GET_CONFIRMATION){
+	    		String sender= data.getStringExtra("sender");
+	    		if(sender.compareTo("Confirmation")==0){
+	    			Intent i = new Intent();
+	                i.putExtra("sender", "Confirmation");
+	                i.putExtra(EventsDbAdapter.KEY_EVENTID, Long.valueOf(mEventId));
+	                setResult(RESULT_OK, i);
+	    			finish();
+	             }
+	    	}
     	}   	
     }
     
@@ -398,8 +395,7 @@ public class CountMeIn extends ActionBarActivity {
 		protected Integer doInBackground(String... userAndOccDetails) {
     		RemoteFunctions rf = RemoteFunctions.INSTANCE;
     		
-    		return rf.registerUserToEvent(RemoteFunctions.REGISTER_USER_TO_EVENT, 
-    				userAndOccDetails[0], userAndOccDetails[1]);
+    		return rf.registerUserToEvent(userAndOccDetails[0], userAndOccDetails[1]);
 			}
 	
     }

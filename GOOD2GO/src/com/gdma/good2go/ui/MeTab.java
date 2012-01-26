@@ -1,351 +1,387 @@
 package com.gdma.good2go.ui;
 
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
 
-import android.R.drawable;
 import android.app.ProgressDialog;
 import android.content.Intent;
 import android.database.Cursor;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.ListView;
-import android.widget.PopupWindow;
 import android.widget.SeekBar;
 import android.widget.SimpleCursorAdapter;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.gdma.good2go.Event;
 import com.gdma.good2go.Karma;
 import com.gdma.good2go.Karma.Badge;
 import com.gdma.good2go.R;
-import com.gdma.good2go.User;
 import com.gdma.good2go.actionbarcompat.ActionBarActivity;
-import com.gdma.good2go.communication.RestClient;
-import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
+import com.gdma.good2go.communication.RemoteFunctions;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.gdma.good2go.utils.KeyManager;
 import com.gdma.good2go.utils.UsersFutureEventsDbAdapter;
 import com.gdma.good2go.utils.UsersHistoryDbAdapter;
-import com.gdma.good2go.utils.UsersUtil;
-import com.google.gson.JsonArray;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 
 public class MeTab extends ActionBarActivity {
 	private static final String TAG = "Me";
-	private static final int POINTS_PER_HOUR = 1000;	
+	private static final int POINTS_PER_HOUR = 1000;
 	
-	private drawable myPic;
-	private long mPoints;
-	private String mBadge;
-	private String mUserId;
-	private String mUserName="";
-	private String mUserNiceName="";
-	private String mUserFirstName="";
-	private String mUserLastName="";
-	private List<Event> usersEvents;
-	private RestClient mClient = null;
-    private UsersHistoryDbAdapter mDbHelper;
+    TextView mTvUserName;
+    TextView mUserPoints;
+    SeekBar mPointsProg;
+	
+	private ListView mHistoryList;
+	private ListView mFutureList;
+	
+    private UsersHistoryDbAdapter mDbHelperHistoryEvents;
     private UsersFutureEventsDbAdapter mDbHelperFutureEvents;
+    
     private Cursor mHistoryEventsCursor;
     private Cursor mFutureEventsCursor;
-	private String[] mColumns;
-	private PopupWindow pw;
+    
+	//private drawable myPic;
+	private long mPoints;
+	private String mBadge;
+
+	private String mUserName="";
+
 	private AppPreferencesPrivateDetails mUsersPref; 
+	
     private String mEventName;
-    private String mEventDesc;
-    private String mEventKey;
     private String mEventDate;
     private String mOccurenceKey;
+    
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.me);
-        mUsersPref = new AppPreferencesPrivateDetails(this) ;
-        //check for unrated events async              
-        new checkForUsersUnRatedEventsTask().execute(mUsersPref.getUserName());
         
-        final Button buttonGetFutureEvents = (Button) findViewById(R.id.FutureEventsMeViewButton);
-        ListView l = (ListView)findViewById(R.id.historyListMeView);
-
+        mUsersPref = new AppPreferencesPrivateDetails(this);
+        
+        mHistoryList = (ListView) findViewById(R.id.historyListMeView);
+        mFutureList = (ListView) findViewById(R.id.futureListMeView);
+        mTvUserName = (TextView) findViewById(R.id.userNameMeView);
+        mUserPoints = (TextView) findViewById(R.id.pointSeekValMeView);
+        mPointsProg = (SeekBar) findViewById(R.id.pointSeekMeView);
+        
+        mHistoryList.setEmptyView(findViewById(R.id.empty2));
+        mFutureList.setEmptyView(findViewById(R.id.empty));
         
         mUserName = mUsersPref.getUserName();
-        mPoints=UsersUtil.remote_getUsersKarma(mUserName);
- 		mBadge=Karma.Badge.getMyBadge(mPoints).getName();
-
         
-//       mUserFirstName = mUsersPref.doPrivateDetailsExist() ? mUsersPref.getUserFirstName() : mUsersPref.substring(0,mUsersPref.indexOf('@'));				
- 		if(mUsersPref.doPrivateDetailsExist()){
- 			mUserFirstName = mUsersPref.getUserFirstName();
- 			mUserLastName = mUsersPref.getUserLastName();
- 		}
- 		else
- 	       	mUserFirstName=mUserName.substring(0, mUserName.indexOf("@"));
-
- 	        		
-        mUserNiceName=mUserFirstName+" "+ mUserLastName;
-        TextView tvName = (TextView) findViewById(R.id.userNameMeView);
-        TextView tvPoints = (TextView) findViewById(R.id.pointSeekValMeView);
-        SeekBar pointsProg = (SeekBar)findViewById(R.id.pointSeekMeView);
-        setBadgesPictures(mBadge);
-        
-        
-        tvName.setText(mUserNiceName);
-        tvPoints.setText(Integer.toString((int)mPoints));
-        pointsProg.setProgress((int)mPoints);
-        pointsProg.setEnabled(false);        
- 
-        new getUsersHistoryTask().execute(mUserName);
-        new getUsersFutureEventsTask().execute(mUserName);
-        
-        mDbHelper = new UsersHistoryDbAdapter(this);
-        mDbHelper.open();
-/**********************************/
-/***********DEBUG AREA*************/
-/**********************************/
-
-        mDbHelper.createUsersHistory("mor1", "1 - Feed the hungry in Even Gvirol", "01/02/12", "40", "2h");
-        mDbHelper.createUsersHistory("mor2", "Clean the beach", "12/02/12", "200", "2h") ; 
-      
-      
-      boolean isEmpty = mDbHelper.isUserHistoryEmpty();
-/**********************************/
-/*******END OF DEBUG AREA**********/
-/**********************************/   
-    
-
-      mHistoryEventsCursor=mDbHelper.fetchAllUsersHistory();
-      mDbHelper.close();
-      
-      mDbHelperFutureEvents = new UsersFutureEventsDbAdapter(this);
-      mDbHelperFutureEvents.open();
-      /**********************************/
-      /***********DEBUG AREA*************/
-      /**********************************/
-
-      mDbHelperFutureEvents.createUsersFutureEvent("adi1", "Testing many things", "25/01/12", "3000", "3h");
-      mDbHelperFutureEvents.createUsersFutureEvent("adi2", "Not doing DB project at all", "25/01/12", "2500", "2h 30m") ; 
-            
-            
-      boolean isEmpty2 = mDbHelperFutureEvents.isUserFutureEventsEmpty();
-      /**********************************/
-      /*******END OF DEBUG AREA**********/
-      /**********************************/   
-      mFutureEventsCursor=mDbHelperFutureEvents.fetchAllUsersFutureEvents();
-      mDbHelperFutureEvents.close();
-      
-      startManagingCursor(mHistoryEventsCursor);
-      startManagingCursor(mFutureEventsCursor);
-      showFutureInList();
-      showHistoryInList();
-      
+        String userNiceName = mUsersPref.doPrivateDetailsExist() ?
+        		mUsersPref.getUserFirstName() + " " + mUsersPref.getUserLastName()
+        		: mUserName.substring(0, mUserName.indexOf("@"));
+        		
+        mTvUserName.setText(userNiceName);
+       
+        //check karma, unrated, history and future events async              
+        new checkForUsersUnRatedEventsTask().execute(mUserName);
+        new getUserKarmaTask().execute(mUserName); 
+        new getUserHistoryTask().execute(mUserName);
+        new getUserFutureTask().execute(mUserName);    
     }
-
-   private int remote_getUsersHistory(String username){
-		Date myDate = new Date();
-		String dateToSend = Long.toString(myDate.getTime());
-		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		mClient.AddParam("action", "getUserHistory");
-		mClient.AddParam("userName", username);
-		mClient.AddParam("userDate", dateToSend);
-
-		
-		try{
-			mClient.Execute(1); //1 is HTTP GET
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersHistory- failed", Toast.LENGTH_LONG);
-			debugging.show();
-			return -1;
-		}
-		
-		
-		mDbHelper = new UsersHistoryDbAdapter(this);
-	    mDbHelper.open();
-	    mDbHelper.createUsersHistory("mor1", "Feed the hungry in Even Gvirol", "01/01/12", "200", "2h");
-	      
-	      
-		List<Event> history = new ArrayList<Event>();
-		String json = mClient.getResponse();
-		json = json.trim();
-		
-		JsonArray jsonArray = new JsonArray();
-		JsonParser parser = new JsonParser();
-		
-		KeyManager key = KeyManager.init();
-		jsonArray = parser.parse(json).getAsJsonArray();
-		for (int i=0;i<jsonArray.size();i++){
-			JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
-			String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
-			String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
-			long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
-			mDbHelper.createUsersHistory(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h");
-		}
-		mDbHelper.close();
-		return 1;
-	
-
-		
-	}
-
-    private int remote_getUsersFutureEvents(String username){
-		Date myDate = new Date();
-		String dateToSend = Long.toString(myDate.getTime());
-    	mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		mClient.AddParam("action", "getRegisteredFutureEvents");
-		mClient.AddParam("userName", username);
-		mClient.AddParam("userDate", dateToSend);
-		
-		try{
-			mClient.Execute(1); //1 is HTTP GET
-		}
-		catch (Exception e){
-			Toast debugging=Toast.makeText(this,"Connection to server -remote_getUsersFutureEvents- failed", Toast.LENGTH_LONG);
-			debugging.show();
-			return -1;
-		}
-		
-		mDbHelperFutureEvents= new UsersFutureEventsDbAdapter(this);
-		mDbHelperFutureEvents.open();
-		mDbHelperFutureEvents.createUsersFutureEvent("mor1", "Feed the hungry in Even Gvirol", "01/03/12", "200", "2h");
-	      
-	    String json = mClient.getResponse();
-		json = json.trim();
-		
-		JsonArray jsonArray = new JsonArray();
-		JsonParser parser = new JsonParser();
-		
-		KeyManager key = KeyManager.init();
-		try{
-			jsonArray = parser.parse(json).getAsJsonArray();
-			for (int i=0;i<jsonArray.size();i++){
-				JsonObject jsonKarma = (JsonObject) jsonArray.get(i);
-				String eventName = jsonKarma.getAsJsonPrimitive("Event").getAsString();
-				String date = jsonKarma.getAsJsonPrimitive("Date").getAsString();
-				long points = jsonKarma.getAsJsonPrimitive("Points").getAsLong();
-				mDbHelperFutureEvents.createUsersFutureEvent(Long.toString(key.getKey()), eventName, date, Long.toString(points), "1h"); // change last var
-			}
-		}catch (Exception e){
-			//MOR - HANDLE THIS.
-			return 1;
-		}
-		mDbHelperFutureEvents.close();
-		return 1;
-
-	}
-
     
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent data) {
+		super.onActivityResult(requestCode, resultCode, data);
+		new getUserKarmaTask().execute(mUserName);
+    }
+   	
+	
+    /** THREADS **/
+    private class checkForUsersUnRatedEventsTask extends AsyncTask<String, Void, List<Event>> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.loading));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(List<Event> feedbackList) {
+    		dialog.dismiss();
+    		if (feedbackList!=null)
+    			getUserFeedback(feedbackList);
+    	}
+			
+		@Override
+		protected List<Event> doInBackground(String... userDetails) {
+			RemoteFunctions rf = RemoteFunctions.INSTANCE;    		
+    		return rf.getUserUnfeedbackedEvents(userDetails[0], 
+    				Long.toString(new Date().getTime()));			
+		}
+	
+    }
+    
+    private class getUserHistoryTask extends AsyncTask<String, Void, List<String[]>> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.loading));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(List<String[]> historyEvents) {
+    		dialog.dismiss();
+    		if (historyEvents!=null)
+    			writeEventsToLocalHistoryDB(historyEvents);    		
+    	}
+			
+		@Override
+		protected List<String[]> doInBackground(String... userDetails) {
+			RemoteFunctions rf = RemoteFunctions.INSTANCE;
+    		return rf.getUserHistoryEvents(userDetails[0], 
+    				Long.toString(new Date().getTime()));			
+		}
+	
+    }
+         
+    private class getUserFutureTask extends AsyncTask<String, Void, List<String[]>> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.loading));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(List<String[]> futureEvents) {
+    		dialog.dismiss();
+    		if (futureEvents!=null)
+    			writeEventsToLocalFutureDB(futureEvents);    		
+    	}
+			
+
+		@Override
+		protected List<String[]> doInBackground(String... userDetails) {
+			RemoteFunctions rf = RemoteFunctions.INSTANCE;
+    		return rf.getUserFutureEvents(userDetails[0], 
+    				Long.toString(new Date().getTime()));			
+		}
+	
+    }
+    
+    private class getUserKarmaTask extends AsyncTask<String, Void, Long> {
+    	ProgressDialog dialog;
+
+    	@Override
+    	protected void onPreExecute(){
+    		dialog = new ProgressDialog(MeTab.this);
+    		dialog.setMessage(getString(R.string.loading));
+    		dialog.setIndeterminate(true);
+    		dialog.setCancelable(false);
+    		dialog.show();
+	    }
+
+    	protected void onPostExecute(Long points) {
+    		dialog.dismiss();
+    		setKarma(points);   		
+    	}
+			
+
+		@Override
+		protected Long doInBackground(String... userName) {
+			return RemoteFunctions.INSTANCE.getUserKarma(userName[0]);			
+		}
+	
+    }
+    
+    /** FUNCS TO BE CALLED FROM THREADS */
+	
+    private void setKarma(long points) {
+        mPoints=points;
+ 		mBadge=Karma.Badge.getMyBadge(mPoints).getName();
+ 		setBadgesPictures(mBadge);        
+        mUserPoints.setText(Integer.toString((int)mPoints));
+        mPointsProg.setProgress((int)mPoints);
+        mPointsProg.setEnabled(false);  		
+	}
+	
+	
     private void showHistoryInList(){
-    	ListView l1 = (ListView)findViewById(R.id.historyListMeView);
-    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, UsersHistoryDbAdapter.KEY_EVENTNAME,UsersHistoryDbAdapter.KEY_EVENT_DURATION, UsersHistoryDbAdapter.KEY_EVENPOINTS};
-    	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
-    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, R.id.eventDuration_entry, R.id.eventPoints_entry};
-        SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,R.layout.me_history_list_item,mHistoryEventsCursor, mColumns, to);
-        l1.setAdapter(mAdapter);
+    	String[] columns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE,
+    			UsersHistoryDbAdapter.KEY_EVENTNAME,
+    			UsersHistoryDbAdapter.KEY_EVENT_DURATION,
+    			UsersHistoryDbAdapter.KEY_EVENPOINTS};
+
+    	int[] to = new int[] {R.id.eventDate_entry, R.id.eventInfo_entry, 
+    			R.id.eventDuration_entry, R.id.eventPoints_entry};
+       
+    	SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,
+    			R.layout.me_history_list_item,mHistoryEventsCursor, columns, to);
+       
+    	mHistoryList.setAdapter(mAdapter);
     }
   
     
     private void showFutureInList(){
-    	ListView l1 = (ListView)findViewById(R.id.futureListMeView);
-    	mColumns = new String[] {UsersHistoryDbAdapter.KEY_EVENTDATE, 
-    			UsersHistoryDbAdapter.KEY_EVENTNAME, 
-    			UsersHistoryDbAdapter.KEY_EVENT_DURATION, 
-    			UsersHistoryDbAdapter.KEY_EVENPOINTS};
-    	// lv1.setAdapter(new ArrayAdapter<String> (this, android.R.layout.simple_list_item_1, s1));
+    	String[] columns = new String[] {UsersFutureEventsDbAdapter.KEY_EVENTDATE, 
+    			UsersFutureEventsDbAdapter.KEY_EVENTNAME, 
+    			UsersFutureEventsDbAdapter.KEY_EVENT_DURATION, 
+    			UsersFutureEventsDbAdapter.KEY_EVENPOINTS};
+
     	int[] to = new int[] {R.id.futureEventDate_entry, R.id.futureEventInfo_entry, 
     			R.id.futureEventDuration_entry, R.id.futureEventPoints_entry};
+    	
         SimpleCursorAdapter mAdapter = new SimpleCursorAdapter(this,
-        		R.layout.me_future_list_item, mFutureEventsCursor, mColumns, to);
-        l1.setAdapter(mAdapter);
+        		R.layout.me_future_list_item, mFutureEventsCursor, columns, to);
+        
+        mFutureList.setAdapter(mAdapter);
     }
 
 	
-	private void setBadgesPictures(String s){
-		if(s.compareTo(Badge.MR_NICE_GUY.getName())==0){
-			setPicture1();
-		}
-		if(s.compareTo(Badge.ANGEL.getName())==0){
-			setPicture1();
-			setPicture2();
-		}
-		if(s.compareTo(Badge.MOTHER_TERESA.getName())==0){
-			setPicture1();
-			setPicture2();
-			setPicture3();
-		}
-		if(s.compareTo(Badge.BUDDHIST_MONK.getName())==0){
-			setPicture1();
-			setPicture2();
-			setPicture3();
-			setPicture4();
-		}
-		if(s.compareTo(Badge.DALAI_LAMA.getName())==0){
-			setPicture1();
-			setPicture2();
-			setPicture3();
-			setPicture4();
-			setPicture5();
-			
-		}
-		if(s.compareTo(Badge.GOD.getName())==0){
-			setPicture1();
-			setPicture2();
-			setPicture3();
-			setPicture4();
-			setPicture5();
-			setPicture6();
-			
-		}
-
+	private void setBadgesPictures(String badge){
+		
+		setBadgePic(R.id.mrNiceGuy_PicMeView, R.drawable.badge_mrniceguy);		
+		
+		if(badge.compareTo(Badge.MR_NICE_GUY.getName())==0)
+			return;
+		
+		setBadgePic(R.id.angle_PicMeView,R.drawable.badge_angel);
+		
+		if(badge.compareTo(Badge.ANGEL.getName())==0)
+			return;
+		
+		setBadgePic(R.id.motherTeresa_PicMeView, R.drawable.badge_mothertheresa);
+		
+		if(badge.compareTo(Badge.MOTHER_TERESA.getName())==0)
+			return;
+		
+		setBadgePic(R.id.buddhistMonk_PicMeView, R.drawable.badge_buddhistmonk);
+		
+		if(badge.compareTo(Badge.BUDDHIST_MONK.getName())==0
+				|| badge.compareTo(Karma.Badge.SAINT.getName())==0)
+			return;
+		
+		setBadgePic(R.id.dalaiLama_PicMeView, R.drawable.badge_dalailama);
+		
+		if(badge.compareTo(Badge.DALAI_LAMA.getName())==0)
+			return;
+		
+		setBadgePic(R.id.god_PicMeView, R.drawable.badge_god);
 	}
 	
-	private void setPicture1(){
-		ImageView im1=(ImageView)findViewById(R.id.mrNiceGuy_PicMeView);
-		im1.setImageResource(R.drawable.badge_mrniceguy);
+	private void setBadgePic(int id, int resId)
+	{
+		ImageView badgePic = (ImageView) findViewById (id);
+		badgePic.setImageResource(resId);
+	}    
+    
+	
+	private void getUserFeedback(List <Event> feedbackList) {
+		for (Event event : feedbackList) {
+			mEventName=event.getEventName();
+    		mOccurenceKey=event.getOccurrences().get(0).getOccurrenceKey();
+    		
+    		Date occDate = event.getOccurrences().get(0).getOccurrenceDate();
+    		SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM");
+    		mEventDate = sdf.format(occDate);
+    		        		
+    		int unfeedbackedPoints = getDeservedPoints(event.getMinDuration());
+    		String ufPoints = Integer.toString(unfeedbackedPoints);
+    		
+    		Bundle extraInfo = new Bundle();        		
+            extraInfo.putString(EventsDbAdapter.KEY_EVENTNAME, mEventName);
+            extraInfo.putString(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY, mOccurenceKey);
+            extraInfo.putString("VOLUNTEER_DATE", mEventDate);
+            extraInfo.putString("POINTS", ufPoints);
+            
+            Intent newIntent = new Intent(this, FeedbackTab.class);
+            newIntent.putExtras(extraInfo);
+            startActivity(newIntent);
+            }
+        }
+	
+
+	private int getDeservedPoints(int totalDurationInMins) {
+		int hour = totalDurationInMins / 60;
+		return hour * POINTS_PER_HOUR;
 	}
-	private void setPicture2(){
-		ImageView im2=(ImageView)findViewById(R.id.angle_PicMeView);
-		im2.setImageResource(R.drawable.badge_angel); 
+	
+	private void writeEventsToLocalHistoryDB(List<String[]> historyEvents) {
+		KeyManager key = KeyManager.init();
+		
+		mDbHelperHistoryEvents = new UsersHistoryDbAdapter(this);
+		mDbHelperHistoryEvents.open();
+		
+		if (!mDbHelperHistoryEvents.isUserHistoryEmpty())
+			mDbHelperHistoryEvents.deleteAllEvents();
+		
+		for(String[] event : historyEvents){
+			
+			String date = convertAmericanDateToLocalDate(event[1]);
+			mDbHelperHistoryEvents.createUsersHistory(Long.toString(key.getKey()), 
+					event[0], date, event[2], "2h");
+			 }
+		mHistoryEventsCursor=mDbHelperHistoryEvents.fetchAllUsersHistory();
+		startManagingCursor(mHistoryEventsCursor);
+		showHistoryInList();
+        
+		mDbHelperHistoryEvents.close(); 		
 	}
-	private void setPicture3(){
-		ImageView im3=(ImageView)findViewById(R.id.motherTeresa_PicMeView);
-		im3.setImageResource(R.drawable.badge_mothertheresa); 
+	
+	
+	private String convertAmericanDateToLocalDate(String americanDate) {
+		try {
+			SimpleDateFormat sdfSource = new SimpleDateFormat("MM/dd/yy");
+			Date date = sdfSource.parse(americanDate);
+			SimpleDateFormat sdfDestination = new SimpleDateFormat("dd/MM/yy");
+			return sdfDestination.format(date);
+		} catch (ParseException e) {
+			Log.i(TAG, "Couldn't parse american date to local");
+		}
+		return americanDate;
 	}
-	private void setPicture4(){
-		ImageView im4=(ImageView)findViewById(R.id.buddhistMonk_PicMeView);
-		im4.setImageResource(R.drawable.badge_buddhistmonk); 
-	}
-	private void setPicture5(){
-		ImageView im5=(ImageView)findViewById(R.id.dalaiLama_PicMeView);
-		im5.setImageResource(R.drawable.badge_dalailama); 
-	}
-	private void setPicture6(){
-		ImageView im6=(ImageView)findViewById(R.id.god_PicMeView);
-		im6.setImageResource(R.drawable.badge_god); 
+
+	private void writeEventsToLocalFutureDB(List<String[]> futureEvents) {
+		KeyManager key = KeyManager.init();
+		
+		mDbHelperFutureEvents = new UsersFutureEventsDbAdapter(this);
+		mDbHelperFutureEvents.open();
+		
+		if (!mDbHelperHistoryEvents.isUserHistoryEmpty())
+			mDbHelperHistoryEvents.deleteAllEvents();
+		
+		for(String[] event : futureEvents){
+			String date = convertAmericanDateToLocalDate(event[1]);
+			mDbHelperFutureEvents.createUsersFutureEvent(Long.toString(key.getKey()), 
+					event[0], date, event[2], "2h");
+			 }
+		mFutureEventsCursor=mDbHelperFutureEvents.fetchAllUsersFutureEvents();
+		startManagingCursor(mFutureEventsCursor);
+		showFutureInList();
+        
+		mDbHelperFutureEvents.close(); 		
 	}
     
-
 	/** FOR ACTION BAR MENUS **/
 	
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
         menuInflater.inflate(R.menu.me, menu);
-
-        // Calling super after populating the menu is necessary here to ensure that the
-        // action bar helpers have a chance to handle this event.
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -378,110 +414,4 @@ public class MeTab extends ActionBarActivity {
         
         return super.onOptionsItemSelected(item);
     }
-    
-    
-    private class checkForUsersUnRatedEventsTask extends AsyncTask<String, Void, List<Event>> {
-    	ProgressDialog dialog;
-
-    	@Override
-    	protected void onPreExecute(){
-    		dialog = new ProgressDialog(MeTab.this);
-    		dialog.setMessage(getString(R.string.loading));
-    		dialog.setIndeterminate(true);
-    		dialog.setCancelable(false);
-    		dialog.show();
-	    }
-
-    	protected void onPostExecute(List<Event> feedbackList) {
-    		dialog.dismiss();
-    		if (feedbackList!=null)
-    			getUserFeedback(feedbackList);
-    	}
-			
-		@Override
-		protected List<Event> doInBackground(String... userDetails) {
-			return UsersUtil.remote_getEventsForFeedback(userDetails[0]);
-			
-		}
-	
-    }
-    
-    private class getUsersHistoryTask extends AsyncTask<String, Void, Integer> {
-    	ProgressDialog dialog;
-
-    	@Override
-    	protected void onPreExecute(){
-    		dialog = new ProgressDialog(MeTab.this);
-    		dialog.setMessage(getString(R.string.loading));
-    		dialog.setIndeterminate(true);
-    		dialog.setCancelable(false);
-    		dialog.show();
-	    }
-
-    	protected void onPostExecute(Integer status) {
-    		dialog.dismiss();
-    	}
-			
-		@Override
-		protected Integer doInBackground(String... userDetails) {
-			return remote_getUsersHistory(userDetails[0]);
-			
-		}
-	
-    }
-        
-  
-    private class getUsersFutureEventsTask extends AsyncTask<String, Void, Integer> {
-    	ProgressDialog dialog;
-
-    	@Override
-    	protected void onPreExecute(){
-    		dialog = new ProgressDialog(MeTab.this);
-    		dialog.setMessage(getString(R.string.loading));
-    		dialog.setIndeterminate(true);
-    		dialog.setCancelable(false);
-    		dialog.show();
-	    }
-
-    	protected void onPostExecute(Integer status) {
-    		dialog.dismiss();
-    	}
-			
-		@Override
-		protected Integer doInBackground(String... userDetails) {
-			return remote_getUsersFutureEvents(userDetails[0]);
-			
-		}
-	
-    }
-       
-    
-	private void getUserFeedback(List <Event> feedbackList) {
-        	for (Event event : feedbackList) {
-        		mEventName=event.getEventName();
-        		mOccurenceKey=event.getOccurrences().get(0).getOccurrenceKey();
-        		
-        		Date occDate = event.getOccurrences().get(0).getOccurrenceDate();
-        		SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd MMMM");
-        		mEventDate = sdf.format(occDate);
-        		        		
-        		int unfeedbackedPoints = getDeservedPoints(event.getMinDuration());
-        		String ufPoints = Integer.toString(unfeedbackedPoints);
-        		
-        		Bundle extraInfo = new Bundle();        		
-                extraInfo.putString(EventsDbAdapter.KEY_EVENTNAME, mEventName);
-                extraInfo.putString(EventsDbAdapter.KEY_EVENT_OCCURENCE_KEY, mOccurenceKey);
-                extraInfo.putString("VOLUNTEER_DATE", mEventDate);
-                extraInfo.putString("POINTS", ufPoints);
-                
-                Intent newIntent = new Intent(this, FeedbackTab.class);
-                newIntent.putExtras(extraInfo);
-                startActivity(newIntent);
-			}
-        }
-
-	private int getDeservedPoints(int totalDurationInMins) {
-		int hour = totalDurationInMins / 60;
-		return hour * POINTS_PER_HOUR;
-	}
 }

@@ -25,7 +25,6 @@ import com.gdma.good2go.ui.maputils.UserItemizedOverlay;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
-import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -209,7 +208,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 		List<Overlay> mapOverlays = mMap.getOverlays();
 		mapOverlays.remove(mUserLocationOverlay);
 		
-        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_maps_current_position);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_home);
         
         mUserLocationOverlay = new UserItemizedOverlay(drawable);
         OverlayItem overlayitem = new OverlayItem(mUserGeoLocation, "This is you being awesome.", "");
@@ -225,7 +224,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 
 	@Override
 	public void onProviderDisabled(String provider) {
-		setUserLocation();
+		//setUserLocation();
 		
 	}
 
@@ -290,7 +289,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 
         List<Overlay> mapOverlays = mMap.getOverlays();
         mapOverlays.clear();
-        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_maps_event_default);
+        Drawable drawable = this.getResources().getDrawable(R.drawable.ic_map_event);
         EventsItemizedOverlay itemizedoverlay = new EventsItemizedOverlay(drawable,mMap);
 
         startManagingCursor(eventsCursor); 
@@ -354,7 +353,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
     private String[] getArrayOfFilteredTypes(){
     	List<String> types = new ArrayList<String>();
     	
-		int i=0;
+		//int i=0;
 		if(mFilterPrefs.getAnimal()){
 			types.add("animals");
 			
@@ -394,7 +393,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
     
     private void getUnFilteredEventsButton(){
 		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
-		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
+		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on2); 
 		
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
@@ -406,7 +405,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
     }
     private void getFilteredEventsButton(){
         buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
-        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
+        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off2); 
         buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	getFilterScreen(v);

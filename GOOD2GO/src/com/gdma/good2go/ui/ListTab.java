@@ -255,7 +255,7 @@ public class ListTab extends ActionBarListActivity {
     private void getUnFilteredEventsButton(){
 		
 		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);	
-		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on); 
+		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on2); 
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	mFilterPrefs.saveDefaultFilterPrefs();
@@ -266,7 +266,7 @@ public class ListTab extends ActionBarListActivity {
     
     private void getFilteredEventsButton(){
         buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
-        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off); 
+        buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off2); 
         buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	getFilterScreen(v);
