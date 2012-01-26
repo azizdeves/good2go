@@ -39,6 +39,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/mePicMeView"
         android:layout_marginRight="10dip"
+        android:textStyle="bold"
         android:text="Points"
         android:layout_marginTop="10dip"
         android:layout_marginBottom="4dip"/>
@@ -50,7 +51,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/userPointsMeView"
         android:max="10000"
-        android:progress="7200"
+        android:progress="0"
         android:secondaryProgress="2" 
         android:progressDrawable="@drawable/seekbar_progress"
         android:thumb="@drawable/seekbar_thumb"/>
@@ -74,6 +75,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/pointSeekMeView"
         android:text="Badges"
+        android:textStyle="bold"
 
         
         android:layout_marginTop="10dip"
@@ -129,27 +131,42 @@
 	        style="@style/TextBody"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-
+			android:textStyle="bold"
 	        android:text="Future events"
 	        android:layout_marginTop="10dip"
 	        android:layout_marginBottom="4dip"/>
+    	<FrameLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 		
 		<ListView android:id="@+id/futureListMeView"
-               android:layout_width="fill_parent"
+               android:layout_width="wrap_content"
                android:layout_height="wrap_content"
    
                android:drawSelectorOnTop="false"/>
+		<TextView android:id="@+id/empty"
+            android:layout_width="fill_parent" 
+            android:layout_height="wrap_content"
+            android:textColor="@color/app_text_secondary"
+            android:layout_marginLeft="5dip"
+            android:textSize="10dp"
+            android:text="@string/me_no_events"/>
         
+		</FrameLayout>
 	<TextView
 	        android:id="@+id/userHistoryMeView"
 	        style="@style/TextBody"
 	        android:layout_width="wrap_content"
 	        android:layout_height="wrap_content"
-	        
+	        android:textStyle="bold"
 	        android:text="History"
 	        android:layout_marginTop="10dip"
 	        android:layout_marginBottom="4dip"/>
-
+    	<FrameLayout
+        android:layout_width="fill_parent" 
+        android:layout_height="0dip"
+        android:layout_weight="1" >
 	
 	
 	<ListView android:id="@+id/historyListMeView"
@@ -157,7 +174,15 @@
                android:layout_height="wrap_content"
                android:drawSelectorOnTop="false"/>
 	
+			<TextView android:id="@+id/empty2"
+            android:layout_width="match_parent" 
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dip"
+            android:textSize="10dp"
+            android:textColor="@color/app_text_secondary"
+            android:text="@string/me_no_events"/>
 	
+	</FrameLayout>
 
 
 	</LinearLayout>

@@ -128,8 +128,7 @@ public class PersonalDetailsTab extends ActionBarActivity{
 			protected Integer doInBackground(String... userDetails) {
         		RemoteFunctions rf = RemoteFunctions.INSTANCE;
         		
-        		return rf.editUser(RemoteFunctions.EDIT_USER, 
-        				userDetails[0], userDetails[1], userDetails[2], 
+        		return rf.editUser(userDetails[0], userDetails[1], userDetails[2], 
         				userDetails[3], userDetails[4], userDetails[5], 
         				userDetails[6]);
 				}

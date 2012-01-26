@@ -148,7 +148,7 @@ public class Login extends Activity {
 		protected Integer doInBackground(String... userDetails) {
     		RemoteFunctions rf = RemoteFunctions.INSTANCE;
     		
-    		return rf.addUser(RemoteFunctions.ADD_USER, userDetails[0]);
+    		return rf.addUser(userDetails[0]);
 			}
 	
     }	

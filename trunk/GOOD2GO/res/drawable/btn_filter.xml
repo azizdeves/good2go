@@ -2,7 +2,7 @@
 <selector xmlns:android="http://schemas.android.com/apk/res/android">
     <item
      android:state_pressed="true"
-     android:drawable="@drawable/ic_filter_pressed" />
+     android:drawable="@drawable/ic_filter_on2" />
     <item
-     android:drawable="@drawable/ic_filter_off" />
+     android:drawable="@drawable/ic_filter_off2" />
 </selector>
