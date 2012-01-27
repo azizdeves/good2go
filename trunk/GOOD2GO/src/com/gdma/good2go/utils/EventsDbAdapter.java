@@ -268,7 +268,7 @@ public class EventsDbAdapter {
     public Cursor fetchAllEvents() {
 
         return mDb.query(DATABASE_TABLE, null, null, null, null, null, 
-        		EVENTS_ORDER, null);
+        		null, null);//EVENTS_ORDER
     }
 
     /**
@@ -295,15 +295,15 @@ public class EventsDbAdapter {
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
 
     	int i=0;
-    	String q = "SELECT * FROM events WHERE 1=1 ";
+    	String q = "SELECT * FROM `events` WHERE 1=1 ";
     	String arr[] = {"", ""};
     	if(timeInMinutes>0){
-    		q=q+" AND "+ KEY_EVENT_DURATION + "<=" + "\'" +Integer.toString(timeInMinutes)+"\'";
+    		q=q+" AND ("+ "CAST("+KEY_EVENT_DURATION +" as INT) <=" +timeInMinutes +")";
     		arr[i]=Integer.toString(timeInMinutes);
     		i++;
     	}
     	if(radius>0){
-    		q=q+" AND "+ KEY_EVENT_DISTANCE+" <" +  "\'"+ Integer.toString(radius)+ "\'";
+    		q=q+" AND ("+ "CAST("+KEY_EVENT_DISTANCE+" as INT) <=" +  radius+ ")";
     		arr[i]=Integer.toString(radius);
     		i++;
     	}

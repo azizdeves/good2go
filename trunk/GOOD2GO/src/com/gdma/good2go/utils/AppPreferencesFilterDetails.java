@@ -2,6 +2,8 @@ package com.gdma.good2go.utils;
 
 
 import java.util.Date;
+import java.util.Iterator;
+import java.util.Map;
 
 import android.R.bool;
 import android.app.Activity;
@@ -22,9 +24,21 @@ public class AppPreferencesFilterDetails {
      private static final String SPECIAL = "special";
      private static final String DURATION= "duration";
      private static final String RADIUS = "radius";
-     private static final String IS_DEFAULT_FILTERS_FLAG = "default_filter_flag";
+     
+     private static final String DATE_PREF_DEFAULT = "default_date";
+     private static final String ANIMAL_DEFAULT = "default_animal";
+     private static final String CHILDREN_DEFAULT = "default_children";
+     private static final String DISABLED_DEFAULT = "default_disabled";
+     private static final String ENVIRONMENT_DEFAULT = "default_env";
+     private static final String ELDERLY_DEFAULT = "default_elderly";
+     private static final String SPECIAL_DEFAULT = "default_special";
+     private static final String DURATION_DEFAULT= "default_duration";
+     private static final String RADIUS_DEFAULT = "default_radius";
+     
+//     private static final String WHAT_FILTER_IS_ON = "kind_of_filter"; //default/users
+     private static final String IS_USER_FILTERS_EXISTS_FLAG = "user_filters_exists_flag";
      private static final int defaultDurationInMin = 12*60;
-     private static final int defaultSadiusInKm = 20;
+     private static final int defaultRadiusInKm = 100;
      
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
@@ -33,6 +47,16 @@ public class AppPreferencesFilterDetails {
      {
          this.appSharedPrefs = context.getSharedPreferences(APP_SHARED_EVENTS_FILTER_DATA, Activity.MODE_PRIVATE);
          this.prefsEditor = appSharedPrefs.edit();
+	     	prefsEditor.putBoolean(ANIMAL_DEFAULT, true);
+	     	prefsEditor.putBoolean(CHILDREN_DEFAULT, true);
+	     	prefsEditor.putBoolean(DISABLED_DEFAULT, true);
+	     	prefsEditor.putBoolean(ENVIRONMENT_DEFAULT, true);
+	     	prefsEditor.putBoolean(ELDERLY_DEFAULT, true);
+	     	prefsEditor.putBoolean(SPECIAL_DEFAULT, true);
+	     	prefsEditor.putInt(DURATION_DEFAULT, defaultDurationInMin);
+	     	prefsEditor.putInt(RADIUS_DEFAULT,defaultRadiusInKm);
+	     	prefsEditor.commit();         
+         
      }
 
      public Long getDate() {
@@ -94,9 +118,25 @@ public class AppPreferencesFilterDetails {
 	}
 	
 	public  int getRadius() {
-		return appSharedPrefs.getInt(RADIUS, defaultSadiusInKm);
+		return appSharedPrefs.getInt(RADIUS, defaultRadiusInKm);
 	}
+	
     public void saveFilterPrefs(boolean animal,boolean children,boolean disabled, boolean env, boolean elderly, boolean special, int radius, int duration) {
+    	if( animal==appSharedPrefs.getBoolean(ANIMAL_DEFAULT, true) &&
+    			children==appSharedPrefs.getBoolean(CHILDREN_DEFAULT, true)&&
+    					disabled==appSharedPrefs.getBoolean(DISABLED_DEFAULT, true)&&
+    							env==appSharedPrefs.getBoolean(ENVIRONMENT_DEFAULT, true)&&
+    									elderly==appSharedPrefs.getBoolean(ELDERLY_DEFAULT, true)&&
+    											special==appSharedPrefs.getBoolean(SPECIAL_DEFAULT, true)&&
+    													radius==appSharedPrefs.getInt(RADIUS_DEFAULT, defaultRadiusInKm)&&
+    															duration==appSharedPrefs.getInt(DURATION_DEFAULT, defaultDurationInMin)
+			
+    		)
+    	{
+    		prefsEditor.putBoolean(IS_USER_FILTERS_EXISTS_FLAG, false);
+    	}
+    	else
+    	{
     	prefsEditor.putBoolean(ANIMAL, animal);
     	prefsEditor.putBoolean(CHILDREN, children);
     	prefsEditor.putBoolean(DISABLED, disabled);
@@ -105,25 +145,67 @@ public class AppPreferencesFilterDetails {
     	prefsEditor.putBoolean(SPECIAL, special);
     	prefsEditor.putInt(DURATION, duration);
     	prefsEditor.putInt(RADIUS,radius);
-    	prefsEditor.putBoolean(IS_DEFAULT_FILTERS_FLAG, false);
+    	prefsEditor.putBoolean(IS_USER_FILTERS_EXISTS_FLAG, true);
+    	}
     	prefsEditor.commit();
     }
-    
-    public void saveDefaultFilterPrefs() {
-    	prefsEditor.putBoolean(ANIMAL, true);
-    	prefsEditor.putBoolean(CHILDREN, true);
-    	prefsEditor.putBoolean(DISABLED, true);
-    	prefsEditor.putBoolean(ENVIRONMENT, true);
-    	prefsEditor.putBoolean(ELDERLY, true);
-    	prefsEditor.putBoolean(SPECIAL, true);
-    	prefsEditor.putInt(DURATION, defaultDurationInMin);
-    	prefsEditor.putInt(RADIUS,defaultSadiusInKm);
-    	prefsEditor.putBoolean(IS_DEFAULT_FILTERS_FLAG, true);
+
+    public void removeUsersFilters() {
+    	
+    	prefsEditor.putBoolean(IS_USER_FILTERS_EXISTS_FLAG, false);
     	prefsEditor.commit();
     	
     }
     
-    public boolean isDefaultFiltersOn(){
-    	return appSharedPrefs.getBoolean(IS_DEFAULT_FILTERS_FLAG, true);
+    
+    public boolean isUserFiltersExist(){
+    	return appSharedPrefs.getBoolean(IS_USER_FILTERS_EXISTS_FLAG, false);
     }
+
+    public void setIsUserFiltersExist(boolean b){
+    	prefsEditor.putBoolean(IS_USER_FILTERS_EXISTS_FLAG, b);
+    	prefsEditor.commit();
+    }
+	/**
+	 * @return the datePrefDefault
+	 */
+	public static String getDatePrefDefault() {
+		return DATE_PREF_DEFAULT;
+	}
+
+	/**
+	 * @return the animalDefault
+	 */
+	public  boolean getAnimalDefault() {
+		return appSharedPrefs.getBoolean(ANIMAL_DEFAULT, true);
+	}
+
+	public  boolean getChildrenDefault() {
+		return appSharedPrefs.getBoolean(CHILDREN_DEFAULT, true);
+	}
+	
+	public  boolean getDisabledDefault() {
+		return appSharedPrefs.getBoolean(DISABLED_DEFAULT, true);
+	}
+	
+	public  boolean getEnvDefault() {
+		return appSharedPrefs.getBoolean(ENVIRONMENT_DEFAULT, true);
+	}
+	
+	public  boolean getElderlyDefault() {
+		return appSharedPrefs.getBoolean(ELDERLY_DEFAULT, true);
+	}
+	
+	public  boolean getSpecialDefault() {
+		return appSharedPrefs.getBoolean(SPECIAL_DEFAULT, true);
+	}
+
+	public  int getDurationDefault() {
+		return appSharedPrefs.getInt(DURATION_DEFAULT, defaultDurationInMin);
+	}
+	
+	public  int getRadiusDefault() {
+		return appSharedPrefs.getInt(RADIUS_DEFAULT, defaultRadiusInKm);
+	}
+    
 }

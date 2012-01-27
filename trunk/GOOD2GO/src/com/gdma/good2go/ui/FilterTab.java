@@ -38,7 +38,7 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 //	private  static Bundle b =null;
 	private  EventsDbAdapter mDbHelper;
 	private  int mDuration=0;
-	private  int radius=0;
+	private  int mRadius=0;
 	private  String caller="";
 	private  ToggleButton togglebutton_Animals;
 	private  ToggleButton togglebutton_Children;
@@ -59,38 +59,47 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 	  caller =(b!=null)?b.getString("caller"):null;
 	  
 	  
-	  mDurationSeekBar = (SeekBar)findViewById(R.id.durationSeek);
-	  mDurationSeekBar.setProgress(mFilterPrefs.getDuration());
-	  mDurationSeekBar.setOnSeekBarChangeListener(this);
+	  mDurationSeekBar =		 (SeekBar)findViewById(R.id.durationSeek);
+	  mDurationTrackingText =	 (TextView)findViewById(R.id.durationSeekVal);
+	  mRadiusTrackingText =  	 (TextView)findViewById(R.id.radiusSeekVal);
+      mRadiusSeekBar =			 (SeekBar)findViewById(R.id.radiusSeek);
+ 	  togglebutton_Animals = 	 (ToggleButton) findViewById(R.id.animalsFilterButton);
+ 	  togglebutton_Children =	 (ToggleButton) findViewById(R.id.childrenFilterButton);
+ 	  togglebutton_Disabled = 	 (ToggleButton) findViewById(R.id.disabledFilterButton);
+ 	  togglebutton_Env = 		 (ToggleButton) findViewById(R.id.envFilterButton);
+ 	  togglebutton_Elderly = 	 (ToggleButton) findViewById(R.id.elderlyFilterButton);
+ 	  togglebutton_Special =  	 (ToggleButton) findViewById(R.id.specialFilterButton);
 
-      mRadiusSeekBar = (SeekBar)findViewById(R.id.radiusSeek);
-      mRadiusSeekBar.setProgress(mFilterPrefs.getRadius());
-      mRadiusSeekBar.setOnSeekBarChangeListener(this);
-       
-	  mDurationTrackingText = (TextView)findViewById(R.id.durationSeekVal);
-	  mRadiusTrackingText = (TextView)findViewById(R.id.radiusSeekVal);
 
+ 	  if(mFilterPrefs.isUserFiltersExist()){
+	      togglebutton_Animals.setChecked(mFilterPrefs.getAnimal());
+	 	  togglebutton_Children.setChecked(mFilterPrefs.getChildren());
+	 	  togglebutton_Disabled.setChecked(mFilterPrefs.getDisabled());
+	 	  togglebutton_Env.setChecked(mFilterPrefs.getEnv());
+	 	  togglebutton_Elderly.setChecked(mFilterPrefs.getElderly());
+	 	  togglebutton_Special.setChecked(mFilterPrefs.getSpecial());
+	 	  mDurationSeekBar.setProgress(mFilterPrefs.getDuration());
+	 	  mRadiusSeekBar.setProgress(mFilterPrefs.getRadius());
+	  }
+ 	  else{
+ 		  togglebutton_Animals.setChecked(mFilterPrefs.getAnimalDefault());
+	 	  togglebutton_Children.setChecked(mFilterPrefs.getChildrenDefault());
+	 	  togglebutton_Disabled.setChecked(mFilterPrefs.getDisabledDefault());
+	 	  togglebutton_Env.setChecked(mFilterPrefs.getEnvDefault());
+	 	  togglebutton_Elderly.setChecked(mFilterPrefs.getElderlyDefault());
+	 	  togglebutton_Special.setChecked(mFilterPrefs.getSpecialDefault());
+	 	  mDurationSeekBar.setProgress(mFilterPrefs.getDurationDefault());
+	 	  mRadiusSeekBar.setProgress(mFilterPrefs.getRadiusDefault());
+	  }
 	  mDuration = mDurationSeekBar.getProgress();
-	  int hours=mDuration/60;
-	  int min = mDuration%60;
-	  mDurationTrackingText.setText(Integer.toString(hours)+":"+Integer.toString(min)+"h");
- 	  mRadiusTrackingText.setText(Integer.toString(mRadiusSeekBar.getProgress())+"km");
+	  String minutes = mDuration%60==0 ? "00" : Integer.toString(mDuration%60);
+	  mDurationTrackingText.setText(Integer.toString(mDuration/60)+":"+minutes+"h");
+	  mRadius=mRadiusSeekBar.getProgress();
+ 	  mRadiusTrackingText.setText(Integer.toString(mRadius)+"km");
 
-  	
-  
-	togglebutton_Animals = (ToggleButton) findViewById(R.id.animalsFilterButton);
-	togglebutton_Children = (ToggleButton) findViewById(R.id.childrenFilterButton);
-	togglebutton_Disabled = (ToggleButton) findViewById(R.id.disabledFilterButton);
-	togglebutton_Env = (ToggleButton) findViewById(R.id.envFilterButton);
-	togglebutton_Elderly = (ToggleButton) findViewById(R.id.elderlyFilterButton);
-	togglebutton_Special = (ToggleButton) findViewById(R.id.specialFilterButton);
-	
-	togglebutton_Animals.setChecked(mFilterPrefs.getAnimal());
-	togglebutton_Children.setChecked(mFilterPrefs.getChildren());
-	togglebutton_Disabled.setChecked(mFilterPrefs.getDisabled());
-	togglebutton_Env.setChecked(mFilterPrefs.getEnv());
-	togglebutton_Elderly.setChecked(mFilterPrefs.getElderly());
-	togglebutton_Special.setChecked(mFilterPrefs.getSpecial());
+	  mDurationSeekBar.setOnSeekBarChangeListener(this);
+      mRadiusSeekBar.setOnSeekBarChangeListener(this);
+    
   }
   
 	
@@ -98,10 +107,10 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
   public void getEventsWithFilters(View view){
  	
 
-		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
-		client.AddParam("action", "getEvents");
+//		RestClient client = new RestClient("http://good-2-go.appspot.com/good2goserver");
+//		client.AddParam("action", "getEvents");
 
-		/*mockup FOR MOR/ADI TO USE
+		/*
 		
 		togglebutton_Animals.value = Event.VolunteeringWith.ANIMALS.name();
 		togglebutton_Children.value = Event.VolunteeringWith.CHILDREN.name();
@@ -195,14 +204,16 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 		else
 			tempBundle.putBoolean("special",false);	
 		
+		
 		mFilterPrefs.saveFilterPrefs(tempBundle.getBoolean("animals"), tempBundle.getBoolean("children"),
 									tempBundle.getBoolean("disabled"),tempBundle.getBoolean("environment"), 
 									tempBundle.getBoolean("elderly"), tempBundle.getBoolean("special"),
-									mDuration,radius);
+									mRadius, mDuration);
 
+		
 		mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
-		Cursor eventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), radius, mDuration);
+		Cursor eventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), mRadius, mDuration);
 		if (eventsCursor.getCount()==0){
 			Toast noDataAlert=Toast.makeText(this, "There are no search results that match your criteria", Toast.LENGTH_LONG);
 			noDataAlert.show();
@@ -237,8 +248,8 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 			mDurationTrackingText.setText(Integer.toString(hours)+":"+Integer.toString(min)+"h");
 		}
 		if(seekBar.getId()==R.id.radiusSeek){
-			radius = progress;
-			mRadiusTrackingText.setText(Integer.toString(radius)+"km");
+			mRadius = progress;
+			mRadiusTrackingText.setText(Integer.toString(mRadius)+"km");
 		}
 		else{return;}
 	}
