@@ -25,6 +25,7 @@ import com.gdma.good2go.ui.maputils.UserItemizedOverlay;
 import com.gdma.good2go.utils.ActivitysCodeUtil;
 import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
+import com.gdma.good2go.utils.FiltersUtil;
 import com.google.android.maps.GeoPoint;
 import com.google.android.maps.MapController;
 import com.google.android.maps.MapView;
@@ -56,9 +57,28 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         setContentView(R.layout.map);
         
         initMapFields();
-
-        mFilterPrefs = new AppPreferencesFilterDetails(this);
-        showFilteredEventsOnMap();
+        
+        /*FOR DEBUGGING*/
+        GeoPoint mUserGeoLocation0 = new GeoPoint((int)(30.04*1E6),(int)(34.48*1E6));
+        GeoPoint mUserGeoLocation1 = new GeoPoint((int)(40.6988*1E6),(int)(18.5413*1E6));
+        GeoPoint mUserGeoLocation2 = new GeoPoint((int)(29.067220*1E6),(int)(34.777659*1E6));
+        GeoPoint mUserGeoLocation3 = new GeoPoint((int)(45.003*1E6),(int)(53.5034*1E6));
+        GeoPoint mUserGeoLocation4 = new GeoPoint((int)(25.6248*1E6),(int)(20.6946*1E6));
+        GeoPoint mUserGeoLocation5 = new GeoPoint((int)(29.291*1E6),(int)(52.8854*1E6));		
+        mDbHelper = new EventsDbAdapter(this);
+	    mDbHelper.open();
+	    mDbHelper.createEvent("0", "0", "tr", "gttt", Integer.toString(mUserGeoLocation0.getLatitudeE6()), Integer.toString( mUserGeoLocation0.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "1", "0", "0", "0", "0", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("1", "1", "tr", "gttt", Integer.toString(mUserGeoLocation1.getLatitudeE6()), Integer.toString( mUserGeoLocation1.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "1", "0", "0", "0", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("2", "2", "tr", "gttt", Integer.toString(mUserGeoLocation2.getLatitudeE6()), Integer.toString( mUserGeoLocation2.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "1", "0", "0", "0",  "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("3", "3", "tr", "gttt", Integer.toString(mUserGeoLocation0.getLatitudeE6()), Integer.toString( mUserGeoLocation3.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "0", "1", "0", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("4", "4", "tr", "gttt", Integer.toString(mUserGeoLocation1.getLatitudeE6()), Integer.toString( mUserGeoLocation4.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "0", "0", "1", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("5", "5", "tr", "gttt", Integer.toString(mUserGeoLocation2.getLatitudeE6()), Integer.toString( mUserGeoLocation5.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "0", "0", "0", "1",  "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.close();
+	    /* *********** */
+	    
+	    
+	    mFilterPrefs = new AppPreferencesFilterDetails(this);
+	    showEventsOnMap();
 		mLocationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 1000, 10, this);
 		mLocationManager.requestLocationUpdates(LocationManager.NETWORK_PROVIDER, 0, 0, this);
 				
@@ -172,7 +192,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	{
 		super.onActivityResult(requestCode, resultCode, data);
 		if (requestCode == ActivitysCodeUtil.GET_FILTERED_EVENTS) {
-			showFilteredEventsOnMap();
+			showEventsOnMap();
 			setUserLocation();
 		
 		}
@@ -268,25 +288,16 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 	}
 
     
-	public void getFilterScreen(View view){
-    	Intent myIntent = new Intent(view.getContext(),FilterTab.class);
-    	startActivityForResult(myIntent, ActivitysCodeUtil.GET_FILTERED_EVENTS);		
-	}
-
-	
-	private void onCreateHelper(){
-		
-		showFilteredEventsOnMap();
-	}
-	
-        
-    private void showFilteredEventsOnMap(){
+    private void showEventsOnMap(){
 		mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
-		Cursor eventsCursor = mDbHelper.fetchEventByFilters(getArrayOfFilteredTypes(), mFilterPrefs.getRadius(), mFilterPrefs.getDuration());
-//				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
-//				debugging.show();
-
+		//Cursor eventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), FiltersUtil.getFilterRadius(mFilterPrefs), FiltersUtil.getFilterDuration(mFilterPrefs));
+	    Cursor eventsCursor = mDbHelper.fetchAllEvents();
+	    if(mFilterPrefs.isUserFiltersExist())
+			setRemoveFilterButton();
+		else
+			setFilterButton();
+		
         List<Overlay> mapOverlays = mMap.getOverlays();
         mapOverlays.clear();
         Drawable drawable = this.getResources().getDrawable(R.drawable.ic_map_event);
@@ -306,7 +317,7 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
 
         mapOverlays.add(itemizedoverlay);
         
-        setChangeFilterButton();
+//        setChangeFilterButton();
         mDbHelper.close();
    	
     }
@@ -349,61 +360,20 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         
         return super.onOptionsItemSelected(item);
     }
-    
-    private String[] getArrayOfFilteredTypes(){
-    	List<String> types = new ArrayList<String>();
-    	
-		//int i=0;
-		if(mFilterPrefs.getAnimal()){
-			types.add("animals");
-			
-		}
-		if(mFilterPrefs.getChildren()){
-			types.add("children");
-			
-		}
-		if(mFilterPrefs.getDisabled()){
-			types.add("disabled");
-			
-		}
-		if(mFilterPrefs.getEnv()){
-			types.add("environment");
-			
-		}
-		if(mFilterPrefs.getElderly()){
-			types.add("elderly");
-			
-		}
 
-		if(mFilterPrefs.getSpecial()){
-			types.add("special");
-			
-		}
-		
-		return (String[]) types.toArray(new String[types.size()]);
-    }
-    
-    
-    private void setChangeFilterButton(){
-    	if (mFilterPrefs.isDefaultFiltersOn())
-    		getFilteredEventsButton();
-    	else 
-    		getUnFilteredEventsButton();
-    }
-    
-    private void getUnFilteredEventsButton(){
+    private void setRemoveFilterButton(){
 		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
 		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on2); 
-		
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	mFilterPrefs.saveDefaultFilterPrefs();
-            	onCreateHelper();
+            	mFilterPrefs.setIsUserFiltersExist(false);
+            	showEventsOnMap();
             	setUserLocation();
             }
         });
     }
-    private void getFilteredEventsButton(){
+    
+    private void setFilterButton(){
         buttonFilterEvents = (Button) findViewById(R.id.FilterEventsMapViewButton);
         buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off2); 
         buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
@@ -412,6 +382,13 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
             }
         });  	
     }
+    
+	public void getFilterScreen(View view){
+    	Intent myIntent = new Intent(view.getContext(),FilterTab.class);
+    	startActivityForResult(myIntent, ActivitysCodeUtil.GET_FILTERED_EVENTS);		
+	}
+
+    
 }
 
 

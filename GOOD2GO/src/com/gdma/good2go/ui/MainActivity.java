@@ -49,6 +49,7 @@ import com.gdma.good2go.actionbarcompat.ActionBarActivity;
 import com.gdma.good2go.communication.DateParser;
 import com.gdma.good2go.communication.RestClient;
 import com.gdma.good2go.utils.AppPreferencesEventsRetrievalDate;
+import com.gdma.good2go.utils.AppPreferencesFilterDetails;
 import com.gdma.good2go.utils.AppPreferencesPrivateDetails;
 import com.gdma.good2go.utils.EventsDbAdapter;
 import com.google.android.maps.GeoPoint;
@@ -73,6 +74,7 @@ public class MainActivity extends ActionBarActivity {
     	setTheme(R.style.AppTheme);    	
         super.onCreate(savedInstanceState); 
                
+        
         Bundle extras = getIntent().getExtras();
 	    if(extras!=null){
 	    	mSender = extras.getString("sender");
@@ -142,7 +144,8 @@ public class MainActivity extends ActionBarActivity {
     		{
     			setDashboardView();
     		}
-    		
+    		AppPreferencesFilterDetails fd = new AppPreferencesFilterDetails(this);
+    		fd.setIsUserFiltersExist(false);
 //        	givePoints();
 		}
     	else

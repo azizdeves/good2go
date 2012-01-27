@@ -80,7 +80,7 @@ public class ListTab extends ActionBarListActivity {
 		}
     	
 	      mFilterPrefs = new AppPreferencesFilterDetails(this);
-	      showFilteredEventsOnList();
+	      showEventsOnList();
 
 
     }
@@ -92,7 +92,7 @@ public class ListTab extends ActionBarListActivity {
  		super.onActivityResult(requestCode, resultCode, data);
 		 if (requestCode == ActivitysCodeUtil.GET_FILTERED_EVENTS) {
 			if(resultCode==RESULT_OK){
-				showFilteredEventsOnList();
+				showEventsOnList();
  			}
  			if(resultCode==RESULT_CANCELED){
 			
@@ -113,25 +113,7 @@ public class ListTab extends ActionBarListActivity {
         i.putExtra(EventsDbAdapter.KEY_EVENTID, id);
         startActivity(i);
     }
-    
 
-	
-	private void onCreateHelper(){
-    	/**GET POINTS FROM LOCAL DB*/
-    	mDbHelper = new EventsDbAdapter(this);
-		mDbHelper.open(); //TODO CLOSE WHEN THE APP IS CLOSED
-		
-		mEventsCursor = mDbHelper.fetchAllEvents();
-		startManagingCursor(mEventsCursor);
-	
-		showPointsInList();
-        setContentView(R.layout.list);
-        mDbHelper.close();
-        getFilteredEventsButton();
-		
-
-		
-	}
 	
 	
 	/** FOR ACTION BAR MENUS **/
@@ -169,21 +151,21 @@ public class ListTab extends ActionBarListActivity {
     }
     
     
-    private void showFilteredEventsOnList(){
+    private void showEventsOnList(){
 
 
 		mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
-	    mEventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), mFilterPrefs.getRadius(), mFilterPrefs.getDuration());
-//				Toast debugging=Toast.makeText(this, "#of results:"+Integer.toString(eventsCursor.getCount()), Toast.LENGTH_SHORT);
-//				debugging.show();
+	    mEventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), FiltersUtil.getFilterRadius(mFilterPrefs), FiltersUtil.getFilterDuration(mFilterPrefs));
 
-		
-		startManagingCursor(mEventsCursor);
+	    startManagingCursor(mEventsCursor);
 		showPointsInList();
         setContentView(R.layout.list);			
 
-        getUnFilteredEventsButton();
+		if(mFilterPrefs.isUserFiltersExist())
+			setRemoveFilterButton();
+		else
+			setFilterButton();
     	
     }
     
@@ -252,25 +234,27 @@ public class ListTab extends ActionBarListActivity {
         
     }
 
-    private void getUnFilteredEventsButton(){
-		
+    private void setRemoveFilterButton(){
 		buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);	
 		buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_on2); 
 		buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
-            	mFilterPrefs.saveDefaultFilterPrefs();
-            	onCreateHelper();
+            	mFilterPrefs.setIsUserFiltersExist(false);
+            	showEventsOnList();
+
             }
-        }); 
+        });
     }
     
-    private void getFilteredEventsButton(){
+    private void setFilterButton(){
         buttonFilterEvents = (Button) findViewById(R.id.FilterEventsListViewButton);
         buttonFilterEvents.setCompoundDrawablesWithIntrinsicBounds(0, 0, 0, R.drawable.ic_filter_off2); 
         buttonFilterEvents.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
             	getFilterScreen(v);
             }
-        });	
+        });  	
     }
+    
+    
 }
