@@ -123,7 +123,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 22;
+    private static final int DATABASE_VERSION = 23;
 
     private final Context mCtx;
 
@@ -305,6 +305,8 @@ public class EventsDbAdapter {
    
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
     	Calendar now = Calendar.getInstance();
+    	//TODO remove static hour
+    	now.set(11, Calendar.HOUR_OF_DAY);
     	int hour = now.get(Calendar.HOUR_OF_DAY);
     	//hour=1;
     	int i=0;
