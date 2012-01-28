@@ -191,11 +191,11 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromLastHalfHour()==false)
-            	{
-            		showToast("No server communication. Please try again later.");
-            	}
-            	else
+//            	if (areEventsFromLastHalfHour()==false)
+//            	{
+//            		showToast("No server communication. Please try again later.");
+//            	}
+//            	else
             	{
 		            Intent newIntent = new Intent(view.getContext(), MapTab.class);
 		            startActivity(newIntent);

@@ -58,7 +58,23 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
         
         initMapFields();
         
-
+        /*FOR DEBUGGING*/
+        GeoPoint mUserGeoLocation0 = new GeoPoint((int)(30.04*1E6),(int)(34.48*1E6));
+        GeoPoint mUserGeoLocation1 = new GeoPoint((int)(40.6988*1E6),(int)(18.5413*1E6));
+        GeoPoint mUserGeoLocation2 = new GeoPoint((int)(29.067220*1E6),(int)(34.777659*1E6));
+        GeoPoint mUserGeoLocation3 = new GeoPoint((int)(45.003*1E6),(int)(53.5034*1E6));
+        GeoPoint mUserGeoLocation4 = new GeoPoint((int)(25.6248*1E6),(int)(20.6946*1E6));
+        GeoPoint mUserGeoLocation5 = new GeoPoint((int)(29.291*1E6),(int)(52.8854*1E6));		
+        mDbHelper = new EventsDbAdapter(this);
+	    mDbHelper.open();
+	    mDbHelper.createEvent("0", "0", "tr", "gttt", Integer.toString(mUserGeoLocation0.getLatitudeE6()), Integer.toString( mUserGeoLocation0.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "1", "0", "0", "0", "0", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("1", "1", "tr", "gttt", Integer.toString(mUserGeoLocation1.getLatitudeE6()), Integer.toString( mUserGeoLocation1.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "1", "0", "0", "0", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("2", "2", "tr", "gttt", Integer.toString(mUserGeoLocation2.getLatitudeE6()), Integer.toString( mUserGeoLocation2.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "1", "0", "0", "0",  "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("3", "3", "tr", "gttt", Integer.toString(mUserGeoLocation0.getLatitudeE6()), Integer.toString( mUserGeoLocation3.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "0", "1", "0", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("4", "4", "tr", "gttt", Integer.toString(mUserGeoLocation1.getLatitudeE6()), Integer.toString( mUserGeoLocation4.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "0", "0", "1", "0", "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.createEvent("5", "5", "tr", "gttt", Integer.toString(mUserGeoLocation2.getLatitudeE6()), Integer.toString( mUserGeoLocation5.getLongitudeE6()), "2", "3", "Tel Aviv", "Ben Yehuda", "12", "0", "0", "0", "0", "0", "1",  "", "10:00", "13:00", "0", "0", "0", "0", "0", "0", "0", "0", "0");
+	    mDbHelper.close();
+	    /* *********** */
 	    
 	    
 	    mFilterPrefs = new AppPreferencesFilterDetails(this);
@@ -275,8 +291,8 @@ public class MapTab extends ActionBarMapActivity implements LocationListener {
     private void showEventsOnMap(){
 		mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
-		//Cursor eventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), FiltersUtil.getFilterRadius(mFilterPrefs), FiltersUtil.getFilterDuration(mFilterPrefs));
-	    Cursor eventsCursor = mDbHelper.fetchAllEvents();
+		Cursor eventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), FiltersUtil.getFilterRadius(mFilterPrefs), FiltersUtil.getFilterDuration(mFilterPrefs));
+	    //Cursor eventsCursor = mDbHelper.fetchAllEvents();
 	    if(mFilterPrefs.isUserFiltersExist())
 			setRemoveFilterButton();
 		else
