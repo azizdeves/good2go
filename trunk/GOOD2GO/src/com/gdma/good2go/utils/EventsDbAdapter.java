@@ -68,6 +68,7 @@ public class EventsDbAdapter {
 	public static final String KEY_EVENT_WORK_MENTAL = "mental";
 	public static final String KEY_EVENT_OCCURENCE_KEY = "occkey";
 	public static final String KEY_EVENT_GROUP_HOW_MANY = "how_many";
+	public static final String KEY_EVENT_DURATION_IN_MINUTES = "duration_in_minutes";
 
 	public static final String KEY_EVENTID = "_id";
 	
@@ -113,7 +114,8 @@ public class EventsDbAdapter {
 		    + KEY_EVENT_WORK_MENIAL + " text not null, "
 		    + KEY_EVENT_WORK_MENTAL + " text not null, "
 		    + KEY_EVENT_OCCURENCE_KEY + " text not null, "
-		    + KEY_EVENT_GROUP_HOW_MANY + " text not null, "		    
+		    + KEY_EVENT_GROUP_HOW_MANY + " text not null, "
+		    + KEY_EVENT_DURATION_IN_MINUTES + " text not null, "
 	        + "UNIQUE ("
 	        + KEY_EVENT_KEY
 	        + "));";
@@ -201,7 +203,7 @@ public class EventsDbAdapter {
     		String typeElderly,String typeEnvironment,String typeSpecial, 
     		String eventImage, String startTime, String endTime, 
     		String preReq, String npoName, String groups, String individ, String kids, 
-    		String menial, String mental, String occurenceKey, String howMany) 
+    		String menial, String mental, String occurenceKey, String howMany, String duration_in_minutes) 
     {
     	
         ContentValues initialValues = new ContentValues();
@@ -234,8 +236,10 @@ public class EventsDbAdapter {
 	    initialValues.put(KEY_EVENT_WORK_MENTAL, mental);
 	    initialValues.put(KEY_EVENT_OCCURENCE_KEY, occurenceKey);
 	    initialValues.put(KEY_EVENT_GROUP_HOW_MANY, howMany);
+	    initialValues.put(KEY_EVENT_DURATION_IN_MINUTES, duration_in_minutes);
 	    
-        
+	    
+
 
         long result=mDb.insert(DATABASE_TABLE, null, initialValues);
         return result;
@@ -299,12 +303,14 @@ public class EventsDbAdapter {
     }
    
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
-
+    	Calendar now = Calendar.getInstance();
+    	int hour = now.get(Calendar.HOUR_OF_DAY);
+    	
     	int i=0;
-    	String q = "SELECT * FROM `events` WHERE 1=1 ";
+    	String q = "SELECT * FROM `events` WHERE " + "( CAST("+KEY_EVENT_START_TIME +" as INT)" + " > " + Integer.toString(hour) +")";
     	String arr[] = {"", ""};
     	if(timeInMinutes>0){
-    		q=q+" AND ("+ "CAST("+KEY_EVENT_DURATION +" as INT) <=" +timeInMinutes +")";
+    		q=q+" AND ("+ "CAST("+KEY_EVENT_DURATION_IN_MINUTES +" as INT) <=" +timeInMinutes +")";
     		arr[i]=Integer.toString(timeInMinutes);
     		i++;
     	}
@@ -381,6 +387,7 @@ public class EventsDbAdapter {
             mCursor.moveToFirst();
         }
         return mCursor;
+        
 
     }  
     /**
