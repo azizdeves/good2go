@@ -38,7 +38,7 @@ public class AppPreferencesFilterDetails {
 //     private static final String WHAT_FILTER_IS_ON = "kind_of_filter"; //default/users
      private static final String IS_USER_FILTERS_EXISTS_FLAG = "user_filters_exists_flag";
      private static final int defaultDurationInMin = 12*60;
-     private static final int defaultRadiusInKm = 100;
+     private static final int defaultRadiusInKm = 500;
      
      private SharedPreferences appSharedPrefs;
      private Editor prefsEditor;
