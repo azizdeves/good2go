@@ -213,6 +213,7 @@ public class ListTab extends ActionBarListActivity {
 	}
     
     private void showPointsInList(){
+    	
     	updateEventsDistance();
     	
         mColumns = new String[] {EventsDbAdapter.KEY_EVENTNAME, 
@@ -224,11 +225,11 @@ public class ListTab extends ActionBarListActivity {
         		R.id.eventinfo_entry, 
         		R.id.eventdistance_entry,
         		R.id.eventPicList};
-        
+
         SimpleCursorAdapter adapter = new SimpleCursorAdapter(this, 
         		R.layout.list_item, 
         		mEventsCursor, mColumns, to);
-        
+
         adapter.setViewBinder(new EventsViewBinder());
         setListAdapter(adapter);
         
