@@ -146,7 +146,7 @@
         android:layout_height="wrap_content"
         android:layout_below ="@id/distance"  
         android:layout_toRightOf ="@id/radius"
-        android:max="100"
+        android:max="300"
         android:progress="15" 
         
         android:progressDrawable="@drawable/seekbar_progress"/>  		
