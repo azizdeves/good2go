@@ -332,8 +332,9 @@ public class MeTab extends ActionBarActivity {
 		for(String[] event : historyEvents){
 			
 			String date = convertAmericanDateToLocalDate(event[1]);
+			String duration = getDurationFromPoints(event[2]);
 			mDbHelperHistoryEvents.createUsersHistory(Long.toString(key.getKey()), 
-					event[0], date, event[2], "2h");
+					event[0], date, event[2], duration);
 			 }
 		mHistoryEventsCursor=mDbHelperHistoryEvents.fetchAllUsersHistory();
 		startManagingCursor(mHistoryEventsCursor);
@@ -366,8 +367,9 @@ public class MeTab extends ActionBarActivity {
 		
 		for(String[] event : futureEvents){
 			String date = convertAmericanDateToLocalDate(event[1]);
+			String duration = getDurationFromPoints(event[2]);
 			mDbHelperFutureEvents.createUsersFutureEvent(Long.toString(key.getKey()), 
-					event[0], date, event[2], "2h");
+					event[0], date, event[2], duration);
 			 }
 		mFutureEventsCursor=mDbHelperFutureEvents.fetchAllUsersFutureEvents();
 		startManagingCursor(mFutureEventsCursor);
@@ -376,6 +378,22 @@ public class MeTab extends ActionBarActivity {
 		mDbHelperFutureEvents.close(); 		
 	}
     
+	private String getDurationFromPoints(String points) {
+		String duration="";
+		int totalPoints = Integer.parseInt(points);
+		int totalMinutes = totalPoints * 60 / POINTS_PER_HOUR;
+		int totalHours = totalMinutes /60;
+		int offsetMins =  totalMinutes - (totalHours * 60);
+		
+		if (totalHours!=0)
+			duration = totalHours + "h ";
+		if (offsetMins!=0)
+			duration = duration + offsetMins + "m";
+		
+		return duration;
+	}
+
+
 	/** FOR ACTION BAR MENUS **/
 	
     @Override
