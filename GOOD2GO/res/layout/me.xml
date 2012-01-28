@@ -64,7 +64,7 @@
  	    android:layout_below="@id/userPointsMeView"
  	    android:layout_toRightOf="@+id/pointSeekMeView"
  	    
- 	    android:text="7200"
+ 	    android:text="0"
  	    android:textColor="@color/app_text_main" />
 		
     <TextView
