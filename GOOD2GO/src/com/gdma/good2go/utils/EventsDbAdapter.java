@@ -305,7 +305,7 @@ public class EventsDbAdapter {
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
     	Calendar now = Calendar.getInstance();
     	int hour = now.get(Calendar.HOUR_OF_DAY);
-    	
+    	//hour=1;
     	int i=0;
     	String q = "SELECT * FROM `events` WHERE " + "( CAST("+KEY_EVENT_START_TIME +" as INT)" + " > " + Integer.toString(hour) +")";
     	String arr[] = {"", ""};

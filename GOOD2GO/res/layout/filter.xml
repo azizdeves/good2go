@@ -49,8 +49,8 @@
         android:id="@+id/disabledFilterButton"
         style="@style/FilterButton"
 	    android:layout_below ="@id/childrenFilterButton"     
-        android:textOn="Disadavantaged"
-        android:textOff="Disadavantaged" 
+        android:textOn="Disadvantaged"
+        android:textOff="Disadvantaged" 
         
         android:drawableTop="@drawable/btn_filter_disabled"/> 
 	
