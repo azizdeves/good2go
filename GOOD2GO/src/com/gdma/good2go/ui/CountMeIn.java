@@ -338,7 +338,7 @@ public class CountMeIn extends ActionBarActivity {
 		String hour_s=null,min_s=null;
 		int hour=0, min=0;
 		
-		if (mEventDuration.contains(" min"))
+		if (mEventDuration.contains("min"))
 		{
 			String[] time = mEventDuration.split(" ");
 			hour_s = time[0].replace("h", "");
@@ -346,7 +346,7 @@ public class CountMeIn extends ActionBarActivity {
 		}
 		else
 		{
-			if (mEventDuration.contains("h"))
+			if (mEventDuration.contains("h "))
 			{
 				hour_s = mEventDuration.replace("h ", "");
 			}
@@ -364,7 +364,7 @@ public class CountMeIn extends ActionBarActivity {
 		
 		if (min_s!=null)
 		{
-			min = Integer.parseInt(hour_s);
+			min = Integer.parseInt(min_s);
 		}
 		
 		float totalHourDur = hour + min / 60;
