@@ -16,6 +16,8 @@
 
 package com.gdma.good2go.utils;
 
+import java.util.Calendar;
+
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -119,7 +121,7 @@ public class EventsDbAdapter {
     
     private static final String DATABASE_NAME = "data";
     private static final String DATABASE_TABLE = "events";
-    private static final int DATABASE_VERSION = 20;
+    private static final int DATABASE_VERSION = 22;
 
     private final Context mCtx;
 
@@ -266,9 +268,13 @@ public class EventsDbAdapter {
      * @return Cursor over all events
      */
     public Cursor fetchAllEvents() {
+    	Calendar now = Calendar.getInstance();
 
-        return mDb.query(DATABASE_TABLE, null, null, null, null, null, 
-        		null, null);//EVENTS_ORDER
+    	int hour = now.get(Calendar.HOUR_OF_DAY);
+    	String where = "CAST("+KEY_EVENT_START_TIME +" as INT)" + " > " + Integer.toString(hour);
+
+        return mDb.query(DATABASE_TABLE, null, where, null, null, null, 
+        		EVENTS_ORDER, null);
     }
 
     /**
