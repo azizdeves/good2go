@@ -191,11 +191,11 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//            	if (areEventsFromLastHalfHour()==false)
-//            	{
-//            		showToast("No server communication. Please try again later.");
-//            	}
-//            	else
+            	if (areEventsFromLastHalfHour()==false)
+            	{
+            		showToast("No server communication. Please try again later.");
+            	}
+            	else
             	{
 		            Intent newIntent = new Intent(view.getContext(), MapTab.class);
 		            startActivity(newIntent);
@@ -307,11 +307,11 @@ public class MainActivity extends ActionBarActivity {
 		client.AddParam("lat", String.valueOf(lat));
 		
 		/**TODO send actual date**/
-//		Calendar c = Calendar.getInstance();
-//		c.set(2012,Calendar.JANUARY,30,0,0,0);
-//		c.set(Calendar.HOUR_OF_DAY,8);
+		Calendar c = Calendar.getInstance();
+		c.set(2012,Calendar.JANUARY,30,0,0,0);
+		c.set(Calendar.HOUR_OF_DAY,8);
 		Date myDate = new Date();
-//		myDate = c.getTime();
+		myDate = c.getTime();
 		String dateToSend = Long.toString(myDate.getTime());
 		
 		client.AddParam("userDate", dateToSend);
