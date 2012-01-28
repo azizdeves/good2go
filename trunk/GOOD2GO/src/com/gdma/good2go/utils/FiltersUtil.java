@@ -84,4 +84,8 @@ public class FiltersUtil {
     	else
   	   		return  mFilterPrefs.getDurationDefault();
     }
+    
+ 
+    
+    
 }
