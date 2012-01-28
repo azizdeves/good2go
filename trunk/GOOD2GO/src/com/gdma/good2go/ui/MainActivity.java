@@ -66,7 +66,7 @@ public class MainActivity extends ActionBarActivity {
 	private String mSender;
 	private String mLocalUsername;
 	private boolean serverOKNoEvents=false;
-	private boolean isServerComm = false;
+	private boolean isServerComm = true;
 	
     private AppPreferencesEventsRetrievalDate mEventsRetrievalDate;
     
@@ -143,7 +143,6 @@ public class MainActivity extends ActionBarActivity {
     		}
     		else
     		{
-    			isServerComm=true;
     			setDashboardView();
     		}
     		AppPreferencesFilterDetails fd = new AppPreferencesFilterDetails(this);
@@ -350,7 +349,6 @@ public class MainActivity extends ActionBarActivity {
  				if (events!=null && events.size()>0)
 				{
 					mEventsRetrievalDate.saveDate(new Date());
-					isServerComm = true;
 					return events;
 					}
 				else
@@ -373,6 +371,7 @@ public class MainActivity extends ActionBarActivity {
 		{
 			String  eMsg= e.getMessage();
 			Log.e(TAG, "Couldn't get events from server: " + eMsg);
+			isServerComm = false;
 			//mEventsRetrievalDate.removeDate();
 		}
 
