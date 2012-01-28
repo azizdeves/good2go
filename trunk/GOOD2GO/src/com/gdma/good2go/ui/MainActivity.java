@@ -400,7 +400,7 @@ public class MainActivity extends ActionBarActivity {
 	        					: String.format("%.1f", 
 	        			(float)(event.getDistance(mMyGeoPoint.getLongitudeE6(),mMyGeoPoint.getLatitudeE6())));
 	        	distance = distance + " km";
-	        	
+
 	        	//calculate duration
 	        	String duration = getDuration(event.getMinDuration());
 	        	        		        	
@@ -463,7 +463,7 @@ public class MainActivity extends ActionBarActivity {
 	        			animals, children,disadvant,
 	        			elderly, env, special, eventImage, startTime, endTime,
 	        			preReq, npoName, groups, individ, kids, 
-	        			menial, mental, occKey, groupsHowMany);
+	        			menial, mental, occKey, groupsHowMany, Integer.toString(event.getMinDuration()));
 	        }
 	        mDbHelper.close();
 	        
@@ -506,8 +506,8 @@ public class MainActivity extends ActionBarActivity {
 	    			type, type,type,
 	    			type,type,type,
 	    			image2,
-	    			"08:00", "22:00", eventTest, eventTest, type, type, type, 
-	    			type, type, eventTest, type);
+	    			"08:00", "12:00", eventTest, eventTest, type, type, type, 
+	    			type, type, eventTest, type, "240");
 	    	
 	}
 
