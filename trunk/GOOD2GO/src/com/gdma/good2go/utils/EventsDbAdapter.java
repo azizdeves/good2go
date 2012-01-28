@@ -273,7 +273,8 @@ public class EventsDbAdapter {
      */
     public Cursor fetchAllEvents() {
     	Calendar now = Calendar.getInstance();
-
+    	//TODO remove static hour
+    	now.set(11, Calendar.HOUR_OF_DAY);
     	int hour = now.get(Calendar.HOUR_OF_DAY);
     	String where = "CAST("+KEY_EVENT_START_TIME +" as INT)" + " > " + Integer.toString(hour);
 
