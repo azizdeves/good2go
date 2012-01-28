@@ -91,15 +91,39 @@ public class Good2GoServerServlet extends HttpServlet {
  		return null;
  	}
 	
-	private void htUpdateData(PrintWriter pw){
+	private void htUpdateData(String fromDate, String toDate, PrintWriter pw){
 		try{
 			Good2GoDatabaseManager dbm = new Good2GoDatabaseManager();
 			
-	        URL url = new URL("http://www.hevratova.org.il/share/");
+			String urlString = new String("http://www.hevratova.org.il/share/");
+			
+			if (fromDate != null && toDate != null){
+				urlString += "?FromDate=" + fromDate + "&ToDate=" + toDate;
+			}
+			else{
+				Calendar cal = Calendar.getInstance();
+				cal.setTime(new Date());
+				
+				String fromDay = new Integer(cal.get(Calendar.DATE)).toString();
+				String fromMonth = (new Integer((cal.get(Calendar.MONTH))+1)).toString();
+				String fromYear = new Integer(cal.get(Calendar.YEAR)).toString();
+				
+				cal.add(Calendar.DATE, 3);
+				
+				String toDay = new Integer(cal.get(Calendar.DATE)).toString();
+				String toMonth = (new Integer((cal.get(Calendar.MONTH))+1)).toString();
+				String toYear = new Integer(cal.get(Calendar.YEAR)).toString();
+				
+				urlString += "?FromDate=" + fromDay + "/" + fromMonth + "/" + fromYear;
+				urlString += "&ToDate=" + toDay + "/" + toMonth + "/" + toYear;
+				
+				pw.println("Updating from: " + fromDay + "/" + fromMonth + "/" + fromYear + " to: "  + toDay + "/" + toMonth + "/" + toYear);
+			}
+			
+	        URL url = new URL(urlString);
 
 			HTTPRequest req = new HTTPRequest(url,HTTPMethod.GET,com.google.appengine.api.urlfetch.FetchOptions.Builder.withDeadline(60));
 			HTTPResponse res = URLFetchServiceFactory.getURLFetchService().fetch(req);
-			
 			byte[] bytes = res.getContent();
 			
 			String s = new String(bytes,"UTF-8");
@@ -165,6 +189,17 @@ public class Good2GoServerServlet extends HttpServlet {
 	        				
 	        				else{
 		        				isSameEvent = false;
+		        				        					
+	        					e = dbm.getEvent(eventKey);
+	        					
+		        				if (e==null){
+		        					isNewEvent = true;
+		        					e = new Event();
+		        					e.setEventKey(eventKey);
+		        				}
+		        				else{
+		        					isNewEvent = false;
+		        				}
 		        				
 		        				if (e != null){
 		        					if (isNewEvent)
@@ -177,17 +212,6 @@ public class Good2GoServerServlet extends HttpServlet {
 		        		        			pw.print(ex.getMessage());
 		        		        		}
 		        					}
-		        				}
-		        					
-	        					e = dbm.getEvent(eventKey);
-	        					
-		        				if (e==null){
-		        					isNewEvent = true;
-		        					e = new Event();
-		        					e.setEventKey(eventKey);
-		        				}
-		        				else{
-		        					isNewEvent = false;
 		        				}
 		        				
 	        					address = e.getEventAddress();
@@ -294,7 +318,7 @@ public class Good2GoServerServlet extends HttpServlet {
 	        					e.setMinDuration(c.get(Calendar.HOUR_OF_DAY)*60 + c.get(Calendar.MINUTE));
 	        				}
 	        				else{
-	        					e.setMinDuration(60);
+	        					e.setMinDuration(120);
 	        				}
 	        				break;
 	        				
@@ -318,7 +342,9 @@ public class Good2GoServerServlet extends HttpServlet {
 	        					}
 	        					
 	        					if (address.getGood2GoPoint() == null || address.getGood2GoPoint().getLat() == 0 || address.getGood2GoPoint().getLon() == 0){
-	        						address.setGood2GoPoint(getCoordinate(address));
+	        						Good2GoPoint g2gPoint = getCoordinate(address);
+	        						if (g2gPoint!=null)
+	        							address.setGood2GoPoint(g2gPoint);
 	        					}
 	        					
 	        					e.setEventAddress(address);
@@ -394,7 +420,6 @@ public class Good2GoServerServlet extends HttpServlet {
 	        			pw.print(ex.getMessage());
 	        		}
 	        	}
-	        	
 	        }
 	        in.close();
 	        
@@ -471,7 +496,6 @@ public class Good2GoServerServlet extends HttpServlet {
 		}
 		
 		else if (action.compareToIgnoreCase("getEvents")==0){
-			
 			Date userDate = null;
 			int duration = -1;
 			double distance = -1;
@@ -725,7 +749,10 @@ public class Good2GoServerServlet extends HttpServlet {
 		}
 		
 		else if (action.compareToIgnoreCase("updateData")==0){
-			htUpdateData(pw);
+			String fromDate = req.getParameter(new String("fromDate"));
+			String toDate = req.getParameter(new String("toDate"));
+			
+			htUpdateData(fromDate,toDate,pw);
 		}
 	}
 }

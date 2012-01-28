@@ -179,8 +179,8 @@ public class Karma implements Comparable<Karma>{
 		return this.getActionType().getPoints();
 	}
 
+	@SuppressWarnings("unused")
 	private void setParticipatePoints(long participatePoints) {
 		this.participatePoints = participatePoints;
 	}
-
 }
