@@ -214,13 +214,15 @@ public class FilterTab extends ActionBarActivity implements SeekBar.OnSeekBarCha
 		mDbHelper = new EventsDbAdapter(this);
 	    mDbHelper.open();
 		Cursor eventsCursor = mDbHelper.fetchEventByFilters(FiltersUtil.getArrayOfFilteredTypes(mFilterPrefs), mRadius, mDuration);
+
 		if (eventsCursor.getCount()==0){
 			Toast noDataAlert=Toast.makeText(this, "There are no search results that match your criteria", Toast.LENGTH_LONG);
 			noDataAlert.show();
+			mFilterPrefs.setIsUserFiltersExist(false);
 			return;
 		}
 		
-		
+		mDbHelper.close();
 		if (caller!= null && caller.compareTo("MainTab")==0){
 			Intent newIntent = new Intent(this, MapTab.class);
 		//	tempBundle.putString("action","MainTab");
