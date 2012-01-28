@@ -66,6 +66,7 @@ public class MainActivity extends ActionBarActivity {
 	private String mSender;
 	private String mLocalUsername;
 	private boolean serverOKNoEvents=false;
+	private boolean isServerComm = false;
 	
     private AppPreferencesEventsRetrievalDate mEventsRetrievalDate;
     
@@ -126,7 +127,7 @@ public class MainActivity extends ActionBarActivity {
 
 	
     private void continueActivityStart() {   	
-    	if (mSender==null)
+    	if (mSender==null || mSender.compareTo("Me")==0 || mSender.compareTo("About")==0)
 		{
     		if (areEventsFromLastHalfHour()==false)
     		{
@@ -142,6 +143,7 @@ public class MainActivity extends ActionBarActivity {
     		}
     		else
     		{
+    			isServerComm=true;
     			setDashboardView();
     		}
     		AppPreferencesFilterDetails fd = new AppPreferencesFilterDetails(this);
@@ -191,9 +193,13 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.nearbybtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromLastHalfHour()==false)
+            	if (isServerComm==false)
             	{
             		showToast("No server communication. Please try again later.");
+            	}
+            	else if (serverOKNoEvents==true) 
+            	{
+            		showToast("It's late, no events for today. Please try again tomorrow.");
             	}
             	else
             	{
@@ -207,9 +213,13 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.searchbtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (areEventsFromLastHalfHour()==false)
+            	if (isServerComm==false)
             	{
             		showToast("No server communication. Please try again later.");
+            	}
+            	else if (serverOKNoEvents==true) 
+            	{
+            		showToast("It's late, no events for today. Please try again tomorrow.");
             	}
             	else
             	{
@@ -226,7 +236,7 @@ public class MainActivity extends ActionBarActivity {
         findViewById(R.id.mebtn).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-            	if (serverOKNoEvents==true || areEventsFromLastHalfHour()==true)
+            	if (isServerComm==true)
             	{
 		            Intent newIntent = new Intent(view.getContext(), MeTab.class);
 		            startActivity(newIntent);
@@ -307,11 +317,11 @@ public class MainActivity extends ActionBarActivity {
 		client.AddParam("lat", String.valueOf(lat));
 		
 		/**TODO send actual date**/
-//		Calendar c = Calendar.getInstance();
-//		c.set(2012,Calendar.JANUARY,30,0,0,0);
-//		c.set(Calendar.HOUR_OF_DAY,8);
+		Calendar c = Calendar.getInstance();
+		c.set(2012,Calendar.JANUARY,30,0,0,0);
+		c.set(Calendar.HOUR_OF_DAY,11);
 		Date myDate = new Date();
-//		myDate = c.getTime();
+		myDate = c.getTime();
 		String dateToSend = Long.toString(myDate.getTime());
 		
 		client.AddParam("userDate", dateToSend);
@@ -340,12 +350,14 @@ public class MainActivity extends ActionBarActivity {
  				if (events!=null && events.size()>0)
 				{
 					mEventsRetrievalDate.saveDate(new Date());
+					isServerComm = true;
 					return events;
 					}
 				else
 				{
 					//no events from today - json is  []
 					Log.i(TAG, "No events for today, response is empty");
+					isServerComm = true;
 					serverOKNoEvents=true;
 				}
 			}
@@ -354,6 +366,7 @@ public class MainActivity extends ActionBarActivity {
 		{
 			String  eMsg= e.getMessage();
 			Log.e(TAG, "Couldn't get events from server, due to HTTP 505 Error: " + eMsg);
+			isServerComm = false;
 			//mEventsRetrievalDate.removeDate();
 		}
 		catch (Exception e)
@@ -453,20 +466,19 @@ public class MainActivity extends ActionBarActivity {
 	        			preReq, npoName, groups, individ, kids, 
 	        			menial, mental, occKey, groupsHowMany);
 	        }
-
 	        mDbHelper.close();
 	        
 	     }
         else
-        	if (mEventsRetrievalDate.isFromLast(AppPreferencesEventsRetrievalDate.HALF_HOUR) == false )
+        	if (areEventsFromLastHalfHour() == false )
         	{
         		showToast ("Couldn't connect to the server or no events for today");
         		
         		//DEBUG
-        		mDbHelper.open();
-        		createManualEventForDebug();
-        		mEventsRetrievalDate.saveDate(new Date());
-        		mDbHelper.close();
+//        		mDbHelper.open();
+//        		createManualEventForDebug();
+//        		mEventsRetrievalDate.saveDate(new Date());
+//        		mDbHelper.close();
         		//DEBUG
         	}
         }
@@ -505,6 +517,8 @@ public class MainActivity extends ActionBarActivity {
     {
     	int actualDurationHours = totalDurationInMins/60;
     	int actualDurationMins = totalDurationInMins%60;
+    	if (actualDurationHours > 2)
+    		actualDurationHours = 2;
     	String duration = actualDurationMins!=0 ? actualDurationMins + "min" : "";
     	if (actualDurationHours!=0)
     		duration = actualDurationHours + "h " + duration;
