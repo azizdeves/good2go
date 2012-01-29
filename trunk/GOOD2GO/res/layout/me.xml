@@ -50,7 +50,7 @@
         android:layout_width="280dip"
         android:layout_height="wrap_content"
         android:layout_below="@id/userPointsMeView"
-        android:max="10000"
+        android:max="100000"
         android:progress="0"
         android:secondaryProgress="2" 
         android:progressDrawable="@drawable/seekbar_progress"
