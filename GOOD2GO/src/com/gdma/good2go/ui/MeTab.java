@@ -362,8 +362,8 @@ public class MeTab extends ActionBarActivity {
 		mDbHelperFutureEvents = new UsersFutureEventsDbAdapter(this);
 		mDbHelperFutureEvents.open();
 		
-		if (!mDbHelperHistoryEvents.isUserHistoryEmpty())
-			mDbHelperHistoryEvents.deleteAllEvents();
+		if (!mDbHelperFutureEvents.isUserFutureEventsEmpty())
+			mDbHelperFutureEvents.deleteAllEvents();
 		
 		for(String[] event : futureEvents){
 			String date = convertAmericanDateToLocalDate(event[1]);
