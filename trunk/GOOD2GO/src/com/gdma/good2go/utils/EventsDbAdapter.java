@@ -274,7 +274,7 @@ public class EventsDbAdapter {
     public Cursor fetchAllEvents() {
     	Calendar now = Calendar.getInstance();
     	//TODO remove static hour
-    	now.set(8, Calendar.HOUR_OF_DAY);
+    	now.set(Calendar.HOUR_OF_DAY, 8);
     	int hour = now.get(Calendar.HOUR_OF_DAY);
     	String where = "CAST("+KEY_EVENT_START_TIME +" as INT)" + " > " + Integer.toString(hour);
 
@@ -306,7 +306,7 @@ public class EventsDbAdapter {
 	public Cursor fetchEventByFilters(String[] types, int radius, int timeInMinutes) throws SQLException {
     	Calendar now = Calendar.getInstance();
     	//TODO remove static hour
-    	now.set(8, Calendar.HOUR_OF_DAY);
+    	now.set(Calendar.HOUR_OF_DAY, 8);
     	int hour = now.get(Calendar.HOUR_OF_DAY);
     	//hour=1;
     	int i=0;
