@@ -667,9 +667,14 @@ public class Good2GoDatabaseManager {
 		return gson.toJson(jsonArray);
 	}
 	
-	public List<Event> getRegisteredFutureEvents(String userName, Date userDate){
+	public String getRegisteredFutureEvents(String userName, Date userDate){
+		Gson gson = new Gson();
+		JsonArray jsonArray = new JsonArray();
+		JsonObject jsonEvent = null;
+		DateFormat dateFormatter = DateFormat.getDateInstance(DateFormat.SHORT);
+		String dateString = "";
+		int duration = 0;
 		
-		List<Event> results = new LinkedList<Event>();
 		List<Occurrence> allOccurrences = new LinkedList<Occurrence>();
 		Event event = null;
 		
@@ -713,15 +718,32 @@ public class Good2GoDatabaseManager {
 			
 			for (Occurrence o : allOccurrences){
 				event = (Event) pm.getObjectById(Event.class, o.getContainingEventKey());
-				event.addOccurrence(o);
-				results.add(event);
+				dateString = dateFormatter.format(o.getOccurrenceDate());
+				
+				Calendar c = Calendar.getInstance();
+				c.setTime(o.getEndTime());
+				
+				Calendar startCal = Calendar.getInstance();
+				startCal.setTime(o.getStartTime());
+				
+				c.add(Calendar.HOUR_OF_DAY, -startCal.get(Calendar.HOUR_OF_DAY));
+				c.add(Calendar.MINUTE, -startCal.get(Calendar.MINUTE));
+				
+				duration = c.get(Calendar.HOUR_OF_DAY);
+				
+				jsonEvent = new JsonObject();
+				jsonEvent.addProperty("Date", dateString);
+				jsonEvent.addProperty("Event", event.getEventName());
+				jsonEvent.addProperty("Points", duration*1000);
+				
+				jsonArray.add(jsonEvent);
 			}
 		}
 		finally{
 			pm.close();
 		}
 		
-		return results;
+		return gson.toJson(jsonArray);
 	}
 	
 	public List<Event> getNextEventsByGood2GoPoint(Good2GoPoint gp, Date userDate, int duration, double distance, List<Event.VolunteeringWith> vw, List<Event.SuitableFor> sf, List<Event.WorkType> wt){
@@ -764,6 +786,7 @@ public class Good2GoDatabaseManager {
 				String lastEventKey = null;
 				boolean isInserted = false;
 				Event event = null;
+				int minDuration = 0;
 				
 				for (Occurrence occurrence : results){
 					
@@ -780,6 +803,7 @@ public class Good2GoDatabaseManager {
 						isInserted = false;
 						event = (Event) pm.getObjectById(Event.class, eventKey);
 						event.getEventAddress();
+						minDuration = Math.min(event.getMinDuration(),120);
 						//Check lists.
 						
 						boolean containsVW = true;
@@ -820,13 +844,13 @@ public class Good2GoDatabaseManager {
 						
 						//Check duration and distance.
 						
-						if ((duration!=-1 && event.getMinDuration()>duration) || (distance>0 && event.getEventAddress().getGood2GoPoint().getDistance(gp)>distance) || !containsVW || !containsSF || !containsWT){
+						if ((duration!=-1 && minDuration>duration) || (distance>0 && event.getEventAddress().getGood2GoPoint().getDistance(gp)>distance) || !containsVW || !containsSF || !containsWT){
 							isInserted = true;
 							continue;
 						}
 						
-						minHours = event.getMinDuration() / 60;
-						minMinutes = event.getMinDuration() % 60;
+						minHours = minDuration / 60;
+						minMinutes = minDuration % 60;
 					}
 					
 					
