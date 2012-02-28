@@ -80,25 +80,36 @@ public class MainActivity extends ActionBarActivity {
 	    if(extras!=null){
 	    	mSender = extras.getString("sender");
 		}
+	    
     	/********************************************Remove this to work with Android Accounts**********************/
     	//saveLocalUsername("Bypass Account");
         /***********************************************************************************************************/             
-               
+
+		int SDK_INT = android.os.Build.VERSION.SDK_INT;
+		
+	    
+		
         /*check accounts*/
-        mLocalUsername = getLocalUsername();
+		mLocalUsername = getLocalUsername();
+		
         if (mLocalUsername == null){
-        	
-        	Account[] accounts = getAccounts(this);
-        	if (accounts.length == 0){
+        	if (SDK_INT >= 7){
+        		Account[] accounts = getAccounts(this);
+        		if (accounts.length == 0){
         		
-        		Intent newIntent = new Intent(this, LoginNoAccounts.class);
-        		startActivityForResult(newIntent, LOGIN_REQUEST );
+        			Intent newIntent = new Intent(this, LoginNoAccounts.class);
+        			startActivityForResult(newIntent, LOGIN_REQUEST );
         		
+        		}
+        		else{
+        			Intent newIntent = new Intent(this, Login.class);
+        			startActivityForResult(newIntent,LOGIN_REQUEST );
+        		}
         	}
         	else{
-        		Intent newIntent = new Intent(this, Login.class);
-        		startActivityForResult(newIntent,LOGIN_REQUEST );
-            }
+    			Intent newIntent = new Intent(this, LoginNoAccounts.class);
+    			startActivityForResult(newIntent, LOGIN_REQUEST );
+        	}
         	
         }
         else{
