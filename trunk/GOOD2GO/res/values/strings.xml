@@ -105,6 +105,7 @@
 	<string name="special_thanksTitle">"SPECIAL THANKS"</string>
 	<string name="special_thanks">"To Ori Wachtel for believing in the idea and for his warm support along the way"</string>
 	<string name="contribTitle">"OTHER CONTRIBUTORS"</string>
+	<string name="welcome_eneter_email">Please enter your email address</string>
 	 
 	
 </resources>
