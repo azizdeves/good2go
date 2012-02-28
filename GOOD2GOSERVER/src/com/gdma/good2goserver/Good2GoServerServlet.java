@@ -458,8 +458,9 @@ public class Good2GoServerServlet extends HttpServlet {
 			}
 			
 			if (userName!=null && userDate!=null){
-			String js = dbm.getUserHistory(userName, userDate);
-			pw.write(js);
+				String js = dbm.getUserHistory(userName, userDate);
+				
+				pw.write(js);
 			}
 			
 			else
@@ -477,16 +478,7 @@ public class Good2GoServerServlet extends HttpServlet {
 			}
 
 			if (userName!=null && userDate!=null){
-				List<Event> events = dbm.getRegisteredFutureEvents(userName, userDate);
-				for (Event e : events){
-					e.setOccurrenceKeys(null);
-					for (Occurrence o : e.getOccurrences())
-						o.setRegisteredUserNames(null);
-				}
-				
-				String js = new JSONSerializer().include("address", "occurrences", "volunteeringWith", "suitableFor", "workType").exclude("occurrences.registeredUserNames", "occurrenceKeys").serialize(events);
-				
-				resp.setContentType("text/plain");
+				String js = dbm.getRegisteredFutureEvents(userName, userDate);
 				
 				pw.print(js);
 			}
