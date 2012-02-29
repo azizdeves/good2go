@@ -64,7 +64,7 @@
 	    android:layout_marginBottom="10dip"
 	    
 	    
-	    android:layout_above="@+id/fbinvite"
+	    android:layout_above="@+id/countmeinbtn2"
 	    android:layout_alignRight="@id/fbstatus"
 	    android:layout_below="@id/fbstatus"
 	    
@@ -72,36 +72,7 @@
 	    android:text="ToggleButton"
 	    android:textOff="No"
 	    android:textOn="Yes"/>
-         
-    <TextView
-        android:id="@+id/fbinvite"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        
-        android:textColor="@color/app_text_main"
-        
-        android:layout_marginBottom="10dip"
-        android:layout_marginTop="10dip"  
-        android:layout_marginLeft="10dip"
-          
-        android:layout_below="@id/fbpost"
-        android:textStyle="bold"
-        android:text="Invite ..."/>
-    
-     <Button
-        android:id="@+id/fbinvitebtn"
-        style="@style/TextWhite"
-        
-        android:background="@drawable/btn_invite_friends"
-        
-        android:layout_width="70dip"
-        android:layout_height="30dip"
-		
-        android:layout_below="@id/fbposttoggleBtn"
-        android:layout_alignRight="@id/fbposttoggleBtn"
-        android:text=">" />
-     
-     
+        */
 
 
 	<Button
@@ -113,7 +84,7 @@
         android:layout_marginLeft="10dip"
         android:layout_marginRight="10dip"
             
-        android:layout_below="@id/fbinvite"
+        android:layout_below="@id/fbpost"
         android:text="Count Me In!" />
 
 
