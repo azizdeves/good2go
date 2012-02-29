@@ -42,7 +42,8 @@
     <string name="mapskey_adi">0Uu6cSgyV-Rk-xGmraOz-OylHV1x1hjUb3nctvg</string>
     <string name="mapskey_gil">0YhczuGFCWeAeSfdYOPvNNsN5LAJwjDrJvsu-eA</string>
     <string name="mapskey_gil2">0mlP0wxqu2lOLFKJEA-rOlYmxmV0tSz2ElAnSzQ</string>
-    <string name="mapskey_mor">0YRc18l4N6pXnWLTP4zPdNZDlP8OuVxR_8Ip7jg</string>    
+    <string name="mapskey_mor">0YRc18l4N6pXnWLTP4zPdNZDlP8OuVxR_8Ip7jg</string>   
+    <string name="mapskey_release">0YhczuGFCWeDaGHXRxAZxTz9yrElFzQJQRJ7_DA</string> 
     <string name="mapview_name">Map</string>
     <string name="meview_name">Me</string>
     <string name="listview_name">List</string>
