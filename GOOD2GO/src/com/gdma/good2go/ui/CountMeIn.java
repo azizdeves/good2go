@@ -98,25 +98,7 @@ public class CountMeIn extends ActionBarActivity {
 /**************NOTICE THE 'addKarma' SECTION*******************/
 /**************************************************************/		
 		
-//	    final Button buttonFBInvite = (Button) findViewById(R.id.fbinvite);
-//		   
-//	    buttonFBInvite.setOnClickListener(new View.OnClickListener() {
-//	        public void onClick(View view) {
-//	           // mSoundManager.playSound(3);
-//	            /*Intent newIntent = new Intent(view.getContext(), 
-//	                            CountMeIn.class);
-//	            startActivityForResult(newIntent, 1);*/
-//	    		Toast.makeText(view.getContext(), "onButtonClick FB Invite",
-//				Toast.LENGTH_LONG).show();
-	    		/***Adding point for inviting a friend***/
-//	    		mClient = new RestClient("http://good-2-go.appspot.com/good2goserver");
-//	    		PointsUtil.remote_addKarma(mUsername, PointsUtil.INVITE_A_FRIEND, client);
 
-	    
-//	        }
-//	    });
-//	    
-//	    
 	    final Button buttonCountMeIn = (Button) findViewById(R.id.countmeinbtn2);
 		   
 	    buttonCountMeIn.setOnClickListener(new View.OnClickListener() {
