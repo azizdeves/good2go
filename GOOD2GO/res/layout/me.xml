@@ -13,7 +13,7 @@
         android:layout_marginRight="10dip"
         android:layout_marginLeft="5dip"
         android:layout_marginTop="5dip"
-        android:src="@drawable/user_pic"/>
+        android:src="@drawable/user_pic1"/>
 
      
     <TextView
