@@ -86,10 +86,11 @@ public class MeTab extends ActionBarActivity {
         mTvUserName.setText(userNiceName);
        
         //check karma, unrated, history and future events async              
+
         new checkForUsersUnRatedEventsTask().execute(mUserName);
         new getUserKarmaTask().execute(mUserName); 
         new getUserHistoryTask().execute(mUserName);
-        new getUserFutureTask().execute(mUserName);    
+        new getUserFutureTask().execute(mUserName);   
     }
     
 
@@ -399,7 +400,7 @@ public class MeTab extends ActionBarActivity {
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         MenuInflater menuInflater = getMenuInflater();
-        menuInflater.inflate(R.menu.me, menu);
+        menuInflater.inflate(R.menu.empty, menu);
         return super.onCreateOptionsMenu(menu);
     }
     
@@ -410,17 +411,17 @@ public class MeTab extends ActionBarActivity {
     	
         switch (item.getItemId()) {
 
-        case R.id.menu_map:
-        	newIntent = new Intent(this, MapTab.class);
-        	newIntent.putExtra("sender", TAG);
-        	startActivity(newIntent);
-            break;
-
-        case R.id.menu_list:
-        	newIntent = new Intent(this, ListTab.class);
-        	newIntent.putExtra("sender", TAG);
-        	startActivity(newIntent);
-            break;
+//        case R.id.menu_map:
+//        	newIntent = new Intent(this, MapTab.class);
+//        	newIntent.putExtra("sender", TAG);
+//        	startActivity(newIntent);
+//            break;
+//
+//        case R.id.menu_list:
+//        	newIntent = new Intent(this, ListTab.class);
+//        	newIntent.putExtra("sender", TAG);
+//        	startActivity(newIntent);
+//            break;
             
         case android.R.id.home:
         	newIntent = new Intent(this, MainActivity.class);
