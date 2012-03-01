@@ -329,7 +329,7 @@ public class MainActivity extends ActionBarActivity {
 		/**TODO send actual date**/
 		Calendar c = Calendar.getInstance();
 		//c.set(2012,Calendar.JANUARY,30,0,0,0);
-		c.set(Calendar.HOUR_OF_DAY,8);
+		//c.set(Calendar.HOUR_OF_DAY,8);
 		Date myDate = new Date();
 		myDate = c.getTime();
 		String dateToSend = Long.toString(myDate.getTime());
